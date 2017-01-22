@@ -1,0 +1,74 @@
+buildscript {
+	repositories {
+		jcenter()
+		maven {
+			name = "forge"
+			url = "http://files.minecraftforge.net/maven"
+		}
+	}
+	dependencies {
+		classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
+	}
+}
+
+apply plugin: "net.minecraftforge.gradle.forge"
+
+version = "1.10.2-" + getVersion("VERSION")
+group = "p455w0rdslib"
+archivesBaseName = "p455w0rdslib"
+sourceCompatibility = targetCompatibility = "1.8"
+
+minecraft {
+	version = "1.10.2-12.18.3.2185"
+	runDir = "run"
+	
+	mappings = "snapshot_20161101"
+	useDepAts = false
+}
+
+repositories {
+	maven {
+		name = "epoxide"
+		url = "http://maven.epoxide.xyz"
+	}
+}
+
+dependencies {
+	compile "net.darkhax.tesla:Tesla:1.10.2-1.2.1.50"
+}
+
+processResources {
+	inputs.property "version", project.version
+	inputs.property "mcversion", project.minecraft.version
+
+	from (sourceSets.main.resources.srcDirs) {
+		include "mcmod.info"
+		expand "version": project.version, "mcversion": project.minecraft.version
+	}
+		
+	from (sourceSets.main.resources.srcDirs) {
+		exclude "mcmod.info"
+	}
+
+	rename '(.+_at.cfg)', 'META-INF/$1'
+}
+
+String getVersion(String type) {
+	String major = "0";
+	String revision = "0";
+	String patch = "0";
+	String prefix = "public static final String $type = \"";
+	File file = file("src/main/java/p455w0rdslib/LibGlobals.java")
+	file.eachLine { String s ->
+		s = s.trim();
+		if (s.startsWith(prefix)) {
+			s = s.substring(prefix.length(), s.length() - 2);
+			String[] pts = s.split("\\.");
+
+			major = pts[0];
+			revision = pts[1];
+			patch = pts[2];
+		}
+	}
+	return "$major.$revision.$patch";
+}
