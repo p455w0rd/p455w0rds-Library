@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -61,25 +62,28 @@ public class LibEvents {
 		BlockPos pos = e.getPos();
 		if (world != null && pos != null && world.getTileEntity(pos) != null) {
 			TileEntity tile = world.getTileEntity(pos);
-			if (tile.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
-				tile.getCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null).attachChunkLoader(P455w0rdsLib.INSTANCE);
+			if (tile instanceof IChunkLoadable) {
+				if (tile.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
+					tile.getCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null).attachChunkLoader(P455w0rdsLib.INSTANCE);
+				}
 			}
 		}
 	}
 
-	/*
-		@SubscribeEvent
-		public void blockBreak(BreakEvent e) {
-			World world = e.getWorld();
-			BlockPos pos = e.getPos();
-			if (world != null && pos != null && world.getTileEntity(pos) != null) {
-				TileEntity tile = world.getTileEntity(pos);
+	@SubscribeEvent
+	public void blockBreak(BreakEvent e) {
+		World world = e.getWorld();
+		BlockPos pos = e.getPos();
+		if (world != null && pos != null && world.getTileEntity(pos) != null) {
+			TileEntity tile = world.getTileEntity(pos);
+			if (tile instanceof IChunkLoadable) {
 				if (tile.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
-					CapabilityChunkLoader.get(tile).attachChunkLoader();
+					tile.getCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null).detachChunkLoader(P455w0rdsLib.INSTANCE);
 				}
 			}
 		}
-	*/
+	}
+
 	@SubscribeEvent
 	public void attachCapabilities(AttachCapabilitiesEvent<TileEntity> event) {
 		if (event.getObject() instanceof IChunkLoadable) {

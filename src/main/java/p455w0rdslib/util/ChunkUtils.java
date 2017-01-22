@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.LoadingCallback;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
 
 /**
@@ -54,7 +55,9 @@ public class ChunkUtils {
 				TileEntity te = world.getTileEntity(pos);
 				if (te != null && te.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
 					TicketHandler handler = new TicketHandler();
-					handler.load(world, pos, ticket);
+					FMLCommonHandler.instance().getWorldThread(FMLCommonHandler.instance().getClientPlayHandler()).addScheduledTask(() -> {
+						handler.load(world, pos, ticket);
+					});
 				}
 			}
 		}

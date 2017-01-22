@@ -15,6 +15,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import p455w0rdslib.util.ChunkUtils.TicketHandler;
 
 /**
@@ -119,7 +120,9 @@ public class CapabilityChunkLoader {
 		public void attachChunkLoader(Object modInstance) {
 			if (tile != null) {
 				TicketHandler handler = TicketHandler.getInstance();
-				handler.load(tile.getWorld(), tile.getPos(), handler.getTicket(modInstance, tile.getWorld()));
+				FMLCommonHandler.instance().getWorldThread(FMLCommonHandler.instance().getClientPlayHandler()).addScheduledTask(() -> {
+					handler.load(tile.getWorld(), tile.getPos(), handler.getTicket(modInstance, tile.getWorld()));
+				});
 			}
 		}
 
@@ -127,7 +130,9 @@ public class CapabilityChunkLoader {
 		public void detachChunkLoader(Object modInstance) {
 			if (tile != null) {
 				TicketHandler handler = TicketHandler.getInstance();
-				handler.unload(tile.getWorld(), tile.getPos(), handler.getTicket(modInstance, tile.getWorld()));
+				FMLCommonHandler.instance().getWorldThread(FMLCommonHandler.instance().getClientPlayHandler()).addScheduledTask(() -> {
+					handler.unload(tile.getWorld(), tile.getPos(), handler.getTicket(modInstance, tile.getWorld()));
+				});
 			}
 		}
 	}
