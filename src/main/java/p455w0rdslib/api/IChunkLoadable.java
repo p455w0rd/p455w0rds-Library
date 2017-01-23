@@ -9,8 +9,6 @@ package p455w0rdslib.api;
 public interface IChunkLoadable {
 
 	/**
-	 * <b>Not fully implemented</b>
-	 *
 	 * @return An instance fo your main mod container
 	 */
 	Object getModInstance();

@@ -7,12 +7,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
-import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -64,7 +61,8 @@ public class LibEvents {
 			TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof IChunkLoadable) {
 				if (tile.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
-					tile.getCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null).attachChunkLoader(P455w0rdsLib.INSTANCE);
+					IChunkLoadable chunkLoader = (IChunkLoadable) tile;
+					tile.getCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null).attachChunkLoader(chunkLoader.getModInstance());
 				}
 			}
 		}
@@ -78,7 +76,8 @@ public class LibEvents {
 			TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof IChunkLoadable) {
 				if (tile.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
-					tile.getCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null).detachChunkLoader(P455w0rdsLib.INSTANCE);
+					IChunkLoadable chunkLoader = (IChunkLoadable) tile;
+					tile.getCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null).detachChunkLoader(chunkLoader.getModInstance());
 				}
 			}
 		}
@@ -88,37 +87,9 @@ public class LibEvents {
 	public void attachCapabilities(AttachCapabilitiesEvent<TileEntity> event) {
 		if (event.getObject() instanceof IChunkLoadable) {
 			TileEntity tile = event.getObject();
-			event.addCapability(new ResourceLocation(LibGlobals.MODID, "chunkloader"), new ProviderTE(tile));
+			IChunkLoadable chunkLoader = (IChunkLoadable) tile;
+			event.addCapability(new ResourceLocation(chunkLoader.getModID(), "chunkloader"), new ProviderTE(tile));
 		}
 	}
 
-	private void loadChunk(World world, int chunkX, int chunkZ) {
-		int minX = chunkX << 4;
-		int minZ = chunkZ << 4;
-		int maxX = minX + 16;
-		int maxZ = minZ + 16;
-		for (int y = 0; y <= 256; y++) {
-			for (int x = minX; x < maxX; x++) {
-				for (int z = minZ; z < maxZ; z++) {
-					BlockPos pos = new BlockPos(x, y, z);
-					if (world.getTileEntity(pos) != null) {
-						TileEntity te = world.getTileEntity(pos);
-						if (te.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
-							//CapabilityChunkLoader.get(te).attachChunkLoader();
-						}
-					}
-				}
-			}
-		}
-	}
-
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onChunkLoadPopulate(PopulateChunkEvent.Post event) {
-		LibGlobals.THREAD_POOL.submit(() -> loadChunk(event.getWorld(), event.getChunkX(), event.getChunkZ()));
-	}
-
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onChunkLoad(ChunkEvent.Load event) {
-		LibGlobals.THREAD_POOL.submit(() -> loadChunk(event.getWorld(), event.getChunk().xPosition, event.getChunk().zPosition));
-	}
 }

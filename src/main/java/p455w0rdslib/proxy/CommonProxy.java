@@ -20,7 +20,6 @@ package p455w0rdslib.proxy;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -30,9 +29,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import p455w0rdslib.LibConfig;
 import p455w0rdslib.LibEntities;
 import p455w0rdslib.LibEvents;
-import p455w0rdslib.P455w0rdsLib;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
-import p455w0rdslib.util.ChunkUtils.Callback;
 
 /**
  * @author p455w0rd
@@ -42,7 +39,7 @@ public class CommonProxy {
 
 	public void preInit(FMLPreInitializationEvent e) {
 		LibConfig.init();
-		ForgeChunkManager.setForcedChunkLoadingCallback(P455w0rdsLib.INSTANCE, Callback.getInstance());
+		//ForgeChunkManager.setForcedChunkLoadingCallback(P455w0rdsLib.INSTANCE, Callback.getInstance());
 		CapabilityChunkLoader.init();
 	}
 
