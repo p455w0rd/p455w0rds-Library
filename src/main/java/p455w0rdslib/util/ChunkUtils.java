@@ -41,6 +41,10 @@ public class ChunkUtils {
 		private Callback() {
 		}
 
+		/**
+		 * Used as part of the Chunk Loader API for a simple Chunk Loading Callback<br>
+		 * There is no real reason to <b>not</b> use this
+		 */
 		public static Callback getInstance() {
 			return INSTANCE;
 		}
