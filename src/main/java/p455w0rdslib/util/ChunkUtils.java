@@ -59,7 +59,7 @@ public class ChunkUtils {
 				TileEntity te = world.getTileEntity(pos);
 				if (te != null && te.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
 					TicketHandler handler = new TicketHandler();
-					FMLCommonHandler.instance().getWorldThread(FMLCommonHandler.instance().getClientPlayHandler()).addScheduledTask(() -> {
+					FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
 						handler.load(world, pos, ticket);
 					});
 				}
