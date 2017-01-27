@@ -1,11 +1,8 @@
 package p455w0rdslib.util;
 
-import java.util.Map;
-
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * @author p455w0rd
@@ -22,7 +19,7 @@ public class MCUtils {
 	}
 
 	public static boolean isClient() {
-		return FMLCommonHandler.instance().getSide() == Side.CLIENT;
+		return FMLCommonHandler.instance().getSide().isClient();
 	}
 
 	public static boolean isServer() {
@@ -30,7 +27,6 @@ public class MCUtils {
 	}
 
 	public static boolean isDeobf() {
-		Map<String, Object> bb = Launch.blackboard;
 		return (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 	}
 

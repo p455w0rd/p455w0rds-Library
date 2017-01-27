@@ -5,12 +5,17 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.UserListOpsEntry;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.world.World;
@@ -106,6 +111,27 @@ public class PlayerUtils {
 			return true;
 		}
 		return sender.getName().equalsIgnoreCase("@") || sender.getName().equals("Server");
+	}
+
+	public static List<UUID> getFullPlayerList() {
+		MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+		List<UUID> uuidList = Lists.newArrayList();
+		if (server != null) {
+			PlayerProfileCache playerCache = server.getPlayerProfileCache();
+			String[] usernames = playerCache.getUsernames();
+			for (String username : usernames) {
+				uuidList.add(playerCache.getGameProfileForUsername(username).getId());
+			}
+		}
+		return uuidList;
+	}
+
+	public static ItemStack getPlayerSkull(String playerName) {
+		ItemStack head = new ItemStack(Items.SKULL, 1, 3);
+		NBTTagCompound nametag = new NBTTagCompound();
+		nametag.setString("SkullOwner", playerName);
+		head.setTagCompound(nametag);
+		return head;
 	}
 
 }

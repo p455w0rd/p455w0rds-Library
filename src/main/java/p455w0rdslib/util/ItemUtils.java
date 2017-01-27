@@ -2,9 +2,11 @@ package p455w0rdslib.util;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 
 /**
  * @author p455w0rd
@@ -107,6 +109,30 @@ public class ItemUtils {
 
 	public static ItemStack readStack(NBTTagCompound nbtTC, String key) {
 		return (nbtTC.hasKey(key) ? ItemStack.loadItemStackFromNBT(nbtTC) : null);
+	}
+
+	public static CapabilityDispatcher getCaps(ItemStack stack) {
+		return MCPrivateUtils.getItemStackCapabilities(stack);
+	}
+
+	public static void setItem(ItemStack stack, Item newItem) {
+		Item item = stack.getItem();
+		NBTTagCompound capNBT = MCPrivateUtils.getItemStackCapNBT(stack);
+		if (newItem == item && stack != null && getCaps(stack) != null) //Item Didn't change but refreshed
+		{
+			net.minecraftforge.common.capabilities.ICapabilityProvider parent = item.initCapabilities(stack, getCaps(stack).serializeNBT());
+			MCPrivateUtils.setItemStackCapabilities(stack, net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(item, stack, parent));
+		}
+		else if (newItem != item && newItem != null) // Item Changed
+		{
+			net.minecraftforge.common.capabilities.ICapabilityProvider parent = newItem.initCapabilities(stack, capNBT);
+			MCPrivateUtils.setItemStackCapabilities(stack, net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(newItem, stack, parent));
+		}
+		if (capNBT != null && getCaps(stack) != null) {
+			getCaps(stack).deserializeNBT(capNBT);
+		}
+		MCPrivateUtils.setItemStackDelegate(stack, newItem != null ? newItem.delegate : null);
+		MCPrivateUtils.setItemStackItem(stack, newItem);
 	}
 
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -59,19 +61,39 @@ public class TileEntityUtils {
 		return tileList;
 	}
 
-	public static List<TileEntity> getAdjacentRFTiles(TileEntity te) {
+	public static List<IEnergyHandler> getAdjacentRFTiles(TileEntity te) {
 		return getAdjacentRFTiles(te, false);
 	}
 
-	public static List<TileEntity> getAdjacentHorizontalRFTiles(TileEntity te) {
+	public static List<IEnergyHandler> getAdjacentHorizontalRFTiles(TileEntity te) {
 		return getAdjacentRFTiles(te, false);
 	}
 
-	private static List<TileEntity> getAdjacentRFTiles(TileEntity te, boolean horizontal) {
-		List<TileEntity> tileList = Lists.newArrayList();
+	private static List<IEnergyHandler> getAdjacentRFTiles(TileEntity te, boolean horizontal) {
+		List<IEnergyHandler> tileList = Lists.newArrayList();
 		for (TileEntity tile : (horizontal ? getAdjacentTiles(te, true) : getAdjacentTiles(te))) {
 			if (tile != null && tile instanceof IEnergyHandler) {
-				tileList.add(tile);
+				tileList.add((IEnergyHandler) tile);
+			}
+		}
+		return tileList;
+	}
+
+	public static List<IEnergyReceiver> getAdjacentRFReceivers(TileEntity te, boolean horizontal) {
+		List<IEnergyReceiver> tileList = Lists.newArrayList();
+		for (IEnergyHandler tile : getAdjacentRFTiles(te, horizontal)) {
+			if (tile instanceof IEnergyReceiver) {
+				tileList.add((IEnergyReceiver) tile);
+			}
+		}
+		return tileList;
+	}
+
+	public static List<IEnergyProvider> getAdjacentRFProviders(TileEntity te, boolean horizontal) {
+		List<IEnergyProvider> tileList = Lists.newArrayList();
+		for (IEnergyHandler tile : getAdjacentRFTiles(te, horizontal)) {
+			if (tile instanceof IEnergyProvider) {
+				tileList.add((IEnergyProvider) tile);
 			}
 		}
 		return tileList;

@@ -120,7 +120,7 @@ public class CapabilityChunkLoader {
 		public void attachChunkLoader(Object modInstance) {
 			if (tile != null) {
 				TicketHandler handler = TicketHandler.getInstance();
-				FMLCommonHandler.instance().getWorldThread(FMLCommonHandler.instance().getClientPlayHandler()).addScheduledTask(() -> {
+				FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
 					handler.load(tile.getWorld(), tile.getPos(), handler.getTicket(modInstance, tile.getWorld()));
 				});
 			}
@@ -130,7 +130,7 @@ public class CapabilityChunkLoader {
 		public void detachChunkLoader(Object modInstance) {
 			if (tile != null) {
 				TicketHandler handler = TicketHandler.getInstance();
-				FMLCommonHandler.instance().getWorldThread(FMLCommonHandler.instance().getClientPlayHandler()).addScheduledTask(() -> {
+				FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
 					handler.unload(tile.getWorld(), tile.getPos(), handler.getTicket(modInstance, tile.getWorld()));
 				});
 			}
