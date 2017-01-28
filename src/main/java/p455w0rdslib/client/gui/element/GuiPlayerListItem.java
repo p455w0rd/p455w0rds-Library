@@ -1,41 +1,31 @@
 package p455w0rdslib.client.gui.element;
 
 import net.minecraft.item.ItemStack;
-import p455w0rdslib.api.gui.IGuiPlayerListItem;
+import p455w0rdslib.util.GuiUtils;
 import p455w0rdslib.util.PlayerUtils;
 
 /**
  * @author p455w0rd
  *
  */
-public class GuiPlayerListItem implements IGuiPlayerListItem {
-
-	final String PLAYER_NAME;
-	final int HEIGHT;
+public class GuiPlayerListItem extends GuiListItem {
 
 	public GuiPlayerListItem(String playerName, int listItemHeight) {
-		PLAYER_NAME = playerName;
-		HEIGHT = listItemHeight;
+		super(playerName, listItemHeight);
 	}
 
 	@Override
-	public String getDisplayText() {
-		return PLAYER_NAME;
+	public void draw(int x, int y, int backColor, int textColor) {
+		GuiUtils.drawItem(getIcon(), 1, y);
+		GuiUtils.getFontRenderer().drawStringWithShadow(getPlayerName(), x + 7, y, textColor);
 	}
 
-	@Override
 	public ItemStack getIcon() {
 		return PlayerUtils.getPlayerSkull(getPlayerName());
 	}
 
-	@Override
 	public String getPlayerName() {
 		return getDisplayText();
-	}
-
-	@Override
-	public int getHeight() {
-		return HEIGHT;
 	}
 
 }

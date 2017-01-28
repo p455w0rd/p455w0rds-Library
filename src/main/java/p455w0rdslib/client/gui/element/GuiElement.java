@@ -1,6 +1,13 @@
 package p455w0rdslib.client.gui.element;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import p455w0rdslib.util.GuiUtils;
 
 /**
  * Base class for all GUI elements
@@ -25,6 +32,44 @@ public abstract class GuiElement {
 		pos = posIn;
 		w = width;
 		h = height;
+	}
+
+	public abstract void drawBackground(int mouseX, int mouseY, float gameTicks);
+
+	public abstract void drawForeground(int mouseX, int mouseY);
+
+	public abstract boolean onClick(int mouseX, int mouseY, int mouseButton);
+
+	public abstract boolean onMouseWheel(int mouseX, int mouseY, int movement);
+
+	public void drawModalRect(int x, int y, int width, int height, int color) {
+		GuiUtils.drawGradientRect(gui, x, y, width, height, color, color);
+	}
+
+	public void drawStencil(int xStart, int yStart, int xEnd, int yEnd, int flag) {
+
+		GlStateManager.disableTexture2D();
+		GL11.glStencilFunc(GL11.GL_ALWAYS, flag, flag);
+		GL11.glStencilOp(GL11.GL_ZERO, GL11.GL_ZERO, GL11.GL_REPLACE);
+		GL11.glStencilMask(flag);
+		GlStateManager.colorMask(false, false, false, false);
+		GlStateManager.depthMask(false);
+		GL11.glClearStencil(0);
+		GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT);
+
+		VertexBuffer buffer = Tessellator.getInstance().getBuffer();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+		buffer.pos(xStart, yEnd, 0).endVertex();
+		buffer.pos(xEnd, yEnd, 0).endVertex();
+		buffer.pos(xEnd, yStart, 0).endVertex();
+		buffer.pos(xStart, yStart, 0).endVertex();
+		Tessellator.getInstance().draw();
+
+		GlStateManager.enableTexture2D();
+		GL11.glStencilFunc(GL11.GL_EQUAL, flag, flag);
+		GL11.glStencilMask(0);
+		GlStateManager.colorMask(true, true, true, true);
+		GlStateManager.depthMask(true);
 	}
 
 	public Gui getGui() {

@@ -2,6 +2,8 @@ package p455w0rdslib.util;
 
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -14,12 +16,16 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -62,6 +68,79 @@ public class GuiUtils {
 		RenderHelper.enableGUIStandardItemLighting();
 		getRenderItem().renderItemAndEffectIntoGUI(item, x, y);
 		RenderHelper.enableStandardItemLighting();
+	}
+
+	public static void drawFluid(Gui gui, int x, int y, FluidStack fluid, int width, int height) {
+		if (fluid == null || fluid.getFluid() == null) {
+			return;
+		}
+		setBlockTextureSheet();
+		int colour = fluid.getFluid().getColor(fluid);
+		GlStateManager.color((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF, (colour >> 24) & 0xFF);
+		drawTiledTexture(gui, x, y, getFluidTexture(fluid), width, height);
+	}
+
+	public static TextureAtlasSprite getFluidTexture(Fluid fluid) {
+		if (fluid == null) {
+			fluid = FluidRegistry.LAVA;
+		}
+		return getTexture(fluid.getStill());
+	}
+
+	public static TextureAtlasSprite getFluidTexture(FluidStack fluid) {
+		if (fluid == null || fluid.getFluid() == null || fluid.getFluid().getStill(fluid) == null) {
+			fluid = new FluidStack(FluidRegistry.LAVA, 1);
+		}
+		return getTexture(fluid.getFluid().getStill(fluid));
+	}
+
+	public static TextureAtlasSprite getTexture(ResourceLocation location) {
+		return getTexture(location.toString());
+	}
+
+	public static TextureAtlasSprite getTexture(String location) {
+		return textureMap().getAtlasSprite(location);
+	}
+
+	public static TextureMap textureMap() {
+		return mc().getTextureMapBlocks();
+	}
+
+	public static void setBlockTextureSheet() {
+		bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
+	}
+
+	public static void drawTiledTexture(Gui gui, int x, int y, TextureAtlasSprite icon, int width, int height) {
+		int i = 0;
+		int j = 0;
+		int drawHeight = 0;
+		int drawWidth = 0;
+		for (i = 0; i < width; i += 16) {
+			for (j = 0; j < height; j += 16) {
+				drawWidth = Math.min(width - i, 16);
+				drawHeight = Math.min(height - j, 16);
+				drawScaledTexturedModelRectFromIcon(gui, x + i, y + j, icon, drawWidth, drawHeight);
+			}
+		}
+		GlStateManager.color(1, 1, 1, 1);
+	}
+
+	public static void drawScaledTexturedModelRectFromIcon(Gui gui, int x, int y, TextureAtlasSprite icon, int width, int height) {
+		if (icon == null) {
+			return;
+		}
+		double minU = icon.getMinU();
+		double maxU = icon.getMaxU();
+		double minV = icon.getMinV();
+		double maxV = icon.getMaxV();
+
+		VertexBuffer buffer = Tessellator.getInstance().getBuffer();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		buffer.pos(x + 0, y + height, MCPrivateUtils.getGuiZLevel(gui)).tex(minU, minV + (maxV - minV) * height / 16F).endVertex();
+		buffer.pos(x + width, y + height, MCPrivateUtils.getGuiZLevel(gui)).tex(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).endVertex();
+		buffer.pos(x + width, y + 0, MCPrivateUtils.getGuiZLevel(gui)).tex(minU + (maxU - minU) * width / 16F, minV).endVertex();
+		buffer.pos(x + 0, y + 0, MCPrivateUtils.getGuiZLevel(gui)).tex(minU, minV).endVertex();
+		Tessellator.getInstance().draw();
 	}
 
 	public static void drawVanillaTooltip(GuiScreen gui, List<String> text, int x, int y) {

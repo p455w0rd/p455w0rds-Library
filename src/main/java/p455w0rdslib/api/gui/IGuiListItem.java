@@ -8,4 +8,10 @@ public interface IGuiListItem {
 
 	String getDisplayText();
 
+	int getHeight();
+
+	int getWidth();
+
+	void draw(int x, int y, int backColor, int textColor);
+
 }
