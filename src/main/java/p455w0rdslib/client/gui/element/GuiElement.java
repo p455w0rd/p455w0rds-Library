@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ResourceLocation;
 import p455w0rdslib.util.GuiUtils;
 
 /**
@@ -16,6 +17,8 @@ import p455w0rdslib.util.GuiUtils;
  *
  */
 public abstract class GuiElement {
+
+	protected static final ResourceLocation VANILLA_BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");
 
 	private Gui gui;
 	private GuiPos pos;
@@ -38,9 +41,33 @@ public abstract class GuiElement {
 
 	public abstract void drawForeground(int mouseX, int mouseY);
 
-	public abstract boolean onClick(int mouseX, int mouseY, int mouseButton);
+	public boolean onClick(int mouseX, int mouseY) {
+		return false;
+	}
 
-	public abstract boolean onMouseWheel(int mouseX, int mouseY, int movement);
+	public boolean onRightClick(int mouseX, int mouseY) {
+		return false;
+	}
+
+	public boolean onMiddleClick(int mouseX, int mouseY) {
+		return false;
+	}
+
+	public boolean onMouseWheel(int mouseX, int mouseY, int movement) {
+		return false;
+	}
+
+	public boolean onMousePressed(int mouseX, int mouseY, int button) {
+		switch (button) {
+		default:
+		case 0:
+			return onClick(mouseX, mouseY);
+		case 1:
+			return onRightClick(mouseX, mouseY);
+		case 2:
+			return onMiddleClick(mouseX, mouseY);
+		}
+	}
 
 	public void drawModalRect(int x, int y, int width, int height, int color) {
 		GuiUtils.drawGradientRect(gui, x, y, width, height, color, color);
@@ -156,5 +183,13 @@ public abstract class GuiElement {
 		w = width;
 		h = height;
 		return this;
+	}
+
+	public void update(int mouseX, int mouseY) {
+		update();
+	}
+
+	public void update() {
+
 	}
 }

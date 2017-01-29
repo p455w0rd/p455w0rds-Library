@@ -37,6 +37,8 @@ public class ReflectionUtils {
 		list.put("isRightMouseClick", "field_147004_w");
 		list.put("dragSplittingRemnant", "field_146996_I");
 		list.put("item", "field_151002_e");
+		list.put("xSize", "field_146999_f");
+		list.put("ySize", "field_147000_g");
 		return list;
 	}
 

@@ -151,6 +151,74 @@ public class GuiUtils {
 		drawHoveringText(gui, text, x, y, getFontRenderer(), -267386864, borderColor1, borderColor2);
 	}
 
+	public static void drawContinuousTexturedBox(Gui gui, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int borderSize) {
+		drawContinuousTexturedBox(gui, res, x, y, u, v, width, height, textureWidth, textureHeight, borderSize, borderSize, borderSize, borderSize);
+	}
+
+	public static void drawContinuousTexturedBox(Gui gui, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder) {
+		bindTexture(res);
+		drawContinuousTexturedBox(gui, x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder);
+	}
+
+	public static void drawContinuousTexturedBox(Gui gui, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder) {
+		float zLevel = MCPrivateUtils.getGuiZLevel(gui);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+
+		int fillerWidth = textureWidth - leftBorder - rightBorder;
+		int fillerHeight = textureHeight - topBorder - bottomBorder;
+		int canvasWidth = width - leftBorder - rightBorder;
+		int canvasHeight = height - topBorder - bottomBorder;
+		int xPasses = canvasWidth / fillerWidth;
+		int remainderWidth = canvasWidth % fillerWidth;
+		int yPasses = canvasHeight / fillerHeight;
+		int remainderHeight = canvasHeight % fillerHeight;
+
+		// Draw Border
+		// Top Left
+		drawTexturedModalRect(x, y, u, v, leftBorder, topBorder, zLevel);
+		// Top Right
+		drawTexturedModalRect(x + leftBorder + canvasWidth, y, u + leftBorder + fillerWidth, v, rightBorder, topBorder, zLevel);
+		// Bottom Left
+		drawTexturedModalRect(x, y + topBorder + canvasHeight, u, v + topBorder + fillerHeight, leftBorder, bottomBorder, zLevel);
+		// Bottom Right
+		drawTexturedModalRect(x + leftBorder + canvasWidth, y + topBorder + canvasHeight, u + leftBorder + fillerWidth, v + topBorder + fillerHeight, rightBorder, bottomBorder, zLevel);
+
+		for (int i = 0; i < xPasses + (remainderWidth > 0 ? 1 : 0); i++) {
+			// Top Border
+			drawTexturedModalRect(x + leftBorder + (i * fillerWidth), y, u + leftBorder, v, (i == xPasses ? remainderWidth : fillerWidth), topBorder, zLevel);
+			// Bottom Border
+			drawTexturedModalRect(x + leftBorder + (i * fillerWidth), y + topBorder + canvasHeight, u + leftBorder, v + topBorder + fillerHeight, (i == xPasses ? remainderWidth : fillerWidth), bottomBorder, zLevel);
+
+			// Throw in some filler for good measure
+			for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++) {
+				drawTexturedModalRect(x + leftBorder + (i * fillerWidth), y + topBorder + (j * fillerHeight), u + leftBorder, v + topBorder, (i == xPasses ? remainderWidth : fillerWidth), (j == yPasses ? remainderHeight : fillerHeight), zLevel);
+			}
+		}
+
+		// Side Borders
+		for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++) {
+			// Left Border
+			drawTexturedModalRect(x, y + topBorder + (j * fillerHeight), u, v + topBorder, leftBorder, (j == yPasses ? remainderHeight : fillerHeight), zLevel);
+			// Right Border
+			drawTexturedModalRect(x + leftBorder + canvasWidth, y + topBorder + (j * fillerHeight), u + leftBorder + fillerWidth, v + topBorder, rightBorder, (j == yPasses ? remainderHeight : fillerHeight), zLevel);
+		}
+	}
+
+	public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, float zLevel) {
+		float uScale = 1f / 0x100;
+		float vScale = 1f / 0x100;
+		Tessellator tessellator = Tessellator.getInstance();
+		VertexBuffer wr = tessellator.getBuffer();
+		wr.begin(7, DefaultVertexFormats.POSITION_TEX);
+		wr.pos(x, y + height, zLevel).tex(u * uScale, ((v + height) * vScale)).endVertex();
+		wr.pos(x + width, y + height, zLevel).tex((u + width) * uScale, ((v + height) * vScale)).endVertex();
+		wr.pos(x + width, y, zLevel).tex((u + width) * uScale, (v * vScale)).endVertex();
+		wr.pos(x, y, zLevel).tex(u * uScale, (v * vScale)).endVertex();
+		tessellator.draw();
+	}
+
 	private static void drawHoveringText(GuiScreen gui, List<String> textLines, int x, int y, FontRenderer font, int backgroundColor, int borderColor1, int borderColor2) {
 		//net.minecraftforge.fml.client.config.GuiUtils.drawHoveringText(textLines, x, y, gui.width, gui.height, -1, font);
 		if (!textLines.isEmpty()) {
@@ -214,6 +282,33 @@ public class GuiUtils {
 			RenderHelper.enableStandardItemLighting();
 			GlStateManager.enableRescaleNormal();
 		}
+	}
+
+	public static void drawCenteredString(String text, int x, int y, int color) {
+		getFontRenderer().drawStringWithShadow(text, x - getFontRenderer().getStringWidth(text) / 2, y, color);
+	}
+
+	public static void drawScaledString(String text, int x, int y, float scale, int color) {
+		//GlStateManager.disableLighting();
+		//GlStateManager.disableAlpha();
+		//GlStateManager.disableBlend();
+		//GlStateManager.disableDepth();
+		GlStateManager.pushMatrix();
+		GlStateManager.scale(scale, scale, scale);
+
+		//int X = (int) ((par4 + offset + 16.0F - getFontRenderer().getStringWidth(stackSize) * scaleFactor) * inverseScaleFactor);
+
+		//int Y = (int) ((par5 + offset + 16.0F - 7.0F * scale) * inverseScaleFactor);
+		getFontRenderer().drawStringWithShadow(text, x, y, color);
+		GlStateManager.popMatrix();
+		//GlStateManager.enableDepth();
+		//GlStateManager.enableBlend();
+		//GlStateManager.enableAlpha();
+		//GlStateManager.enableLighting();
+	}
+
+	public static void drawStringNoShadow(String text, int x, int y, int color) {
+		getFontRenderer().drawString(text, x, y, color, false);
 	}
 
 	public static void drawGradientRect(Gui gui, int left, int top, int right, int bottom, int startColor, int endColor) {

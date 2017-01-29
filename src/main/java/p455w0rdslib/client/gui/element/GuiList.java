@@ -23,7 +23,7 @@ import p455w0rdslib.api.gui.IGuiListItem;
  */
 public class GuiList extends GuiElement {
 
-	int numRows, selectedIndex = -1, firstIndex = -1, borderColor = 0xFFCCCCCC, backgroundColor = 0xFF000000,
+	int numRows, selectedIndex = 0, firstIndex = 0, borderColor = 0xFF00FF00, backgroundColor = 0xFF333333,
 			textColor = 0xFFFFFFFF;
 	List<IGuiListItem> list;
 
@@ -37,28 +37,25 @@ public class GuiList extends GuiElement {
 	}
 
 	protected int drawListItem(int elementIndex, int x, int y) {
-
 		IGuiListItem element = getList().get(elementIndex);
 		if (elementIndex == selectedIndex) {
-			element.draw(x, y, backgroundColor, textColor);
+			element.draw(x + 1, y + 2, 0xFF000000, 0xFF00FF00);
 		}
 		else {
-			element.draw(x, y, backgroundColor, textColor);
+			element.draw(x + 1, y + 2, backgroundColor, textColor);
 		}
 
-		return element.getHeight();
+		return element.getHeight() + 2;
 	}
 
 	@Override
-	public void drawBackground(int mouseX, int mouseY, float gameTicks) {
-
-		drawModalRect(getX() - 1, getY() - 1, getX() + getWidth() + 1, getY() + getHeight() + 1, borderColor);
-		drawModalRect(getX(), getY(), getX() + getWidth(), getY() + getHeight(), backgroundColor);
+	public void drawBackground(int mouseX, int mouseY, float partialTicks) {
+		drawModalRect(getX(), getY(), getX() + getWidth() + 1, getY() + getHeight() + 1, borderColor);
+		drawModalRect(getX() + 1, getY() + 1, getX() + getWidth(), getY() + getHeight(), backgroundColor);
 	}
 
 	@Override
 	public void drawForeground(int mouseX, int mouseY) {
-
 		int heightDrawn = 0;
 		int nextElement = firstIndex;
 
@@ -82,8 +79,7 @@ public class GuiList extends GuiElement {
 	}
 
 	@Override
-	public boolean onClick(int mouseX, int mouseY, int mouseButton) {
-
+	public boolean onClick(int mouseX, int mouseY) {
 		int heightChecked = 0;
 		for (int i = firstIndex; i < getList().size(); i++) {
 			if (heightChecked > getDisplayedHeight()) {

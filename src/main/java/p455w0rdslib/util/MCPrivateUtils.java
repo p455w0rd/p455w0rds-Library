@@ -163,4 +163,12 @@ public class MCPrivateUtils {
 		ReflectionHelper.setPrivateValue(ItemStack.class, stack, delegate, "delegate");
 	}
 
+	public static int getGuiContainerXSize(GuiContainer gui) {
+		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("xSize"));
+	}
+
+	public static int getGuiContainerYSize(GuiContainer gui) {
+		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("ySize"));
+	}
+
 }

@@ -16,8 +16,8 @@ public class GuiPlayerListItem extends GuiListItem {
 
 	@Override
 	public void draw(int x, int y, int backColor, int textColor) {
-		GuiUtils.drawItem(getIcon(), 1, y);
-		GuiUtils.getFontRenderer().drawStringWithShadow(getPlayerName(), x + 7, y, textColor);
+		GuiUtils.drawItem(getIcon(), 5, y - 3);
+		GuiUtils.getFontRenderer().drawStringWithShadow(getPlayerName(), x + 15, y + 1, textColor);
 	}
 
 	public ItemStack getIcon() {
