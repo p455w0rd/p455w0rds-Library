@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -110,8 +109,19 @@ public class TileEntityUtils {
 	private static List<TileEntity> getAdjacentInventoryTiles(TileEntity te, boolean horizontal) {
 		List<TileEntity> tileList = Lists.newArrayList();
 		for (TileEntity tile : (horizontal ? getAdjacentTiles(te, true) : getAdjacentTiles(te))) {
-			if (tile != null && tile instanceof IInventory) {
-				tileList.add(tile);
+			if (tile != null) {
+				if (InventoryUtils.isItemHandler(tile, null) && InventoryUtils.getItemHandler(tile, null) != null) {
+					if (!tileList.contains(tile)) {
+						tileList.add(tile);
+					}
+				}
+				for (int i = 0; i < 6; i++) {
+					if (InventoryUtils.isItemHandler(tile, EnumFacing.VALUES[i]) && InventoryUtils.getItemHandler(tile, EnumFacing.VALUES[i]) != null) {
+						if (!tileList.contains(tile)) {
+							tileList.add(tile);
+						}
+					}
+				}
 			}
 		}
 		return tileList;
