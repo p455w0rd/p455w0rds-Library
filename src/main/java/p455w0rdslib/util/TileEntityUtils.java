@@ -7,13 +7,14 @@ import com.google.common.collect.Lists;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 /**
  * @author p455w0rd
@@ -98,15 +99,15 @@ public class TileEntityUtils {
 		return tileList;
 	}
 
-	public static List<TileEntity> getAdjacentInventoryTiles(TileEntity te) {
-		return getAdjacentInventoryTiles(te, false);
+	public static List<TileEntity> getAdjacentItemTiles(TileEntity te) {
+		return getAdjacentItemTiles(te, false);
 	}
 
-	public static List<TileEntity> getAdjacentHorizontalInventoryTiles(TileEntity te) {
-		return getAdjacentInventoryTiles(te, true);
+	public static List<TileEntity> getAdjacentHorizontalItemTiles(TileEntity te) {
+		return getAdjacentItemTiles(te, true);
 	}
 
-	private static List<TileEntity> getAdjacentInventoryTiles(TileEntity te, boolean horizontal) {
+	private static List<TileEntity> getAdjacentItemTiles(TileEntity te, boolean horizontal) {
 		List<TileEntity> tileList = Lists.newArrayList();
 		for (TileEntity tile : (horizontal ? getAdjacentTiles(te, true) : getAdjacentTiles(te))) {
 			if (tile != null) {
@@ -115,8 +116,8 @@ public class TileEntityUtils {
 						tileList.add(tile);
 					}
 				}
-				for (int i = 0; i < 6; i++) {
-					if (InventoryUtils.isItemHandler(tile, EnumFacing.VALUES[i]) && InventoryUtils.getItemHandler(tile, EnumFacing.VALUES[i]) != null) {
+				for (EnumFacing element : EnumFacing.VALUES) {
+					if (InventoryUtils.isItemHandler(tile, element) && InventoryUtils.getItemHandler(tile, element) != null) {
 						if (!tileList.contains(tile)) {
 							tileList.add(tile);
 						}
@@ -152,26 +153,51 @@ public class TileEntityUtils {
 		return tileList;
 	}
 
-	public static List<TileEntity> getAdjacentItemTiles(TileEntity te) {
-		return getAdjacentItemTiles(te, false);
+	public static List<TileEntity> getAdjacentInventoryTiles(TileEntity te) {
+		return getAdjacentInventoryTiles(te, false);
 	}
 
-	public static List<TileEntity> getAdjacentHorizontalItemTiles(TileEntity te) {
-		return getAdjacentItemTiles(te, true);
+	public static List<TileEntity> getAdjacentHorizontalInventoryTiles(TileEntity te) {
+		return getAdjacentInventoryTiles(te, true);
 	}
 
-	private static List<TileEntity> getAdjacentItemTiles(TileEntity te, boolean horizontal) {
+	private static List<TileEntity> getAdjacentInventoryTiles(TileEntity te, boolean horizontal) {
 		List<TileEntity> tileList = Lists.newArrayList();
-		for (EnumFacing facing : (horizontal ? EnumFacing.HORIZONTALS : EnumFacing.VALUES)) {
-			if (te == null || te.getWorld() == null || te.getPos() == null) {
-				break;
-			}
-			BlockPos pos = te.getPos();
-			TileEntity currentTile = te.getWorld().getTileEntity(pos.offset(facing));
-			if (currentTile != null) {
-				if (currentTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite()) || currentTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-					tileList.add(currentTile);
+		for (TileEntity tile : (horizontal ? getAdjacentTiles(te, true) : getAdjacentTiles(te))) {
+			if (InventoryUtils.isInventory(tile)) {
+				if (tile instanceof ISidedInventory) {
+					for (int i = 0; i < EnumFacing.values().length; i++) {
+						if (((ISidedInventory) tile).getSlotsForFace(EnumFacing.values()[i]).length > 0 && !tileList.contains(tile)) {
+							tileList.add(tile);
+						}
+					}
 				}
+				else {
+					if (!tileList.contains(tile)) {
+						tileList.add(tile);
+					}
+				}
+			}
+		}
+		return tileList;
+	}
+
+	public static boolean hasAdjacentItemStorageTile(TileEntity te) {
+		return !getAdjacentInventoryTiles(te).isEmpty() || !getAdjacentItemTiles(te).isEmpty();
+	}
+
+	public static boolean hasAdjacentItemStorageTileWithSpace(TileEntity te, ItemStack stack) {
+		if (hasAdjacentItemStorageTile(te)) {
+			return InventoryUtils.hasRoomForStack(te, stack);
+		}
+		return false;
+	}
+
+	public static List<TileEntity> getAdjacentItemStorageTilesWithSpace(TileEntity te, ItemStack stack) {
+		List<TileEntity> tileList = Lists.newArrayList();
+		for (TileEntity tile : getAdjacentInventoryTiles(te)) {
+			if (hasAdjacentItemStorageTileWithSpace(tile, stack) && !tileList.contains(tile)) {
+				tileList.add(tile);
 			}
 		}
 		return tileList;
