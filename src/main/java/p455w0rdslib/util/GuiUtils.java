@@ -11,11 +11,9 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Container;
@@ -37,19 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiUtils {
 
 	private static Minecraft mc() {
-		return Minecraft.getMinecraft();
-	}
-
-	public static RenderItem getRenderItem() {
-		return mc().getRenderItem();
-	}
-
-	public static TextureManager getTextureManager() {
-		return mc().getTextureManager();
-	}
-
-	public static FontRenderer getFontRenderer() {
-		return mc().fontRendererObj;
+		return MCUtils.mc();
 	}
 
 	public static void bindTexture(String texturePath) {
@@ -61,12 +47,12 @@ public class GuiUtils {
 	}
 
 	public static void bindTexture(ResourceLocation location) {
-		getTextureManager().bindTexture(location);
+		RenderUtils.getTextureManager().bindTexture(location);
 	}
 
 	public static void drawItem(ItemStack item, int x, int y) {
 		RenderHelper.enableGUIStandardItemLighting();
-		getRenderItem().renderItemAndEffectIntoGUI(item, x, y);
+		RenderUtils.getRenderItem().renderItemAndEffectIntoGUI(item, x, y);
 		RenderHelper.enableStandardItemLighting();
 	}
 
@@ -144,11 +130,11 @@ public class GuiUtils {
 	}
 
 	public static void drawVanillaTooltip(GuiScreen gui, List<String> text, int x, int y) {
-		drawHoveringText(gui, text, x, y, getFontRenderer(), -267386864, 1347420415, 1344798847);
+		drawHoveringText(gui, text, x, y, RenderUtils.getFontRenderer(), -267386864, 1347420415, 1344798847);
 	}
 
 	public static void drawToolTipWithBorderColor(GuiScreen gui, List<String> text, int x, int y, int borderColor1, int borderColor2) {
-		drawHoveringText(gui, text, x, y, getFontRenderer(), -267386864, borderColor1, borderColor2);
+		drawHoveringText(gui, text, x, y, RenderUtils.getFontRenderer(), -267386864, borderColor1, borderColor2);
 	}
 
 	public static void drawContinuousTexturedBox(Gui gui, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int borderSize) {
@@ -229,7 +215,7 @@ public class GuiUtils {
 			int i = 0;
 
 			for (String s : textLines) {
-				int j = getFontRenderer().getStringWidth(s);
+				int j = RenderUtils.getFontRenderer().getStringWidth(s);
 
 				if (j > i) {
 					i = j;
@@ -266,7 +252,7 @@ public class GuiUtils {
 
 			for (int k1 = 0; k1 < textLines.size(); ++k1) {
 				String s1 = textLines.get(k1);
-				getFontRenderer().drawStringWithShadow(s1, l1, i2, -1);
+				RenderUtils.getFontRenderer().drawStringWithShadow(s1, l1, i2, -1);
 
 				if (k1 == 0) {
 					i2 += 2;
@@ -285,7 +271,7 @@ public class GuiUtils {
 	}
 
 	public static void drawCenteredString(String text, int x, int y, int color) {
-		getFontRenderer().drawStringWithShadow(text, x - getFontRenderer().getStringWidth(text) / 2, y, color);
+		RenderUtils.getFontRenderer().drawStringWithShadow(text, x - RenderUtils.getFontRenderer().getStringWidth(text) / 2, y, color);
 	}
 
 	public static void drawScaledString(String text, int x, int y, float scale, int color) {
@@ -299,7 +285,7 @@ public class GuiUtils {
 		//int X = (int) ((par4 + offset + 16.0F - getFontRenderer().getStringWidth(stackSize) * scaleFactor) * inverseScaleFactor);
 
 		//int Y = (int) ((par5 + offset + 16.0F - 7.0F * scale) * inverseScaleFactor);
-		getFontRenderer().drawStringWithShadow(text, x, y, color);
+		RenderUtils.getFontRenderer().drawStringWithShadow(text, x, y, color);
 		GlStateManager.popMatrix();
 		//GlStateManager.enableDepth();
 		//GlStateManager.enableBlend();
@@ -308,7 +294,7 @@ public class GuiUtils {
 	}
 
 	public static void drawStringNoShadow(String text, int x, int y, int color) {
-		getFontRenderer().drawString(text, x, y, color, false);
+		RenderUtils.getFontRenderer().drawString(text, x, y, color, false);
 	}
 
 	public static void drawGradientRect(Gui gui, int left, int top, int right, int bottom, int startColor, int endColor) {
@@ -393,7 +379,7 @@ public class GuiUtils {
 
 			Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(itemstack, i, j);
 
-			MCPrivateUtils.getGuiScreenRenderItem(gui).renderItemOverlayIntoGUI(getFontRenderer(), itemstack, i, j, s);
+			MCPrivateUtils.getGuiScreenRenderItem(gui).renderItemOverlayIntoGUI(RenderUtils.getFontRenderer(), itemstack, i, j, s);
 		}
 		MCPrivateUtils.setGuiScreenRendererZLevel(gui, 0.0F);
 		MCPrivateUtils.setGuiZLevel(gui, 0.0F);
@@ -443,7 +429,7 @@ public class GuiUtils {
 			font = stack.getItem().getFontRenderer(stack);
 		}
 		if (font == null) {
-			font = getFontRenderer();
+			font = RenderUtils.getFontRenderer();
 		}
 		MCPrivateUtils.getGuiScreenRenderItem(gui).renderItemAndEffectIntoGUI(stack, x, y);
 		MCPrivateUtils.getGuiScreenRenderItem(gui).renderItemOverlayIntoGUI(font, stack, x, y - (MCPrivateUtils.getGuiDraggedStack(gui) == null ? 0 : 8), altText);

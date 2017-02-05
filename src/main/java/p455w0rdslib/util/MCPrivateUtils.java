@@ -43,6 +43,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -169,6 +170,22 @@ public class MCPrivateUtils {
 
 	public static int getGuiContainerYSize(GuiContainer gui) {
 		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("ySize"));
+	}
+
+	public static float getRainfall(Biome biome) {
+		return ReflectionHelper.getPrivateValue(Biome.class, biome, ReflectionUtils.determineSRG("rainfall"));
+	}
+
+	public static void setRainfall(Biome biome, float rainfall) {
+		ReflectionHelper.setPrivateValue(Biome.class, biome, rainfall, ReflectionUtils.determineSRG("rainfall"));
+	}
+
+	public static boolean isRainEnabled(Biome biome) {
+		return ReflectionHelper.getPrivateValue(Biome.class, biome, ReflectionUtils.determineSRG("enableRain"));
+	}
+
+	public static void setRainEnabled(Biome biome, boolean enableRain) {
+		ReflectionHelper.setPrivateValue(Biome.class, biome, enableRain, ReflectionUtils.determineSRG("enableRain"));
 	}
 
 }

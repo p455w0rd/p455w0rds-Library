@@ -207,7 +207,7 @@ public class GuiList extends GuiElement {
 	public int getTotalListHeight() {
 		int totalHeight = 0;
 		for (IGuiListItem entry : getList()) {
-			totalHeight += entry.getHeight();
+			totalHeight += entry.getHeight() + 2;
 		}
 		return totalHeight;
 	}
@@ -215,7 +215,7 @@ public class GuiList extends GuiElement {
 	public int getDisplayedHeight() {
 		int displayHeight = 0;
 		for (int i = 0; i < getNumberOfItemsToDisplay(); i++) {
-			displayHeight += getList().get(i).getHeight();
+			displayHeight += getList().get(i).getHeight() + 2;
 		}
 		return displayHeight;
 	}

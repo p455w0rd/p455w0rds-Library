@@ -135,4 +135,8 @@ public class ItemUtils {
 		MCPrivateUtils.setItemStackItem(stack, newItem);
 	}
 
+	public static boolean areStacksSameSize(ItemStack stackA, ItemStack stackB) {
+		return (stackA == null && stackB == null) || (stackA != null && stackB != null && stackA.stackSize == stackB.stackSize);
+	}
+
 }

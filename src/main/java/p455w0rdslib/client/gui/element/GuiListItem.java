@@ -1,7 +1,7 @@
 package p455w0rdslib.client.gui.element;
 
 import p455w0rdslib.api.gui.IGuiListItem;
-import p455w0rdslib.util.GuiUtils;
+import p455w0rdslib.util.RenderUtils;
 
 /**
  * @author p455w0rd
@@ -19,7 +19,7 @@ public class GuiListItem implements IGuiListItem {
 
 	@Override
 	public void draw(int x, int y, int backColor, int textColor) {
-		GuiUtils.getFontRenderer().drawStringWithShadow(TEXT, x, y, textColor);
+		RenderUtils.getFontRenderer().drawStringWithShadow(TEXT, x, y, textColor);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class GuiListItem implements IGuiListItem {
 
 	@Override
 	public int getWidth() {
-		return GuiUtils.getFontRenderer().getStringWidth(TEXT);
+		return RenderUtils.getFontRenderer().getStringWidth(TEXT);
 	}
 
 }

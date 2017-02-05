@@ -1,8 +1,8 @@
 package p455w0rdslib.client.gui.element;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
-import p455w0rdslib.util.GuiUtils;
 import p455w0rdslib.util.MCPrivateUtils;
+import p455w0rdslib.util.RenderUtils;
 
 /**
  * @author p455w0rd
@@ -61,8 +61,8 @@ public class GuiButton extends GuiElement {
 	}
 
 	public void drawCenteredString(String text) {
-		int x1 = (getWidth() / 2) - (GuiUtils.getFontRenderer().getStringWidth(text) / 2);
-		GuiUtils.getFontRenderer().drawStringWithShadow(text, getX() + x1, getY() + 3, textColor);
+		int x1 = (getWidth() / 2) - (RenderUtils.getFontRenderer().getStringWidth(text) / 2);
+		RenderUtils.getFontRenderer().drawStringWithShadow(text, getX() + x1, getY() + 3, textColor);
 	}
 
 	public String getLabel() {

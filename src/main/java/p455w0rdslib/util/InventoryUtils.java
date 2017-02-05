@@ -260,23 +260,77 @@ public class InventoryUtils {
 	}
 
 	public static boolean hasRoomForStack(IInventory inventory, ItemStack stack) {
-		return hasRoomForStack(inventory, stack, null);
-	}
-
-	public static boolean hasRoomForStack(IInventory inventory, ItemStack stack, @Nullable EnumFacing facing) {
-		IInventory tempInventory = getInventoryCopy(inventory);
-		if (facing == null) {
-			return ItemStack.areItemStacksEqual(stack, insertItem(tempInventory, stack.copy()));
+		if (stack == null) {
+			return false;
 		}
-		for (int i = 0; i < EnumFacing.values().length; i++) {
-			if (ItemStack.areItemStacksEqual(stack, insertItem(tempInventory, stack.copy(), EnumFacing.values()[i]))) {
+		IInventory tempInventory = inventory instanceof ISidedInventory ? getSidedInventoryCopy((ISidedInventory) inventory) : getInventoryCopy(inventory);
+		if (!(inventory instanceof ISidedInventory)) {
+			return !ItemUtils.areStacksSameSize(stack.copy(), insertItem(tempInventory, stack.copy()));
+		}
+		else {
+			if (isInventoryValidForItem((ISidedInventory) tempInventory, stack.copy(), null)) {
 				return true;
+			}
+			for (EnumFacing facing : EnumFacing.VALUES) {
+				if (isInventoryValidForItem((ISidedInventory) tempInventory, stack.copy(), facing)) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
+	public static boolean isInventoryValidForItem(ISidedInventory inv, ItemStack stack, @Nullable EnumFacing facing) {
+		boolean canInsert = false;
+		for (int i = 0; i < inv.getSizeInventory(); i++) {
+			if (inv.canInsertItem(i, stack, facing)) {
+				canInsert = true;
+				break;
+			}
+		}
+		return isInventoryValidForItem(inv, stack) && inv.getSlotsForFace(facing).length > 0 && canInsert;
+	}
+
+	public static boolean isInventoryValidForItem(IInventory inv, ItemStack stack) {
+		boolean hasAvailableSlot = false;
+		for (int i = 0; i < inv.getSizeInventory(); i++) {
+			if (inv.getStackInSlot(i) == null && inv.isItemValidForSlot(i, stack)) {
+				hasAvailableSlot = true;
+				break;
+			}
+			else {
+				ItemStack slotStack = inv.getStackInSlot(i);
+				if (ItemStack.areItemStacksEqual(stack, slotStack) && slotStack.stackSize < slotStack.getMaxStackSize()) {
+					hasAvailableSlot = true;
+					break;
+				}
+			}
+		}
+		return hasAvailableSlot;
+	}
+
+	public static boolean isInventoryValidForItem(IItemHandler handler, ItemStack stack) {
+		boolean hasAvailableSlot = false;
+		for (int i = 0; i < handler.getSlots(); i++) {
+			if (handler.getStackInSlot(i) == null) {
+				hasAvailableSlot = true;
+				break;
+			}
+			else {
+				ItemStack slotStack = handler.getStackInSlot(i);
+				if (ItemStack.areItemStacksEqual(stack, slotStack) && slotStack.stackSize < slotStack.getMaxStackSize()) {
+					hasAvailableSlot = true;
+					break;
+				}
+			}
+		}
+		return hasAvailableSlot;
+	}
+
 	public static boolean hasRoomForStack(IItemHandler handler, ItemStack stack) {
+		if (stack == null) {
+			return false;
+		}
 		IItemHandler tempHandler = null;
 		if (handler instanceof IItemHandlerModifiable) {
 			tempHandler = getItemHandlerModifiableCopy((IItemHandlerModifiable) handler);
@@ -284,7 +338,7 @@ public class InventoryUtils {
 		else {
 			tempHandler = getItemHandlerCopy(handler);
 		}
-		return ItemStack.areItemStacksEqual(stack, ItemHandlerHelper.insertItemStacked(tempHandler, stack.copy(), false));
+		return isInventoryValidForItem(tempHandler, stack);
 	}
 
 	public static IItemHandlerModifiable getItemHandlerModifiableCopy(IItemHandlerModifiable handler) {
@@ -437,6 +491,116 @@ public class InventoryUtils {
 		};
 	}
 
+	public static ISidedInventory getSidedInventoryCopy(ISidedInventory inventory) {
+		return new ISidedInventory() {
+			@Override
+			public String getName() {
+				return inventory.getName();
+			}
+
+			@Override
+			public boolean hasCustomName() {
+				return inventory.hasCustomName();
+			}
+
+			@Override
+			public ITextComponent getDisplayName() {
+				return inventory.getDisplayName();
+			}
+
+			@Override
+			public int getSizeInventory() {
+				return inventory.getSizeInventory();
+			}
+
+			@Override
+			public ItemStack getStackInSlot(int index) {
+				return inventory.getStackInSlot(index);
+			}
+
+			@Override
+			public ItemStack decrStackSize(int index, int count) {
+				return inventory.decrStackSize(index, count);
+			}
+
+			@Override
+			public ItemStack removeStackFromSlot(int index) {
+				return inventory.removeStackFromSlot(index);
+			}
+
+			@Override
+			public void setInventorySlotContents(int index, ItemStack stack) {
+				inventory.setInventorySlotContents(index, stack);
+			}
+
+			@Override
+			public int getInventoryStackLimit() {
+				return inventory.getInventoryStackLimit();
+			}
+
+			@Override
+			public void markDirty() {
+				inventory.markDirty();
+			}
+
+			@Override
+			public boolean isUseableByPlayer(EntityPlayer player) {
+				return inventory.isUseableByPlayer(player);
+			}
+
+			@Override
+			public void openInventory(EntityPlayer player) {
+				inventory.openInventory(player);
+			}
+
+			@Override
+			public void closeInventory(EntityPlayer player) {
+				inventory.closeInventory(player);
+			}
+
+			@Override
+			public boolean isItemValidForSlot(int index, ItemStack stack) {
+				return inventory.isItemValidForSlot(index, stack);
+			}
+
+			@Override
+			public int getField(int id) {
+				return inventory.getField(id);
+			}
+
+			@Override
+			public void setField(int id, int value) {
+				inventory.setField(id, value);
+			}
+
+			@Override
+			public int getFieldCount() {
+				return inventory.getFieldCount();
+			}
+
+			@Override
+			public void clear() {
+				inventory.clear();
+			}
+
+			@Override
+			public int[] getSlotsForFace(EnumFacing side) {
+				return inventory.getSlotsForFace(side);
+			}
+
+			@Override
+			public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+				return inventory.canInsertItem(index, itemStackIn, direction);
+			}
+
+			@Override
+			public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+				return inventory.canExtractItem(index, stack, direction);
+			}
+
+		};
+	}
+
 	public static ItemStack insertMergeable(IInventory inventory, int slot, ItemStack stack, ItemStack existingStack) {
 		int stackLimit = Math.min(inventory.getInventoryStackLimit(), stack.getMaxStackSize());
 		if (existingStack.stackSize >= stackLimit) {
@@ -465,8 +629,8 @@ public class InventoryUtils {
 
 	public static ItemStack insertStack(TileEntity tile, ItemStack stack) {
 		ItemStack returnStack = stack;
-		if (ItemStack.areItemStacksEqual(stack, insertStack(tile, null, stack.copy()))) {
-			return returnStack;
+		if (!ItemStack.areItemStacksEqual(returnStack, stack = insertStack(tile, null, stack.copy()))) {
+			return stack;
 		}
 		for (EnumFacing facing : EnumFacing.VALUES) {
 			returnStack = insertStack(tile, facing, stack.copy());

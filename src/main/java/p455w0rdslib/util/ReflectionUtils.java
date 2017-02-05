@@ -39,6 +39,8 @@ public class ReflectionUtils {
 		list.put("item", "field_151002_e");
 		list.put("xSize", "field_146999_f");
 		list.put("ySize", "field_147000_g");
+		list.put("rainfall", "field_76751_G");
+		list.put("enableRain", "field_76765_S");
 		return list;
 	}
 
