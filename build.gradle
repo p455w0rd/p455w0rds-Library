@@ -39,8 +39,8 @@ repositories {
 
 dependencies {
 	compile "net.darkhax.tesla:Tesla:1.10.2-1.2.1.50"
-	compile "com.enderio:EnderIO:1.10.2-3.0.1.147_beta"
-	compile "com.enderio.core:EnderCore:1.10.2-0.4.1.61-beta"
+	//compile "com.enderio:EnderIO:1.10.2-3.0.1.147_beta"
+	//compile "com.enderio.core:EnderCore:1.10.2-0.4.1.61-beta"
 }
 
 processResources {
