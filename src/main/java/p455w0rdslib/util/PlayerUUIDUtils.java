@@ -30,12 +30,23 @@ import p455w0rdslib.LibRegistry;
  */
 public class PlayerUUIDUtils {
 
-	public static String getPlayerName(final UUID uuid) throws InterruptedException, ExecutionException {
-		return LibGlobals.THREAD_POOL.submit(() -> fetchPlayerName(uuid)).get();
+	public static String getPlayerName(final UUID uuid) {
+		String retVal = "";
+		try {
+			retVal = LibGlobals.THREAD_POOL.submit(() -> fetchPlayerName(uuid)).get();
+		}
+		catch (InterruptedException | ExecutionException e) {
+		}
+		return retVal;
 	};
 
-	public static UUID getPlayerUUID(final String name) throws InterruptedException, ExecutionException {
-		return LibGlobals.THREAD_POOL.submit(() -> fetchPlayerUUID(name)).get();
+	public static UUID getPlayerUUID(final String name) {
+		try {
+			return LibGlobals.THREAD_POOL.submit(() -> fetchPlayerUUID(name)).get();
+		}
+		catch (InterruptedException | ExecutionException e) {
+		}
+		return null;
 	};
 
 	public static EntityPlayer getPlayerFromWorld(World world, UUID player) {

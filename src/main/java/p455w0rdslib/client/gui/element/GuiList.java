@@ -1,17 +1,10 @@
 package p455w0rdslib.client.gui.element;
 
-import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
-import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
-
-import org.lwjgl.opengl.GL11;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -23,9 +16,10 @@ import p455w0rdslib.api.gui.IGuiListItem;
  */
 public class GuiList extends GuiElement {
 
-	int numRows, selectedIndex = 0, firstIndex = 0, borderColor = 0xFF00FF00, backgroundColor = 0xFF333333,
-			textColor = 0xFFFFFFFF;
-	List<IGuiListItem> list;
+	int selectedIndex = 0, firstIndex = 0, borderColor = 0xFF333333, backgroundColor = 0xFF333333,
+			selectedBackgroundColor = 0xFF333333, disabledBackgroundColor = 0xFF000000, textColor = 0xFFFFFFFF,
+			disabledTextColor = 0xFF333333, selectedTextColor = 0xFF00FF00;
+	List<IGuiListItem> listList;
 
 	public GuiList(Gui guiIn, GuiPos pos, int elementWidth, int elementHeight) {
 		this(guiIn, pos, elementWidth, elementHeight, null);
@@ -33,25 +27,30 @@ public class GuiList extends GuiElement {
 
 	public GuiList(Gui guiIn, GuiPos pos, int elementWidth, int elementHeight, @Nullable List<IGuiListItem> list) {
 		super(guiIn, pos, elementWidth, elementHeight);
-		setList(list == null ? Lists.newArrayList() : list);
+		if (list != null) {
+			setList(list);
+		}
 	}
 
 	protected int drawListItem(int elementIndex, int x, int y) {
 		IGuiListItem element = getList().get(elementIndex);
+		if (element.getParent() == null) {
+			element.setParent(this);
+		}
 		if (elementIndex == selectedIndex) {
-			element.draw(x + 1, y + 2, 0xFF000000, 0xFF00FF00);
+			element.draw(x, y + 4, element.isDisabled() ? getDisabledBackgroundColor() : getSelectedBackgroundColor(), element.isDisabled() ? getDisabledTextColor() : getSelectedTextColor());
 		}
 		else {
-			element.draw(x + 1, y + 2, backgroundColor, textColor);
+			element.draw(x, y + 4, element.isDisabled() ? getDisabledBackgroundColor() : 0xFF999999, element.isDisabled() ? getDisabledTextColor() : getTextColor());
 		}
 
-		return element.getHeight() + 2;
+		return element.getHeight() + 5;
 	}
 
 	@Override
 	public void drawBackground(int mouseX, int mouseY, float partialTicks) {
-		drawModalRect(getX(), getY(), getX() + getWidth() + 1, getY() + getHeight() + 1, borderColor);
-		drawModalRect(getX() + 1, getY() + 1, getX() + getWidth(), getY() + getHeight(), backgroundColor);
+		drawModalRect(getX(), getY(), getX() + getWidth() + 1, getY() + getHeight() + 1, getBorderColor());
+		drawModalRect(getX() + 1, getY() + 1, getX() + getWidth(), getY() + getHeight(), 0xFF333333);
 	}
 
 	@Override
@@ -62,38 +61,120 @@ public class GuiList extends GuiElement {
 		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
 
-		GL11.glEnable(GL_STENCIL_TEST);
-		drawStencil(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 1);
+		//GL11.glEnable(GL_STENCIL_TEST);
+		//drawStencil(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 1);
 
-		glPushMatrix();
+		//glPushMatrix();
 		//glTranslated(-scrollHoriz, 0, 0);
 
-		int e = getList().size();
-		while (nextElement < e && heightDrawn <= getHeight()) {
+		int e = size();
+		while (nextElement < e && heightDrawn + 3 < getHeight()) {
 			heightDrawn += drawListItem(nextElement, getX(), getY() + heightDrawn);
 			nextElement++;
 		}
+		//glPopMatrix();
+		//glDisable(GL_STENCIL_TEST);
 		glPopMatrix();
-		glDisable(GL_STENCIL_TEST);
-		glPopMatrix();
+	}
+
+	public int getDisabledBackgroundColor() {
+		return disabledBackgroundColor;
+	}
+
+	public GuiList setDisabledBackgroundColor(int color) {
+		disabledBackgroundColor = color;
+		return this;
+	}
+
+	public int getTextColor() {
+		return textColor;
+	}
+
+	public GuiList setTextColor(int color) {
+		textColor = color;
+		return this;
+	}
+
+	public int getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public GuiList setBackgroundColor(int color) {
+		backgroundColor = color;
+		return this;
+	}
+
+	public int getSelectedTextColor() {
+		return selectedTextColor;
+	}
+
+	public GuiList setSelectedTextColor(int color) {
+		selectedTextColor = color;
+		return this;
+	}
+
+	public int getSelectedBackgroundColor() {
+		return selectedBackgroundColor;
+	}
+
+	public GuiList setSelectedBackgroundColor(int color) {
+		selectedBackgroundColor = color;
+		return this;
+	}
+
+	public int getDisabledTextColor() {
+		return disabledTextColor;
+	}
+
+	public GuiList setDisabledTextColor(int color) {
+		disabledTextColor = color;
+		return this;
+	}
+
+	public int getBorderColor() {
+		return borderColor;
+	}
+
+	public GuiList setBorderColor(int color) {
+		borderColor = color;
+		return this;
 	}
 
 	@Override
 	public boolean onClick(int mouseX, int mouseY) {
 		int heightChecked = 0;
 		for (int i = firstIndex; i < getList().size(); i++) {
-			if (heightChecked > getDisplayedHeight()) {
+			if (heightChecked >= getHeight()) {
 				break;
 			}
 			int elementHeight = getList().get(i).getHeight();
-			if (getY() + heightChecked <= mouseY && getY() + heightChecked + elementHeight >= mouseY) {
-				setSelectedIndex(i);
+			if (getY() + heightChecked <= mouseY && getY() + heightChecked + elementHeight >= mouseY && mouseX >= getX() && mouseX <= getX() + getWidth()) {
+				if (!getList().get(i).isDisabled()) {
+					setSelectedIndex(i);
+				}
 				//onElementClicked(getList().get(i));
 				break;
 			}
-			heightChecked += elementHeight;
+			heightChecked += elementHeight + 8;
 		}
 		return true;
+	}
+
+	public int getPrevScrollPos() {
+
+		int position = size() - 1;
+		if (position < 0) {
+			return 0;
+		}
+		int heightUsed = 0;
+
+		while (position >= 0 && heightUsed < getHeight()) {
+			heightUsed += getList().get(position--).getHeight();
+		}
+		if (heightUsed > getHeight()) {
+			++position;
+		}
+		return position + 1;
 	}
 
 	public GuiList add(IGuiListItem listItem) {
@@ -102,7 +183,7 @@ public class GuiList extends GuiElement {
 	}
 
 	public GuiList addAll(List<IGuiListItem> list) {
-		this.list.addAll(list);
+		listList.addAll(list);
 		return this;
 	}
 
@@ -127,11 +208,12 @@ public class GuiList extends GuiElement {
 	public void scrollDown() {
 		int heightDisplayed = 0;
 		int elementsDisplayed = 0;
+
 		for (int i = firstIndex; i < getList().size(); i++) {
-			if (heightDisplayed + getList().get(i).getHeight() > getDisplayedHeight()) {
+			if (heightDisplayed > getHeight()) {
 				break;
 			}
-			heightDisplayed += getList().get(i).getHeight();
+			heightDisplayed += getList().get(i).getHeight() + 10;
 			elementsDisplayed++;
 		}
 		if (firstIndex + elementsDisplayed < getList().size()) {
@@ -188,16 +270,12 @@ public class GuiList extends GuiElement {
 	}
 
 	public GuiList setList(List<IGuiListItem> list) {
-		this.list = list;
+		listList = list;
 		return this;
 	}
 
 	public List<IGuiListItem> getList() {
-		return list;
-	}
-
-	public int getNumberOfItemsToDisplay() {
-		return numRows;
+		return listList;
 	}
 
 	public int size() {
@@ -212,11 +290,4 @@ public class GuiList extends GuiElement {
 		return totalHeight;
 	}
 
-	public int getDisplayedHeight() {
-		int displayHeight = 0;
-		for (int i = 0; i < getNumberOfItemsToDisplay(); i++) {
-			displayHeight += getList().get(i).getHeight() + 2;
-		}
-		return displayHeight;
-	}
 }

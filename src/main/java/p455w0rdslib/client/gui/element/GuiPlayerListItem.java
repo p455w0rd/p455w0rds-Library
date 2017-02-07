@@ -11,14 +11,18 @@ import p455w0rdslib.util.RenderUtils;
  */
 public class GuiPlayerListItem extends GuiListItem {
 
-	public GuiPlayerListItem(String playerName, int listItemHeight) {
-		super(playerName, listItemHeight);
+	String playerName = "";
+
+	public GuiPlayerListItem(String diaplayText, String playerName) {
+		super(diaplayText, 12);
+		this.playerName = playerName;
 	}
 
 	@Override
 	public void draw(int x, int y, int backColor, int textColor) {
-		GuiUtils.drawItem(getIcon(), 5, y - 3);
-		RenderUtils.getFontRenderer().drawStringWithShadow(getPlayerName(), x + 15, y + 1, textColor);
+		GuiUtils.drawGradientRect((getParent() != null ? getParent().getGui() : RenderUtils.mc().currentScreen), x + 2, y - 3, x + (getParent() == null ? getWidth() : getParent().getWidth()), y + getHeight(), backColor, backColor);
+		GuiUtils.drawItem(getIcon(), x + 2, y - 3);
+		RenderUtils.getFontRenderer().drawStringWithShadow(getDisplayText(), x + 18, y + 1, textColor);
 	}
 
 	public ItemStack getIcon() {
@@ -26,7 +30,7 @@ public class GuiPlayerListItem extends GuiListItem {
 	}
 
 	public String getPlayerName() {
-		return getDisplayText();
+		return playerName == "" ? "Notch" : playerName;
 	}
 
 }

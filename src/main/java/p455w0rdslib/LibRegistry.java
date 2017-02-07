@@ -22,14 +22,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.google.common.collect.Maps;
+
+import net.minecraft.item.ItemStack;
+
 /**
  * @author p455w0rd
  *
  */
 public class LibRegistry {
 
-	private static Map<UUID, String> NAME_REGISTRY = new HashMap<UUID, String>();
-	private static Map<String, UUID> UUID_REGISTRY = new HashMap<String, UUID>();
+	private static Map<UUID, String> NAME_REGISTRY = Maps.newHashMap();
+	private static Map<String, UUID> UUID_REGISTRY = Maps.newHashMap();
+	private static Map<String, ItemStack> SKULL_REGISTRY = Maps.newHashMap();
+
+	public static Map<String, ItemStack> getSkullRegistry() {
+		return SKULL_REGISTRY;
+	}
 
 	public static Map<UUID, String> getNameRegistry() {
 		return NAME_REGISTRY;

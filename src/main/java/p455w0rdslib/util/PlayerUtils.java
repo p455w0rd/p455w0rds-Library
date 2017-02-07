@@ -1,6 +1,7 @@
 package p455w0rdslib.util;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import p455w0rdslib.LibRegistry;
 import p455w0rdslib.P455w0rdsLib;
 
 /**
@@ -127,11 +129,16 @@ public class PlayerUtils {
 	}
 
 	public static ItemStack getPlayerSkull(String playerName) {
-		ItemStack head = new ItemStack(Items.SKULL, 1, 3);
-		NBTTagCompound nametag = new NBTTagCompound();
-		nametag.setString("SkullOwner", playerName);
-		head.setTagCompound(nametag);
-		return head;
+		ItemStack head = null;
+		Map<String, ItemStack> skullCache = LibRegistry.getSkullRegistry();
+		if (!skullCache.containsKey(playerName)) {
+			head = new ItemStack(Items.SKULL, 1, 3);
+			NBTTagCompound nametag = new NBTTagCompound();
+			nametag.setString("SkullOwner", playerName);
+			head.setTagCompound(nametag);
+			skullCache.put(playerName, head);
+		}
+		return skullCache.get(playerName);
 	}
 
 }

@@ -53,10 +53,6 @@ public abstract class GuiElement {
 		return false;
 	}
 
-	public boolean onMouseWheel(int mouseX, int mouseY, int movement) {
-		return false;
-	}
-
 	public boolean onMousePressed(int mouseX, int mouseY, int button) {
 		switch (button) {
 		default:
@@ -189,7 +185,14 @@ public abstract class GuiElement {
 		update();
 	}
 
-	public void update() {
+	public boolean isMouseOver(int mouseX, int mouseY) {
+		return mouseX >= getX() && mouseX <= getX() + getWidth() && mouseY >= getY() && mouseY <= getY() + getHeight();
+	}
 
+	public boolean onMouseWheel(int mouseX, int mouseY, int movement) {
+		return false;
+	}
+
+	public void update() {
 	}
 }
