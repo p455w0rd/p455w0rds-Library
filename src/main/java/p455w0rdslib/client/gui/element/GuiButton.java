@@ -1,6 +1,7 @@
 package p455w0rdslib.client.gui.element;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import p455w0rdslib.api.gui.IModularGui;
 import p455w0rdslib.util.MCPrivateUtils;
 import p455w0rdslib.util.RenderUtils;
 
@@ -13,11 +14,11 @@ public class GuiButton extends GuiElement {
 	int borderColor = 0xFF000000, backgroundColor = 0xFFCCCCCC, textColor = 0xFFFFFFFF;
 	String text = "";
 
-	public GuiButton(GuiContainer gui, GuiPos posIn, int height, String label) {
-		this(gui, posIn, MCPrivateUtils.getGuiContainerXSize(gui) - (posIn.getX() * 2), height, label);
+	public GuiButton(IModularGui gui, GuiPos posIn, int height, String label) {
+		this(gui, posIn, MCPrivateUtils.getGuiContainerXSize((GuiContainer) gui) - (posIn.getX() * 2), height, label);
 	}
 
-	public GuiButton(GuiContainer gui, GuiPos posIn, int width, int height, String label) {
+	public GuiButton(IModularGui gui, GuiPos posIn, int width, int height, String label) {
 		super(gui, posIn, width, height);
 		text = label;
 	}

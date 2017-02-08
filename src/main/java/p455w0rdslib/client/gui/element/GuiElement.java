@@ -1,6 +1,10 @@
 package p455w0rdslib.client.gui.element;
 
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -8,6 +12,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import p455w0rdslib.api.gui.IModularGui;
 import p455w0rdslib.util.GuiUtils;
 
 /**
@@ -20,17 +25,18 @@ public abstract class GuiElement {
 
 	protected static final ResourceLocation VANILLA_BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");
 
-	private Gui gui;
+	private IModularGui gui;
 	private GuiPos pos;
 	private int w, h;
 	private boolean enabled = true, visible = true;
+	private List<String> tooltip = Lists.newArrayList();
 
-	public GuiElement(Gui gui, GuiPos posIn) {
+	public GuiElement(IModularGui gui, GuiPos posIn) {
 		this.gui = gui;
 		pos = posIn;
 	}
 
-	public GuiElement(Gui gui, GuiPos posIn, int width, int height) {
+	public GuiElement(IModularGui gui, GuiPos posIn, int width, int height) {
 		this.gui = gui;
 		pos = posIn;
 		w = width;
@@ -65,8 +71,12 @@ public abstract class GuiElement {
 		}
 	}
 
+	public void onMouseReleased(int mouseX, int mouseY, int button) {
+		return;
+	}
+
 	public void drawModalRect(int x, int y, int width, int height, int color) {
-		GuiUtils.drawGradientRect(gui, x, y, width, height, color, color);
+		GuiUtils.drawGradientRect((Gui) gui, x, y, width, height, color, color);
 	}
 
 	public void drawStencil(int xStart, int yStart, int xEnd, int yEnd, int flag) {
@@ -95,11 +105,11 @@ public abstract class GuiElement {
 		GlStateManager.depthMask(true);
 	}
 
-	public Gui getGui() {
+	public IModularGui getGui() {
 		return gui;
 	}
 
-	public GuiElement setGui(Gui guiIn) {
+	public GuiElement setGui(IModularGui guiIn) {
 		gui = guiIn;
 		return this;
 	}
@@ -195,4 +205,18 @@ public abstract class GuiElement {
 
 	public void update() {
 	}
+
+	public List<String> getTooltip() {
+		return tooltip;
+	}
+
+	public GuiElement setTooltip(List<String> tooltipLines) {
+		tooltip = tooltipLines;
+		return this;
+	}
+
+	public boolean hasTooltip() {
+		return getTooltip().size() > 0;
+	}
+
 }

@@ -2,6 +2,7 @@ package p455w0rdslib.client.gui.element;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import p455w0rdslib.api.gui.IModularGui;
 import p455w0rdslib.util.GuiUtils;
 
 /**
@@ -14,11 +15,11 @@ public class GuiCheckbox extends GuiElement {
 	private int boxWidth = 11;
 	private String displayedText;
 
-	public GuiCheckbox(Gui gui, GuiPos pos, String text, boolean checked, int width) {
+	public GuiCheckbox(IModularGui gui, GuiPos pos, String text, boolean checked, int width) {
 		this(gui, pos, text, checked, width, false);
 	}
 
-	public GuiCheckbox(Gui gui, GuiPos pos, String text, boolean checked, int width, boolean checkBoxOnRight) {
+	public GuiCheckbox(IModularGui gui, GuiPos pos, String text, boolean checked, int width, boolean checkBoxOnRight) {
 		super(gui, pos, width, 11);
 		isChecked = checked;
 		displayedText = text;
@@ -29,7 +30,7 @@ public class GuiCheckbox extends GuiElement {
 	public void drawBackground(int mouseX, int mouseY, float partialTicks) {
 		if (isVisible()) {
 			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + boxWidth && mouseY < getY() + getHeight();
-			GuiUtils.drawContinuousTexturedBox(getGui(), VANILLA_BUTTON_TEXTURES, getX() + (getWidth() - boxWidth), getY(), 0, 46, boxWidth, getHeight(), 200, 20, 2, 3, 2, 2);
+			GuiUtils.drawContinuousTexturedBox((Gui) getGui(), VANILLA_BUTTON_TEXTURES, getX() + (getWidth() - boxWidth), getY(), 0, 46, boxWidth, getHeight(), 200, 20, 2, 3, 2, 2);
 		}
 	}
 

@@ -1,5 +1,6 @@
 package p455w0rdslib.client.gui.element;
 
+import net.minecraft.client.gui.Gui;
 import p455w0rdslib.api.gui.IGuiListItem;
 import p455w0rdslib.util.GuiUtils;
 import p455w0rdslib.util.RenderUtils;
@@ -12,8 +13,9 @@ public class GuiListItem implements IGuiListItem {
 
 	final String TEXT;
 	final int HEIGHT;
-	boolean disabled = false;
+	boolean disabled = false, highlighted = false;
 	GuiList parentElement = null;
+	int posX = 0, posY = 0;
 
 	public GuiListItem(String text, int listItemHeight) {
 		TEXT = text;
@@ -33,8 +35,54 @@ public class GuiListItem implements IGuiListItem {
 
 	@Override
 	public void draw(int x, int y, int backColor, int textColor) {
-		GuiUtils.drawGradientRect((getParent() != null ? getParent().getGui() : RenderUtils.mc().currentScreen), x + 2, y - 3, x + (getParent() == null ? getWidth() : getParent().getWidth()), y + getHeight(), backColor, backColor);
+		setX(x);
+		setY(y);
+		if (getParent() != null) {
+			//getParent().drawModalRect(x + 1, y - 3, x + getParent().getWidth(), y + getHeight() + 1, backColor);
+			Gui.drawRect(x + 1, y - 3, x + getParent().getWidth(), y + getHeight() + 1, backColor);
+		}
+		else {
+			GuiUtils.drawGradientRect(RenderUtils.mc().currentScreen, x + 1, y - 3, x + getWidth(), y + getHeight(), backColor, backColor);
+		}
 		RenderUtils.getFontRenderer().drawStringWithShadow(TEXT, x, y, textColor);
+	}
+
+	@Override
+	public int getX() {
+		return posX;
+	}
+
+	@Override
+	public IGuiListItem setX(int x) {
+		posX = x;
+		return this;
+	}
+
+	@Override
+	public int getY() {
+		return posY;
+	}
+
+	@Override
+	public IGuiListItem setY(int y) {
+		posY = y;
+		return this;
+	}
+
+	public IGuiListItem setHighlighted() {
+		setHighlighted(true);
+		return this;
+	}
+
+	@Override
+	public IGuiListItem setHighlighted(boolean isSelected) {
+		highlighted = isSelected;
+		return this;
+	}
+
+	@Override
+	public boolean isHighlighted() {
+		return highlighted;
 	}
 
 	@Override
@@ -42,7 +90,8 @@ public class GuiListItem implements IGuiListItem {
 		return disabled;
 	}
 
-	public GuiListItem setDisabled(boolean isDisabled) {
+	@Override
+	public IGuiListItem setDisabled(boolean isDisabled) {
 		disabled = isDisabled;
 		return this;
 	}

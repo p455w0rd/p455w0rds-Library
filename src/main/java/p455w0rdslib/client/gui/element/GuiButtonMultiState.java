@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.client.gui.inventory.GuiContainer;
+import p455w0rdslib.api.gui.IModularGui;
 
 /**
  * @author p455w0rd
@@ -15,12 +15,12 @@ public class GuiButtonMultiState extends GuiButton {
 	List<String> labels = Lists.newArrayList();
 	int index = 0;
 
-	public GuiButtonMultiState(GuiContainer gui, GuiPos posIn, int height, List<String> labelsIn) {
+	public GuiButtonMultiState(IModularGui gui, GuiPos posIn, int height, List<String> labelsIn) {
 		super(gui, posIn, height, labelsIn.size() > 0 ? labelsIn.get(0) : "");
 		labels = labelsIn;
 	}
 
-	public GuiButtonMultiState(GuiContainer gui, GuiPos posIn, int width, int height, List<String> labelsIn) {
+	public GuiButtonMultiState(IModularGui gui, GuiPos posIn, int width, int height, List<String> labelsIn) {
 		super(gui, posIn, width, height, labelsIn.size() > 0 ? labelsIn.get(0) : "");
 		labels = labelsIn;
 	}

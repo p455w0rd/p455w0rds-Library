@@ -1,120 +1,183 @@
 package p455w0rdslib.client.gui.element;
 
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.util.ResourceLocation;
+import p455w0rdslib.api.gui.IModularGui;
 
 /**
  * @author p455w0rd
  *
  */
-public class GuiScrollbar {
+public abstract class GuiScrollbar extends GuiElement {
 
-	private int displayX = 0;
-	private int displayY = 0;
-	private int width = 12;
-	private int height = 16;
-	private int pageSize = 1;
+	protected int scrollPos, minPos, maxPos, sliderWidth, sliderHeight, borderColor = 0xFF000000,
+			faceColor = 0xFF333333;
+	protected boolean dragging;
+	GuiElement parentElement;
 
-	private int maxScroll = 0;
-	private int minScroll = 0;
-	private int currentScroll = 0;
+	public GuiScrollbar(IModularGui gui, GuiPos posIn, int width, int height, int max) {
+		this(gui, posIn, width, height, max, 0);
+	}
 
-	public void draw(final GuiContainer g) {
+	public GuiScrollbar(IModularGui gui, GuiPos posIn, int width, int height, int max, int min) {
+		super(gui, posIn, width, height);
+		minPos = min;
+		maxPos = max;
+	}
 
-		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("minecraft", "gui/container/creative_inventory/tabs.png"));
-
-		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		if (getRange() == 0) {
-			g.drawTexturedModalRect(displayX, displayY, 232 + width, 0, width, 15);
-		}
-		else {
-			final int offset = (currentScroll - minScroll) * (height - 15) / getRange();
-			g.drawTexturedModalRect(displayX, offset + displayY, 232, 0, width, 15);
+	@Override
+	public void update(int mouseX, int mouseY) {
+		if (isDragging()) {
+			doDrag(mouseX - getX(), mouseY - getY());
 		}
 	}
 
-	private int getRange() {
-		return maxScroll - minScroll;
+	@Override
+	public boolean onMousePressed(int mouseX, int mouseY, int mouseButton) {
+		setDragging(mouseButton == 0);
+		update(mouseX, mouseY);
+		return true;
 	}
 
-	public int getLeft() {
-		return displayX;
+	@Override
+	public void onMouseReleased(int mouseX, int mouseY, int button) {
+		if (isDragging()) {
+			onStopDragging();
+		}
+		setDragging(false);
 	}
 
-	public GuiScrollbar setLeft(final int v) {
-		displayX = v;
+	protected abstract void doDrag(int x, int y);
+
+	@Override
+	public void drawBackground(int mouseX, int mouseY, float gameTicks) {
+	}
+
+	@Override
+	public void drawForeground(int mouseX, int mouseY) {
+	}
+
+	@Override
+	public boolean onMouseWheel(int mouseX, int mouseY, int direction) {
+		if (direction > 0) {
+			setScrollPos(getScrollPos() - 1);
+		}
+		else if (direction < 0) {
+			setScrollPos(getScrollPos() + 1);
+		}
+		if (getParentElement() != null) {
+			getParentElement().onMouseWheel(mouseX, mouseY, direction);
+		}
+		return true;
+	}
+
+	public int getSliderXPos() {
+		return 0;
+	}
+
+	public int getSliderYPos() {
+		return 0;
+	}
+
+	public GuiElement getParentElement() {
+		return parentElement;
+	}
+
+	public GuiScrollbar setParentElement(GuiElement element) {
+		parentElement = element;
 		return this;
 	}
 
-	public int getTop() {
-		return displayY;
+	public int getScrollPos() {
+		return scrollPos;
 	}
 
-	public GuiScrollbar setTop(final int v) {
-		displayY = v;
+	public GuiScrollbar setScrollPos(int pos) {
+		scrollPos = Math.max(getMinPos(), Math.min(getMaxPos(), pos));
+		if (pos != getScrollPos()) {
+			scrollPos = pos;
+			onValueChanged(scrollPos);
+		}
 		return this;
 	}
 
-	public int getWidth() {
-		return width;
+	public void onValueChanged(int value) {
+		return;
 	}
 
-	public GuiScrollbar setWidth(final int v) {
-		width = v;
+	public void onStopDragging() {
+		return;
+	}
+
+	public int getMinPos() {
+		return minPos;
+	}
+
+	public GuiScrollbar setMinPos(int pos) {
+		minPos = pos;
 		return this;
 	}
 
-	public int getHeight() {
-		return height;
+	public int getMaxPos() {
+		return maxPos;
 	}
 
-	public GuiScrollbar setHeight(final int v) {
-		height = v;
+	public GuiScrollbar setMaxPos(int pos) {
+		maxPos = pos;
 		return this;
 	}
 
-	public void setRange(final int min, final int max, final int pageSize) {
-		minScroll = min;
-		maxScroll = max;
-		this.pageSize = pageSize;
-
-		if (minScroll > maxScroll) {
-			maxScroll = minScroll;
-		}
-
-		applyRange();
+	public GuiScrollbar setBounds(int min, int max) {
+		setMinPos(min);
+		setMaxPos(max);
+		setScrollPos(getScrollPos());
+		return this;
 	}
 
-	private void applyRange() {
-		currentScroll = Math.max(Math.min(currentScroll, maxScroll), minScroll);
+	public int getSliderWidth() {
+		return sliderWidth;
 	}
 
-	public int getCurrentScroll() {
-		return currentScroll;
+	public GuiScrollbar setSliderWidth(int width) {
+		sliderWidth = width;
+		return this;
 	}
 
-	public void click(final GuiContainer aeBaseGui, final int x, final int y) {
-		if (getRange() == 0) {
-			return;
-		}
-
-		if (x > displayX && x <= displayX + width) {
-			if (y > displayY && y <= displayY + height) {
-				currentScroll = (y - displayY);
-				currentScroll = minScroll + ((currentScroll * 2 * getRange() / height));
-				currentScroll = (currentScroll + 1) >> 1;
-				applyRange();
-			}
-		}
+	public int getSliderHeight() {
+		return sliderHeight;
 	}
 
-	public void wheel(int delta) {
-		delta = Math.max(Math.min(-delta, 1), -1);
-		currentScroll += delta * pageSize;
-		applyRange();
+	public GuiScrollbar setSliderHeight(int height) {
+		sliderHeight = height;
+		return this;
+	}
+
+	public int getBorderColor() {
+		return borderColor;
+	}
+
+	public GuiScrollbar setBorderColor(int color) {
+		borderColor = color;
+		return this;
+	}
+
+	public int getFaceColor() {
+		return faceColor;
+	}
+
+	public GuiScrollbar setFaceColor(int color) {
+		faceColor = color;
+		return this;
+	}
+
+	public GuiScrollbar setColors(int border, int face) {
+		return setBorderColor(border).setFaceColor(face);
+	}
+
+	public boolean isDragging() {
+		return dragging;
+	}
+
+	public void setDragging(boolean isDragging) {
+		dragging = isDragging;
 	}
 
 }

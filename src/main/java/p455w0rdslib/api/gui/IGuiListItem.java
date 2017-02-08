@@ -8,6 +8,14 @@ import p455w0rdslib.client.gui.element.GuiList;
  */
 public interface IGuiListItem {
 
+	int getX();
+
+	IGuiListItem setX(int y);
+
+	int getY();
+
+	IGuiListItem setY(int y);
+
 	String getDisplayText();
 
 	int getHeight();
@@ -18,8 +26,14 @@ public interface IGuiListItem {
 
 	boolean isDisabled();
 
+	IGuiListItem setDisabled(boolean isDisabled);
+
 	GuiList getParent();
 
 	IGuiListItem setParent(GuiList parent);
+
+	boolean isHighlighted();
+
+	IGuiListItem setHighlighted(boolean isSelected);
 
 }
