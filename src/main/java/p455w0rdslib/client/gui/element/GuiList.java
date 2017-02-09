@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import p455w0rdslib.api.gui.IGuiList;
 import p455w0rdslib.api.gui.IGuiListItem;
+import p455w0rdslib.api.gui.IGuiScrollbar;
 import p455w0rdslib.api.gui.IModularGui;
 
 /**
@@ -69,6 +70,12 @@ public class GuiList extends GuiElement implements IGuiList {
 			heightDrawn += drawListItem(nextElement, getX(), getY() + heightDrawn);
 			nextElement++;
 		}
+	}
+
+	@Override
+	public IGuiList attachScrollbar(IGuiScrollbar scrollbar) {
+		getGui().addElement(scrollbar);
+		return this;
 	}
 
 	@Override

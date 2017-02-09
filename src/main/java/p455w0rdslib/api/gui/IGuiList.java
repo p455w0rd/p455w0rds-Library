@@ -81,4 +81,6 @@ public interface IGuiList extends IGuiElement {
 
 	int getTotalListHeight();
 
+	IGuiList attachScrollbar(IGuiScrollbar scrollbar);
+
 }
