@@ -1,5 +1,6 @@
 package p455w0rdslib.client.gui.element;
 
+import p455w0rdslib.api.gui.IGuiScrollbar;
 import p455w0rdslib.api.gui.IModularGui;
 
 /**
@@ -24,13 +25,13 @@ public class GuiVScrollbar extends GuiScrollbar {
 	}
 
 	@Override
-	protected void doDrag(int x, int y) {
+	public void doDrag(int x, int y) {
 		y += Math.round(getSliderHeight() * (y / (float) getHeight()) + (getSliderHeight() * 0.25f));
 		setScrollPos(getMinPos() + ((getMaxPos() - getMinPos()) * y / getHeight()));
 	}
 
 	@Override
-	public GuiScrollbar setBounds(int min, int max) {
+	public IGuiScrollbar setBounds(int min, int max) {
 		int dist = max - min;
 		setSliderHeight(dist <= 0 ? getHeight() : Math.max(getHeight() / ++dist, 9));
 		setSliderWidth(getWidth());

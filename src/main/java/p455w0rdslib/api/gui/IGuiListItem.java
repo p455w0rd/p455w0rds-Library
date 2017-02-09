@@ -1,7 +1,5 @@
 package p455w0rdslib.api.gui;
 
-import p455w0rdslib.client.gui.element.GuiList;
-
 /**
  * @author p455w0rd
  *
@@ -28,9 +26,9 @@ public interface IGuiListItem {
 
 	IGuiListItem setDisabled(boolean isDisabled);
 
-	GuiList getParent();
+	IGuiList getParent();
 
-	IGuiListItem setParent(GuiList parent);
+	IGuiListItem setParent(IGuiList parent);
 
 	boolean isHighlighted();
 

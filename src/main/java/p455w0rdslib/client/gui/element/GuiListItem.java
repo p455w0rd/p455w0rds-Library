@@ -1,8 +1,8 @@
 package p455w0rdslib.client.gui.element;
 
 import net.minecraft.client.gui.Gui;
+import p455w0rdslib.api.gui.IGuiList;
 import p455w0rdslib.api.gui.IGuiListItem;
-import p455w0rdslib.util.GuiUtils;
 import p455w0rdslib.util.RenderUtils;
 
 /**
@@ -14,7 +14,7 @@ public class GuiListItem implements IGuiListItem {
 	final String TEXT;
 	final int HEIGHT;
 	boolean disabled = false, highlighted = false;
-	GuiList parentElement = null;
+	IGuiList parentElement = null;
 	int posX = 0, posY = 0;
 
 	public GuiListItem(String text, int listItemHeight) {
@@ -23,12 +23,12 @@ public class GuiListItem implements IGuiListItem {
 	}
 
 	@Override
-	public GuiList getParent() {
+	public IGuiList getParent() {
 		return parentElement;
 	}
 
 	@Override
-	public GuiListItem setParent(GuiList parent) {
+	public IGuiListItem setParent(IGuiList parent) {
 		parentElement = parent;
 		return this;
 	}
@@ -42,7 +42,7 @@ public class GuiListItem implements IGuiListItem {
 			Gui.drawRect(x + 1, y - 3, x + getParent().getWidth(), y + getHeight() + 1, backColor);
 		}
 		else {
-			GuiUtils.drawGradientRect(RenderUtils.mc().currentScreen, x + 1, y - 3, x + getWidth(), y + getHeight(), backColor, backColor);
+			Gui.drawRect(x + 1, y - 3, x + getWidth(), y + getHeight(), backColor);
 		}
 		RenderUtils.getFontRenderer().drawStringWithShadow(TEXT, x, y, textColor);
 	}

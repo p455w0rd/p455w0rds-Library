@@ -2,18 +2,11 @@ package p455w0rdslib.client.gui.element;
 
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.collect.Lists;
 
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import p455w0rdslib.api.gui.IGuiElement;
 import p455w0rdslib.api.gui.IModularGui;
-import p455w0rdslib.util.GuiUtils;
 
 /**
  * Base class for all GUI elements
@@ -21,7 +14,7 @@ import p455w0rdslib.util.GuiUtils;
  * @author p455w0rd
  *
  */
-public abstract class GuiElement {
+public abstract class GuiElement implements IGuiElement {
 
 	protected static final ResourceLocation VANILLA_BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");
 
@@ -43,22 +36,28 @@ public abstract class GuiElement {
 		h = height;
 	}
 
+	@Override
 	public abstract void drawBackground(int mouseX, int mouseY, float gameTicks);
 
+	@Override
 	public abstract void drawForeground(int mouseX, int mouseY);
 
+	@Override
 	public boolean onClick(int mouseX, int mouseY) {
 		return false;
 	}
 
+	@Override
 	public boolean onRightClick(int mouseX, int mouseY) {
 		return false;
 	}
 
+	@Override
 	public boolean onMiddleClick(int mouseX, int mouseY) {
 		return false;
 	}
 
+	@Override
 	public boolean onMousePressed(int mouseX, int mouseY, int button) {
 		switch (button) {
 		default:
@@ -71,150 +70,142 @@ public abstract class GuiElement {
 		}
 	}
 
+	@Override
 	public void onMouseReleased(int mouseX, int mouseY, int button) {
 		return;
 	}
 
-	public void drawModalRect(int x, int y, int width, int height, int color) {
-		GuiUtils.drawGradientRect((Gui) gui, x, y, width, height, color, color);
-	}
-
-	public void drawStencil(int xStart, int yStart, int xEnd, int yEnd, int flag) {
-
-		GlStateManager.disableTexture2D();
-		GL11.glStencilFunc(GL11.GL_ALWAYS, flag, flag);
-		GL11.glStencilOp(GL11.GL_ZERO, GL11.GL_ZERO, GL11.GL_REPLACE);
-		GL11.glStencilMask(flag);
-		GlStateManager.colorMask(false, false, false, false);
-		GlStateManager.depthMask(false);
-		GL11.glClearStencil(0);
-		GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT);
-
-		VertexBuffer buffer = Tessellator.getInstance().getBuffer();
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-		buffer.pos(xStart, yEnd, 0).endVertex();
-		buffer.pos(xEnd, yEnd, 0).endVertex();
-		buffer.pos(xEnd, yStart, 0).endVertex();
-		buffer.pos(xStart, yStart, 0).endVertex();
-		Tessellator.getInstance().draw();
-
-		GlStateManager.enableTexture2D();
-		GL11.glStencilFunc(GL11.GL_EQUAL, flag, flag);
-		GL11.glStencilMask(0);
-		GlStateManager.colorMask(true, true, true, true);
-		GlStateManager.depthMask(true);
-	}
-
+	@Override
 	public IModularGui getGui() {
 		return gui;
 	}
 
-	public GuiElement setGui(IModularGui guiIn) {
+	@Override
+	public IGuiElement setGui(IModularGui guiIn) {
 		gui = guiIn;
 		return this;
 	}
 
+	@Override
 	public boolean isVisible() {
 		return visible;
 	}
 
-	public GuiElement setVisible(boolean visibility) {
+	@Override
+	public IGuiElement setVisible(boolean visibility) {
 		visible = visibility;
 		return this;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
 
-	public GuiElement setEnabled(boolean doEnable) {
+	@Override
+	public IGuiElement setEnabled(boolean doEnable) {
 		enabled = doEnable;
 		return this;
 	}
 
-	public GuiElement enable() {
+	@Override
+	public IGuiElement enable() {
 		return setEnabled(true);
 	}
 
-	public GuiElement disable() {
+	@Override
+	public IGuiElement disable() {
 		return setEnabled(false);
 	}
 
+	@Override
 	public GuiPos getPos() {
 		return pos;
 	}
 
-	public GuiElement setPos(int xPos, int yPos) {
+	@Override
+	public IGuiElement setPos(int xPos, int yPos) {
 		pos = new GuiPos(xPos, yPos);
 		return this;
 	}
 
+	@Override
 	public int getX() {
 		return pos.getX();
 	}
 
-	public GuiElement setX(int posX) {
+	@Override
+	public IGuiElement setX(int posX) {
 		setPos(posX, getY());
 		return this;
 	}
 
+	@Override
 	public int getY() {
 		return pos.getY();
 	}
 
-	public GuiElement setY(int posY) {
+	@Override
+	public IGuiElement setY(int posY) {
 		setPos(getX(), posY);
 		return this;
 	}
 
+	@Override
 	public int getWidth() {
 		return w;
 	}
 
-	public GuiElement setWidth(int width) {
+	@Override
+	public IGuiElement setWidth(int width) {
 		w = width;
 		return this;
 	}
 
+	@Override
 	public int getHeight() {
 		return h;
 	}
 
-	public GuiElement setHeight(int height) {
+	@Override
+	public IGuiElement setHeight(int height) {
 		h = height;
 		return this;
 	}
 
-	public GuiElement setSize(int width, int height) {
+	@Override
+	public IGuiElement setSize(int width, int height) {
 		w = width;
 		h = height;
 		return this;
 	}
 
+	@Override
 	public void update(int mouseX, int mouseY) {
-		update();
 	}
 
+	@Override
 	public boolean isMouseOver(int mouseX, int mouseY) {
 		return mouseX >= getX() && mouseX <= getX() + getWidth() && mouseY >= getY() && mouseY <= getY() + getHeight();
 	}
 
+	@Override
 	public boolean onMouseWheel(int mouseX, int mouseY, int movement) {
 		return false;
 	}
 
-	public void update() {
-	}
-
+	@Override
 	public List<String> getTooltip() {
 		return tooltip;
 	}
 
-	public GuiElement setTooltip(List<String> tooltipLines) {
+	@Override
+	public IGuiElement setTooltip(List<String> tooltipLines) {
 		tooltip = tooltipLines;
 		return this;
 	}
 
+	@Override
 	public boolean hasTooltip() {
 		return getTooltip().size() > 0;
 	}

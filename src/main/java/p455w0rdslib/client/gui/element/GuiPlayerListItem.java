@@ -2,6 +2,7 @@ package p455w0rdslib.client.gui.element;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.ItemStack;
+import p455w0rdslib.api.gui.IGuiPlayerListItem;
 import p455w0rdslib.util.GuiUtils;
 import p455w0rdslib.util.PlayerUtils;
 import p455w0rdslib.util.RenderUtils;
@@ -10,7 +11,7 @@ import p455w0rdslib.util.RenderUtils;
  * @author p455w0rd
  *
  */
-public class GuiPlayerListItem extends GuiListItem {
+public class GuiPlayerListItem extends GuiListItem implements IGuiPlayerListItem {
 
 	String playerName = "";
 
@@ -27,17 +28,18 @@ public class GuiPlayerListItem extends GuiListItem {
 			Gui.drawRect(x + 1, y - 3, x + getParent().getWidth(), y + getHeight() + 1, backColor);
 		}
 		else {
-			GuiUtils.drawGradientRect(RenderUtils.mc().currentScreen, x + 18 + 1, y - 3, x + getWidth(), y + getHeight(), backColor, backColor);
+			Gui.drawRect(x + 18 + 1, y - 3, x + getWidth(), y + getHeight(), backColor);
 		}
-		//GuiUtils.drawGradientRect((getParent() != null ? getParent().getGui() : RenderUtils.mc().currentScreen), x + 2, y - 3, x + (getParent() == null ? getWidth() : getParent().getWidth()), y + getHeight(), backColor, backColor);
 		GuiUtils.drawItem(getIcon(), x + 2, y - 3);
 		RenderUtils.getFontRenderer().drawStringWithShadow(getDisplayText(), x + 18, y + 1, textColor);
 	}
 
+	@Override
 	public ItemStack getIcon() {
 		return PlayerUtils.getPlayerSkull(getPlayerName());
 	}
 
+	@Override
 	public String getPlayerName() {
 		return playerName == "" ? "Notch" : playerName;
 	}

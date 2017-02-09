@@ -1,5 +1,6 @@
 package p455w0rdslib.client.gui.element;
 
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import p455w0rdslib.api.gui.IModularGui;
 import p455w0rdslib.util.MCPrivateUtils;
@@ -25,8 +26,8 @@ public class GuiButton extends GuiElement {
 
 	@Override
 	public void drawBackground(int mouseX, int mouseY, float gameTicks) {
-		drawModalRect(getX(), getY(), getX() + getWidth() + 1, getY() + getHeight() + 1, borderColor);
-		drawModalRect(getX() + 1, getY() + 1, getX() + getWidth(), getY() + getHeight(), backgroundColor);
+		Gui.drawRect(getX(), getY(), getX() + getWidth() + 1, getY() + getHeight() + 1, borderColor);
+		Gui.drawRect(getX() + 1, getY() + 1, getX() + getWidth(), getY() + getHeight(), backgroundColor);
 	}
 
 	@Override
