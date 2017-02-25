@@ -21,6 +21,7 @@ public class GuiList extends GuiElement implements IGuiList {
 			selectedBackgroundColor = 0xFF333333, disabledBackgroundColor = 0xFF000000, textColor = 0xFFFFFFFF,
 			disabledTextColor = 0xFF333333, selectedTextColor = 0xFF00FF00, highlightColor = 0x6617FF6D;
 	List<IGuiListItem> listList;
+	IGuiScrollbar attachedScrollbar;
 
 	public GuiList(IModularGui guiIn, GuiPos pos, int elementWidth, int elementHeight) {
 		this(guiIn, pos, elementWidth, elementHeight, null);
@@ -73,8 +74,31 @@ public class GuiList extends GuiElement implements IGuiList {
 	}
 
 	@Override
+	public IGuiScrollbar getAttachedScrollbar() {
+		return attachedScrollbar;
+	}
+
+	@Override
+	public IGuiList setAttachedScrollbar(IGuiScrollbar scrollbar) {
+		attachedScrollbar = scrollbar;
+		return this;
+	}
+
+	@Override
 	public IGuiList attachScrollbar(IGuiScrollbar scrollbar) {
-		getGui().addElement(scrollbar);
+		if (getAttachedScrollbar() == null) {
+			setAttachedScrollbar(scrollbar).setVisible(isVisible());
+			getGui().addElement(scrollbar);
+		}
+		return this;
+	}
+
+	@Override
+	public IGuiList generateScrollbar() {
+		if (getAttachedScrollbar() == null) {
+			attachScrollbar(new GuiVScrollbar(getGui(), new GuiPos(getX() + getWidth() - 6, getY() + 1), 6, getHeight() - 1, getPrevScrollPos()).setParentElement(this));
+			setWidth(getWidth() - 6);
+		}
 		return this;
 	}
 
@@ -187,24 +211,8 @@ public class GuiList extends GuiElement implements IGuiList {
 				}
 				break;
 			}
-
 			heightChecked += elementHeight + 8;
 		}
-
-		/*
-		for (IGuiListItem element : getList()) {
-			if (isMouseOverElement(element, getGui().getX() - mouseX, mouseY - getGui().getY())) {
-				if (!element.isDisabled()) {
-					if (GuiScreen.isCtrlKeyDown()) {
-						element.setHighlighted(!element.isHighlighted());
-					}
-					else {
-						setClickedElement(element);
-					}
-				}
-			}
-		}
-		*/
 		return true;
 	}
 
@@ -231,8 +239,8 @@ public class GuiList extends GuiElement implements IGuiList {
 		return getList().isEmpty();
 	}
 
+	@Override
 	public int getPrevScrollPos() {
-
 		int position = size() - 1;
 		if (position < 0) {
 			return 0;
@@ -245,7 +253,7 @@ public class GuiList extends GuiElement implements IGuiList {
 		if (heightUsed > getHeight()) {
 			++position;
 		}
-		return position + 1;
+		return position + 5;
 	}
 
 	@Override
@@ -302,9 +310,15 @@ public class GuiList extends GuiElement implements IGuiList {
 	public boolean onMouseWheel(int mouseX, int mouseY, int direction) {
 		if (direction > 0) {
 			scrollUp();
+			if (getAttachedScrollbar() != null) {
+				getAttachedScrollbar().setScrollPos(getAttachedScrollbar().getScrollPos() - 2);
+			}
 		}
 		else if (direction < 0) {
 			scrollDown();
+			if (getAttachedScrollbar() != null) {
+				getAttachedScrollbar().setScrollPos(getAttachedScrollbar().getScrollPos() + 2);
+			}
 		}
 		return true;
 	}
@@ -315,6 +329,7 @@ public class GuiList extends GuiElement implements IGuiList {
 	@Override
 	public void scrollUp() {
 		if (firstIndex > 0) {
+			//firstIndex = (size() - 5) + getPrevScrollPos();
 			firstIndex--;
 		}
 		onScroll(firstIndex);

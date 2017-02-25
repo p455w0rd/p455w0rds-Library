@@ -18,6 +18,8 @@ public interface IGuiScrollbar extends IGuiElement {
 
 	int getScrollPos();
 
+	IGuiScrollbar setScrollPos(int pos);
+
 	void onStopDragging();
 
 	int getMinPos();

@@ -1,5 +1,6 @@
 package p455w0rdslib.client.gui.element;
 
+import p455w0rdslib.api.gui.IGuiList;
 import p455w0rdslib.api.gui.IGuiScrollbar;
 import p455w0rdslib.api.gui.IModularGui;
 
@@ -27,13 +28,25 @@ public class GuiVScrollbar extends GuiScrollbar {
 	@Override
 	public void doDrag(int x, int y) {
 		y += Math.round(getSliderHeight() * (y / (float) getHeight()) + (getSliderHeight() * 0.25f));
-		setScrollPos(getMinPos() + ((getMaxPos() - getMinPos()) * y / getHeight()));
+		int newPos = getMinPos() + ((getMaxPos() - getMinPos()) * y / getHeight());
+
+		int direction = getScrollPos() == newPos ? 0 : getScrollPos() > newPos ? 1 : -1;
+		if (getParentElement() != null && getParentElement() instanceof IGuiList) {
+			boolean shouldMove = newPos != 0 && (getMaxPos() - getMinPos() + 1) % newPos == 0;
+			if (direction > 0 && shouldMove) {
+				((IGuiList) getParentElement()).scrollUp();
+			}
+			else if (direction < 0 && shouldMove) {
+				((IGuiList) getParentElement()).scrollDown();
+			}
+		}
+		setScrollPos(newPos);
 	}
 
 	@Override
 	public IGuiScrollbar setBounds(int min, int max) {
 		int dist = max - min;
-		setSliderHeight(dist <= 0 ? getHeight() : Math.max(getHeight() / ++dist, 9));
+		setSliderHeight(dist <= 0 ? getHeight() : Math.max(getHeight() / dist, 9));
 		setSliderWidth(getWidth());
 		return super.setBounds(min, max);
 	}

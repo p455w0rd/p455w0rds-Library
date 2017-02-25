@@ -34,6 +34,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class RenderUtils {
 
+	public static int titlesTimer;
+	public static String displayedText = "";
+	public static int titleFadeIn;
+	public static int titleDisplayTime;
+	public static int titleFadeOut;
+	public static float titleScale = 1.0f;
+
 	public static ItemModelMesher getMesher() {
 		return getRenderItem().getItemModelMesher();
 	}
@@ -58,7 +65,12 @@ public class RenderUtils {
 		return mc().renderEngine;
 	}
 
-	public static void renderHighlightText(ScaledResolution scaledRes, int yOffset, String text) {
+	public static float getPartialTicks() {
+		return mc().getRenderPartialTicks();
+	}
+
+	public static void renderHighlightText(int yOffset, String text) {
+		ScaledResolution scaledRes = new ScaledResolution(mc());
 		Minecraft mc = Minecraft.getMinecraft();
 		String s = TextFormatting.ITALIC + "" + text;
 
@@ -73,7 +85,10 @@ public class RenderUtils {
 		GlStateManager.pushMatrix();
 		//GlStateManager.enableBlend();
 		//GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		//GlStateManager.translate(0.5, 0.0, 0.5);
+		//GlStateManager.scale(2.0F, 2.0F, 2.0F);
 		getFontRenderer().drawStringWithShadow(s, i, j, 16777215 + (k << 24));
+		//GlStateManager.translate(-0.5, 0, -0.5);
 		//GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 
@@ -91,7 +106,9 @@ public class RenderUtils {
 		List<EnumFacing> sideList = Arrays.asList(sides);
 		int height = length;
 		float[] colors = new float[] {
-				((float) red) / 255, ((float) green) / 255, ((float) blue) / 255
+				((float) red) / 255,
+				((float) green) / 255,
+				((float) blue) / 255
 		};
 		float a = 1.0F;
 		double yOffset = 0.5D;
@@ -386,7 +403,9 @@ public class RenderUtils {
 		length = length < 1 ? 1 : length;
 		int height = length;
 		float[] colors = new float[] {
-				((float) red) / 255, ((float) green) / 255, ((float) blue) / 255
+				((float) red) / 255,
+				((float) green) / 255,
+				((float) blue) / 255
 		};
 		float a = ((float) beamAlpha) / 255;
 		double yOffset = 0.5;

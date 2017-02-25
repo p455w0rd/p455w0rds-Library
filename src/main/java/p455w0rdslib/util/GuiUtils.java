@@ -51,7 +51,7 @@ public class GuiUtils {
 	}
 
 	public static void drawItem(ItemStack item, int x, int y) {
-		RenderHelper.enableStandardItemLighting();
+		RenderHelper.enableGUIStandardItemLighting();
 		RenderUtils.getRenderItem().renderItemAndEffectIntoGUI(item, x, y);
 		RenderHelper.disableStandardItemLighting();
 	}

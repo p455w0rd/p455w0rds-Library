@@ -116,11 +116,8 @@ public class ContributorUtils {
 		for (RenderPlayer renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
 			List<LayerRenderer<AbstractClientPlayer>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
 			for (int i = 0; i < r.size(); ++i) {
-				if (r.get(i) instanceof LayerElytra) {
-					renderPlayer.removeLayer((LayerElytra) r.get(i));
-				}
-				if (r.get(i) instanceof LayerCape) {
-					renderPlayer.removeLayer((LayerCape) r.get(i));
+				if (r.get(i) instanceof LayerElytra || r.get(i) instanceof LayerCape) {
+					renderPlayer.removeLayer(r.get(i));
 				}
 			}
 			renderPlayer.addLayer(layerWings = new LayerContributorWings());
@@ -156,7 +153,7 @@ public class ContributorUtils {
 			}
 			return false;
 		}
-	
+
 		public static boolean doesPlayerHaveMMDCape(AbstractClientPlayer player) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
 				String uuid = player.getUniqueID().toString() + "_MMD";

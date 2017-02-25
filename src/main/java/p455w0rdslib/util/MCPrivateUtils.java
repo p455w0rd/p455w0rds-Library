@@ -96,6 +96,14 @@ public class MCPrivateUtils {
 		ReflectionHelper.setPrivateValue(Entity.class, enderman, dm, ReflectionUtils.determineSRG("dataManager"));
 	}
 
+	public static float getRenderItemZLevel(RenderItem ri) {
+		return ReflectionHelper.getPrivateValue(RenderItem.class, ri, ReflectionUtils.determineZLevelSRG("zLevel", RenderItem.class));
+	}
+
+	public static void setRenderItemZLevel(RenderItem ri, float zLevel) {
+		ReflectionHelper.setPrivateValue(RenderItem.class, ri, zLevel, ReflectionUtils.determineZLevelSRG("zLevel", RenderItem.class));
+	}
+
 	public static float getGuiZLevel(Gui gui) {
 		return ReflectionHelper.getPrivateValue(Gui.class, gui, ReflectionUtils.determineZLevelSRG("zLevel", Gui.class));
 	}

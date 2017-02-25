@@ -120,7 +120,7 @@ public class PlayerUtils {
 		List<UUID> uuidList = Lists.newArrayList();
 		if (server != null) {
 			PlayerProfileCache playerCache = server.getPlayerProfileCache();
-			String[] usernames = playerCache.getUsernames();
+			String[] usernames = server.getAllUsernames();
 			for (String username : usernames) {
 				uuidList.add(playerCache.getGameProfileForUsername(username).getId());
 			}

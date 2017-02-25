@@ -25,20 +25,30 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 		super(gui, posIn, width, height);
 		minPos = min;
 		maxPos = max;
+		setSliderWidth(width);
+		setSliderHeight(15);
 	}
 
 	@Override
 	public void update(int mouseX, int mouseY) {
 		if (isDragging()) {
-			doDrag(mouseX - getX(), mouseY - getY());
+			doDrag(mouseX - getX(), mouseY - (getY() + getSliderHeight()));
 		}
 	}
 
 	@Override
 	public boolean onMousePressed(int mouseX, int mouseY, int mouseButton) {
-		setDragging(mouseButton == 0);
-		update(mouseX, mouseY);
-		return true;
+		if (isMouseOver(mouseX, mouseY)) {
+			setDragging(mouseButton == 0);
+			update(mouseX, mouseY);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isMouseOver(int mouseX, int mouseY) {
+		return mouseX > getX() && mouseY > getY() && mouseX <= getX() + getWidth() && mouseY <= getY() + getHeight();
 	}
 
 	@Override
@@ -54,26 +64,40 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 
 	@Override
 	public void drawBackground(int mouseX, int mouseY, float partialTicks) {
-
-		Gui.drawRect(getX() - 1, getY() - 1, getX() + getWidth() + 1, getY() + getHeight() + 1, borderColor);
-		Gui.drawRect(getX(), getY(), getX() + getWidth(), getY() + getHeight(), faceColor);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		if (getParentElement() != null && getParentElement().isVisible()) {
+			Gui.drawRect(getX() - 1, getY() - 1, getX() + getWidth() + 1, getY() + getHeight() + 1, borderColor);
+			Gui.drawRect(getX(), getY(), getX() + getWidth(), getY() + getHeight(), faceColor);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		}
 	}
 
 	@Override
 	public void drawForeground(int mouseX, int mouseY) {
+		if (getParentElement() != null && getParentElement().isVisible()) {
+			int sliderMidX = getSliderWidth() / 2;
+			int sliderMidY = getSliderHeight() / 2;
+			int sliderEndX = getSliderWidth() - sliderMidX;
+			int sliderEndY = getSliderHeight() - sliderMidY;
+
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			Gui.drawRect(getX() + getSliderXPos(), getY() + getSliderYPos() - 1, getX() + getSliderXPos() + getSliderWidth() + 1, getY() + getSliderYPos() + getSliderHeight() + 1, borderColor);
+			Gui.drawRect(getX() + getSliderXPos() + 1, getY() + getSliderYPos(), getX() + getSliderXPos() + getSliderWidth(), getY() + getSliderYPos() + getSliderHeight(), 0xFFCCCCCC);
+		}
 	}
 
 	@Override
 	public boolean onMouseWheel(int mouseX, int mouseY, int direction) {
-		if (direction > 0) {
-			setScrollPos(getScrollPos() - 1);
-		}
-		else if (direction < 0) {
-			setScrollPos(getScrollPos() + 1);
-		}
+
 		if (getParentElement() != null) {
 			getParentElement().onMouseWheel(mouseX, mouseY, direction);
+		}
+		else {
+			if (direction > 0) {
+				setScrollPos(getScrollPos() - 1);
+			}
+			else if (direction < 0) {
+				setScrollPos(getScrollPos() + 1);
+			}
 		}
 		return true;
 	}
@@ -104,10 +128,11 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 		return scrollPos;
 	}
 
+	@Override
 	public IGuiScrollbar setScrollPos(int pos) {
 		scrollPos = Math.max(getMinPos(), Math.min(getMaxPos(), pos));
 		if (pos != getScrollPos()) {
-			scrollPos = pos;
+			//scrollPos = pos;
 			//onValueChanged(scrollPos);
 		}
 		return this;

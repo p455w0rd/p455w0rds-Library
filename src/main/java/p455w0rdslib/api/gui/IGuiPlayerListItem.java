@@ -1,5 +1,7 @@
 package p455w0rdslib.api.gui;
 
+import java.util.UUID;
+
 import net.minecraft.item.ItemStack;
 
 /**
@@ -11,5 +13,7 @@ public interface IGuiPlayerListItem extends IGuiListItem {
 	ItemStack getIcon();
 
 	String getPlayerName();
+
+	UUID getID();
 
 }

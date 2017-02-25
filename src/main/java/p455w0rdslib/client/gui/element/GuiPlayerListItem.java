@@ -1,9 +1,12 @@
 package p455w0rdslib.client.gui.element;
 
+import java.util.UUID;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.ItemStack;
 import p455w0rdslib.api.gui.IGuiPlayerListItem;
 import p455w0rdslib.util.GuiUtils;
+import p455w0rdslib.util.PlayerUUIDUtils;
 import p455w0rdslib.util.PlayerUtils;
 import p455w0rdslib.util.RenderUtils;
 
@@ -14,10 +17,12 @@ import p455w0rdslib.util.RenderUtils;
 public class GuiPlayerListItem extends GuiListItem implements IGuiPlayerListItem {
 
 	String playerName = "";
+	UUID uuid;
 
-	public GuiPlayerListItem(String diaplayText, String playerName) {
+	public GuiPlayerListItem(String diaplayText, UUID uuidIn) {
 		super(diaplayText, 12);
-		this.playerName = playerName;
+		playerName = PlayerUUIDUtils.getPlayerName(uuidIn);
+		uuid = uuidIn;
 	}
 
 	@Override
@@ -42,6 +47,11 @@ public class GuiPlayerListItem extends GuiListItem implements IGuiPlayerListItem
 	@Override
 	public String getPlayerName() {
 		return playerName == "" ? "Notch" : playerName;
+	}
+
+	@Override
+	public UUID getID() {
+		return uuid;
 	}
 
 }

@@ -58,10 +58,9 @@ public interface IGuiList extends IGuiElement {
 
 	void scrollDown();
 
-	@Override
-	boolean onMouseWheel(int mouseX, int mouseY, int direction);
-
 	void scrollUp();
+
+	int getPrevScrollPos();
 
 	void clear();
 
@@ -81,6 +80,12 @@ public interface IGuiList extends IGuiElement {
 
 	int getTotalListHeight();
 
+	IGuiScrollbar getAttachedScrollbar();
+
+	IGuiList setAttachedScrollbar(IGuiScrollbar scrollbar);
+
 	IGuiList attachScrollbar(IGuiScrollbar scrollbar);
+
+	IGuiList generateScrollbar();
 
 }
