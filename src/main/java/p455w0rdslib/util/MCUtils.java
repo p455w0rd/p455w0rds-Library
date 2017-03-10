@@ -1,8 +1,11 @@
 package p455w0rdslib.util;
 
+import java.io.File;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -36,6 +39,15 @@ public class MCUtils {
 	@SideOnly(Side.CLIENT)
 	public static Minecraft mc() {
 		return Minecraft.getMinecraft();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static World getWorld() {
+		return mc().theWorld;
+	}
+
+	public File getDataDir() {
+		return mc().mcDataDir;
 	}
 
 }

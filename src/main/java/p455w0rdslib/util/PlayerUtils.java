@@ -32,6 +32,10 @@ import p455w0rdslib.P455w0rdsLib;
  */
 public class PlayerUtils {
 
+	public static EntityPlayer getPlayer() {
+		return MCUtils.mc().thePlayer;
+	}
+
 	public static EntityPlayer getPlayerByContext(MessageContext ctx) {
 		return P455w0rdsLib.PROXY.getPlayer(ctx);
 	}

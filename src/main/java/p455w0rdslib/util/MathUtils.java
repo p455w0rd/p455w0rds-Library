@@ -34,6 +34,10 @@ public class MathUtils {
 		return new Random().nextInt((max - min) + 1) + min;
 	}
 
+	public static boolean between(double min, double value, double max) {
+		return min <= value && value <= max;
+	}
+
 	public static final float SQRT_2 = sqrt(2.0F);
 	/** A table of sin values computed from 0 (inclusive) to 2*pi (exclusive), with steps of 2*PI / 65536. */
 	private static final float[] SIN_TABLE = new float[65536];
@@ -345,7 +349,7 @@ public class MathUtils {
 
 	/**
 	 * Rounds the first parameter up to the next interval of the second parameter.
-	 *  
+	 *
 	 * For instance, {@code roundUp(1, 4)} returns 4; {@code roundUp(0, 4)} returns 0; and {@code roundUp(4, 4)} returns
 	 * 4.
 	 */
@@ -569,7 +573,38 @@ public class MathUtils {
 		}
 
 		MULTIPLY_DE_BRUIJN_BIT_POSITION = new int[] {
-				0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
+				0,
+				1,
+				28,
+				2,
+				29,
+				14,
+				24,
+				3,
+				30,
+				22,
+				20,
+				15,
+				25,
+				17,
+				4,
+				8,
+				31,
+				27,
+				13,
+				23,
+				21,
+				19,
+				16,
+				7,
+				26,
+				12,
+				18,
+				6,
+				11,
+				5,
+				10,
+				9
 		};
 		FRAC_BIAS = Double.longBitsToDouble(4805340802404319232L);
 		ASINE_TAB = new double[257];

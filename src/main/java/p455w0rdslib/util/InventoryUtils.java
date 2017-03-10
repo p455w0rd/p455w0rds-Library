@@ -695,7 +695,7 @@ public class InventoryUtils {
 		if (stack == null || inv.getSizeInventory() <= 0) {
 			return null;
 		}
-		for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
+		for (int slot = 0; slot < inv.getSizeInventory(); ++slot) {
 			if (!inv.isItemValidForSlot(slot, stack)) {
 				return stack;
 			}
@@ -716,8 +716,7 @@ public class InventoryUtils {
 						inv.setInventorySlotContents(slot, copy);
 						inv.markDirty();
 					}
-
-					return null;
+					continue;
 				}
 				else {
 					// copy the stack to not modify the original one
@@ -760,6 +759,42 @@ public class InventoryUtils {
 			}
 		}
 		return stack;
+	}
+
+	@Nullable
+	public static ItemStack addItem(IInventory inv, ItemStack stack) {
+		ItemStack itemstack = stack.copy();
+
+		for (int i = 0; i < inv.getSizeInventory(); ++i) {
+			ItemStack itemstack1 = inv.getStackInSlot(i);
+
+			if (itemstack1 == null) {
+				inv.setInventorySlotContents(i, itemstack);
+				inv.markDirty();
+				return null;
+			}
+
+			if (ItemStack.areItemsEqual(itemstack1, itemstack)) {
+				int j = Math.min(inv.getInventoryStackLimit(), itemstack1.getMaxStackSize());
+				int k = Math.min(itemstack.stackSize, j - itemstack1.stackSize);
+
+				if (k > 0) {
+					itemstack1.stackSize += k;
+					itemstack.stackSize -= k;
+
+					if (itemstack.stackSize <= 0) {
+						inv.markDirty();
+						return null;
+					}
+				}
+			}
+		}
+
+		if (itemstack.stackSize != stack.stackSize) {
+			inv.markDirty();
+		}
+
+		return itemstack;
 	}
 
 }

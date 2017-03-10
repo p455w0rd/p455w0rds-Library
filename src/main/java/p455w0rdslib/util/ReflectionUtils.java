@@ -41,6 +41,12 @@ public class ReflectionUtils {
 		list.put("ySize", "field_147000_g");
 		list.put("rainfall", "field_76751_G");
 		list.put("enableRain", "field_76765_S");
+		list.put("lastDamageSource", "field_189750_bF");
+		list.put("lastDamageStamp", "field_189751_bG");
+		list.put("unloadedEntityList", "field_72997_g");
+		list.put("lastPortalPos", "field_181016_an");
+		list.put("lastPortalVec", "field_181017_ao");
+		list.put("teleportDirection", "field_181018_ap");
 		return list;
 	}
 

@@ -19,4 +19,11 @@ public interface IChunkLoadable {
 	 */
 	String getModID();
 
+	/**
+	 * This method determines chunkloading functionality.<br>
+	 * This is primarily for instances where you might want to have a config option to disable chunk loading of a specific TE.
+	 * @return true if TE should chunkload
+	 */
+	boolean shouldChunkLoad();
+
 }

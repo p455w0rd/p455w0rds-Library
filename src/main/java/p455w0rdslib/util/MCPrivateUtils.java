@@ -19,7 +19,11 @@
 package p455w0rdslib.util;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ListMultimap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -35,6 +39,7 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -43,8 +48,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
@@ -194,6 +207,54 @@ public class MCPrivateUtils {
 
 	public static void setRainEnabled(Biome biome, boolean enableRain) {
 		ReflectionHelper.setPrivateValue(Biome.class, biome, enableRain, ReflectionUtils.determineSRG("enableRain"));
+	}
+
+	public static BiMap<Class<? extends Entity>, EntityRegistration> getEntityClassRegistry() {
+		return ReflectionHelper.getPrivateValue(EntityRegistry.class, EntityRegistry.instance(), "entityClassRegistrations");
+	}
+
+	public static Map<String, ModContainer> getEntityNameRegistry() {
+		return ReflectionHelper.getPrivateValue(EntityRegistry.class, EntityRegistry.instance(), "entityNames");
+	}
+
+	public static ListMultimap<ModContainer, EntityRegistration> getEntityRegistration() {
+		return ReflectionHelper.getPrivateValue(EntityRegistry.class, EntityRegistry.instance(), "entityRegistrations");
+	}
+
+	public static void setLastDamageSource(EntityLivingBase entity, DamageSource source) {
+		ReflectionHelper.setPrivateValue(EntityLivingBase.class, entity, source, ReflectionUtils.determineSRG("lastDamageSource"));
+	}
+
+	public static void setLastDamageStamp(EntityLivingBase entity, long time) {
+		ReflectionHelper.setPrivateValue(EntityLivingBase.class, entity, time, ReflectionUtils.determineSRG("lastDamageStamp"));
+	}
+
+	public static List<Entity> getUnloadedEntityList(World world) {
+		return ReflectionHelper.getPrivateValue(World.class, world, ReflectionUtils.determineSRG("unloadedEntityList"));
+	}
+
+	public static BlockPos getEntityLastPortalPos(Entity entity) {
+		return ReflectionHelper.getPrivateValue(Entity.class, entity, ReflectionUtils.determineSRG("lastPortalPos"));
+	}
+
+	public static void setEntityLastPortalPos(Entity entity, BlockPos pos) {
+		ReflectionHelper.setPrivateValue(Entity.class, entity, pos, ReflectionUtils.determineSRG("lastPortalPos"));
+	}
+
+	public static Vec3d getEntityLastPortalVec(Entity entity) {
+		return ReflectionHelper.getPrivateValue(Entity.class, entity, ReflectionUtils.determineSRG("lastPortalVec"));
+	}
+
+	public static void setEntityLastPortalVec(Entity entity, Vec3d vector) {
+		ReflectionHelper.setPrivateValue(Entity.class, entity, vector, ReflectionUtils.determineSRG("lastPortalVec"));
+	}
+
+	public static EnumFacing getEntityTeleportDirection(Entity entity) {
+		return ReflectionHelper.getPrivateValue(Entity.class, entity, ReflectionUtils.determineSRG("teleportDirection"));
+	}
+
+	public static void setEntityTeleportDirection(Entity entity, EnumFacing direction) {
+		ReflectionHelper.setPrivateValue(Entity.class, entity, direction, ReflectionUtils.determineSRG("teleportDirection"));
 	}
 
 }

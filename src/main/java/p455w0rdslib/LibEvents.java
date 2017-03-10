@@ -88,7 +88,9 @@ public class LibEvents {
 		if (event.getObject() instanceof IChunkLoadable) {
 			TileEntity tile = event.getObject();
 			IChunkLoadable chunkLoader = (IChunkLoadable) tile;
-			event.addCapability(new ResourceLocation(chunkLoader.getModID(), "chunkloader"), new ProviderTE(tile));
+			if (chunkLoader.shouldChunkLoad()) {
+				event.addCapability(new ResourceLocation(chunkLoader.getModID(), "chunkloader"), new ProviderTE(tile));
+			}
 		}
 	}
 

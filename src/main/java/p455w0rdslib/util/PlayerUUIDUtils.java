@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -59,18 +58,8 @@ public class PlayerUUIDUtils {
 
 	private static String fetchPlayerName(final UUID uuid) throws IOException {
 		if (LibRegistry.getNameRegistry().containsKey(uuid)) {
-			Map<UUID, String> test = LibRegistry.getNameRegistry();
 			return LibRegistry.getNameRegistry().get(uuid);
 		}
-		/*
-		if (!ProxiedUtils.isSMP()) {
-			if (ProxiedUtils.isClientSide() && ProxiedUtils.getWorld() != null && ProxiedUtils.getPlayer() != null) {
-				String name = ProxiedUtils.getPlayer().getName();
-				LibRegistry.registerName(uuid, name);
-				return name;
-			}
-		}
-		*/
 		String USERNAME_API_URL = "https://api.mojang.com/user/profiles/%s/names";
 		CharMatcher DASH_MATCHER = CharMatcher.is('-');
 		String uuidString = DASH_MATCHER.removeFrom(uuid.toString());
@@ -120,7 +109,7 @@ public class PlayerUUIDUtils {
 		}
 		if (!ProxiedUtils.isSMP()) {
 			if (ProxiedUtils.isClientSide() && ProxiedUtils.getWorld() != null && ProxiedUtils.getPlayer() != null) {
-				UUID uuid = ProxiedUtils.getPlayer().getUniqueID();
+				UUID uuid = ProxiedUtils.getPlayer().getGameProfile().getId();
 				LibRegistry.registerUUID(name, uuid);
 				return uuid;
 			}
