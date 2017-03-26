@@ -6,10 +6,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import p455w0rdslib.util.MathUtils;
 
 /**
  * Pos3D - a way of performing operations on objects in a three dimensional environment.
@@ -163,7 +163,7 @@ public class Pos3D extends Vec3d {
 		double subX = xCoord - pos.xCoord;
 		double subY = yCoord - pos.yCoord;
 		double subZ = zCoord - pos.zCoord;
-		return MathHelper.sqrt_double(subX * subX + subY * subY + subZ * subZ);
+		return MathUtils.sqrt(subX * subX + subY * subY + subZ * subZ);
 	}
 
 	/**

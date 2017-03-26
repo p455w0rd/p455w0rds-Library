@@ -47,6 +47,7 @@ public class ReflectionUtils {
 		list.put("lastPortalPos", "field_181016_an");
 		list.put("lastPortalVec", "field_181017_ao");
 		list.put("teleportDirection", "field_181018_ap");
+		list.put("entitiesById", "field_175729_l");
 		return list;
 	}
 

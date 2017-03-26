@@ -480,7 +480,7 @@ public class RenderUtils {
 		VertexBuffer vertexbuffer = tessellator.getBuffer();
 		double d0 = totalWorldTime + partialTicks;
 		double d1 = height < 0 ? d0 : -d0;
-		double d2 = MathHelper.frac(d1 * 0.2D - MathHelper.floor_double(d1 * 0.1D));
+		double d2 = MathHelper.frac(d1 * 0.2D - MathUtils.floor(d1 * 0.1D));
 		float f = colors[0];
 		float f1 = colors[1];
 		float f2 = colors[2];
@@ -779,7 +779,7 @@ public class RenderUtils {
 		VertexBuffer vertexbuffer = tessellator.getBuffer();
 		double d0 = totalWorldTime + partialTicks;
 		double d1 = height < 0 ? d0 : -d0;
-		double d2 = MathHelper.frac(d1 * 0.2D - MathHelper.floor_double(d1 * 0.1D));
+		double d2 = MathHelper.frac(d1 * 0.2D - MathUtils.floor(d1 * 0.1D));
 		float f = colors[0];
 		float f1 = colors[1];
 		float f2 = colors[2];
@@ -1019,13 +1019,13 @@ public class RenderUtils {
 		if (entityName != null && !entityName.isEmpty()) {
 			Entity entity = null;
 			if (entityNBT != null) {
-				entity = EntityList.createEntityFromNBT(entityNBT, Minecraft.getMinecraft().theWorld);
+				entity = EntityList.createEntityFromNBT(entityNBT, EasyMappings.world());
 			}
 			else {
 				int id = EntityList.getIDFromString(entityName);
 				Class<? extends Entity> clazz = EntityList.getClassFromID(id);
 				try {
-					entity = clazz.getConstructor(World.class).newInstance(Minecraft.getMinecraft().theWorld);
+					entity = clazz.getConstructor(World.class).newInstance(EasyMappings.world());
 				}
 				catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				}

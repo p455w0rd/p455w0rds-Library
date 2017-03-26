@@ -326,12 +326,12 @@ public class GuiUtils {
 	}
 
 	public static void drawSlot(GuiContainer gui, Slot slotIn) {
-		int i = slotIn.xDisplayPosition;
-		int j = slotIn.yDisplayPosition;
+		int i = EasyMappings.slotPosX(slotIn);
+		int j = EasyMappings.slotPosY(slotIn);
 		ItemStack itemstack = slotIn.getStack();
 		boolean flag = false;
 		boolean flag1 = (slotIn == MCPrivateUtils.getGuiClickedSlot(gui)) && (MCPrivateUtils.getGuiDraggedStack(gui) != null) && (!MCPrivateUtils.getGuiIsRightMouseClick(gui));
-		ItemStack itemstack1 = mc().thePlayer.inventory.getItemStack();
+		ItemStack itemstack1 = EasyMappings.player().inventory.getItemStack();
 		String s = null;
 		if ((slotIn == MCPrivateUtils.getGuiClickedSlot(gui)) && (MCPrivateUtils.getGuiDraggedStack(gui) != null) && (MCPrivateUtils.getGuiIsRightMouseClick(gui)) && (itemstack != null)) {
 			itemstack = itemstack.copy();
@@ -397,7 +397,7 @@ public class GuiUtils {
 	}
 
 	public static void updateDragSplitting(GuiContainer gui) {
-		ItemStack itemstack = mc().thePlayer.inventory.getItemStack();
+		ItemStack itemstack = EasyMappings.player().inventory.getItemStack();
 
 		if (itemstack != null && MCPrivateUtils.getGuiDragSplitting(gui)) {
 			MCPrivateUtils.setGuiDragSplittingRemnant(gui, itemstack.stackSize);

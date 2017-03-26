@@ -17,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import p455w0rdslib.api.gui.IGuiElement;
 import p455w0rdslib.api.gui.IModularGui;
+import p455w0rdslib.util.EasyMappings;
 import p455w0rdslib.util.GuiUtils;
 
 /**
@@ -204,7 +205,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	public boolean isMouseOverSlot(Slot slotIn, int mouseX, int mouseY) {
-		return isMouseOver(slotIn.xDisplayPosition, slotIn.yDisplayPosition, 16, 16, mouseX, mouseY);
+		return isMouseOver(EasyMappings.slotPosX(slotIn), EasyMappings.slotPosY(slotIn), 16, 16, mouseX, mouseY);
 	}
 
 	@Override
@@ -219,7 +220,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 
 	@Override
 	protected void renderToolTip(ItemStack stack, int x, int y) {
-		List<String> list = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
+		List<String> list = stack.getTooltip(EasyMappings.player(), mc.gameSettings.advancedItemTooltips);
 
 		for (int i = 0; i < list.size(); ++i) {
 			if (i == 0) {

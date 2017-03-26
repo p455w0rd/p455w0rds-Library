@@ -16,7 +16,7 @@ public class SittableUtil {
 	public static boolean sitOnBlock(World par1World, double x, double y, double z, EntityPlayer par5EntityPlayer, double par6) {
 		if (!checkForExistingEntity(par1World, x, y, z, par5EntityPlayer)) {
 			EntitySittableBlock nemb = new EntitySittableBlock(par1World, x, y, z, par6);
-			par1World.spawnEntityInWorld(nemb);
+			EasyMappings.spawn(par1World, par5EntityPlayer);
 			par5EntityPlayer.startRiding(nemb);
 		}
 		return true;
@@ -25,7 +25,7 @@ public class SittableUtil {
 	public static boolean sitOnBlockWithRotationOffset(World par1World, double x, double y, double z, EntityPlayer par5EntityPlayer, double par6, int metadata, double offset) {
 		if (!checkForExistingEntity(par1World, x, y, z, par5EntityPlayer)) {
 			EntitySittableBlock nemb = new EntitySittableBlock(par1World, x, y, z, par6, metadata, offset);
-			par1World.spawnEntityInWorld(nemb);
+			EasyMappings.spawn(par1World, par5EntityPlayer);
 			par5EntityPlayer.startRiding(nemb);
 		}
 		return true;

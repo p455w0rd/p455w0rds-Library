@@ -43,7 +43,7 @@ public class MCUtils {
 
 	@SideOnly(Side.CLIENT)
 	public static World getWorld() {
-		return mc().theWorld;
+		return EasyMappings.world();
 	}
 
 	public File getDataDir() {

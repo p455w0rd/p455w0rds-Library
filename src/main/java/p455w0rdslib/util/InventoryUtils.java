@@ -449,8 +449,8 @@ public class InventoryUtils {
 			}
 
 			@Override
-			public boolean isUseableByPlayer(EntityPlayer player) {
-				return inventory.isUseableByPlayer(player);
+			public boolean isUsableByPlayer(EntityPlayer player) {
+				return inventory.isUsableByPlayer(player);
 			}
 
 			@Override
@@ -544,8 +544,8 @@ public class InventoryUtils {
 			}
 
 			@Override
-			public boolean isUseableByPlayer(EntityPlayer player) {
-				return inventory.isUseableByPlayer(player);
+			public boolean isUsableByPlayer(EntityPlayer player) {
+				return inventory.isUsableByPlayer(player);
 			}
 
 			@Override

@@ -1,6 +1,5 @@
 package p455w0rdslib.util;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -20,16 +19,10 @@ public class NetworkUtils {
 
 	public static ItemStack readItemStack(ByteBuf dataIn) {
 		PacketBuffer buf = new PacketBuffer(dataIn);
-		try {
-			NBTTagCompound nbt = buf.readNBTTagCompoundFromBuffer();
-			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt);
-			stack.stackSize = buf.readInt();
-			return stack;
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+		NBTTagCompound nbt = EasyMappings.readNBT(buf);
+		ItemStack stack = ItemStack.loadItemStackFromNBT(nbt);
+		stack.stackSize = buf.readInt();
+		return stack;
 	}
 
 	public static void writeItemStack(ByteBuf dataOut, ItemStack itemStack) {
@@ -37,7 +30,7 @@ public class NetworkUtils {
 		NBTTagCompound nbt = new NBTTagCompound();
 		itemStack.writeToNBT(nbt);
 		try {
-			buf.writeNBTTagCompoundToBuffer(nbt);
+			EasyMappings.writeNBT(nbt, buf);
 			buf.writeInt(itemStack.stackSize);
 		}
 		catch (Exception e) {

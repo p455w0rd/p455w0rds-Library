@@ -33,7 +33,7 @@ import p455w0rdslib.P455w0rdsLib;
 public class PlayerUtils {
 
 	public static EntityPlayer getPlayer() {
-		return MCUtils.mc().thePlayer;
+		return EasyMappings.player();
 	}
 
 	public static EntityPlayer getPlayerByContext(MessageContext ctx) {
@@ -124,7 +124,7 @@ public class PlayerUtils {
 		List<UUID> uuidList = Lists.newArrayList();
 		if (server != null) {
 			PlayerProfileCache playerCache = server.getPlayerProfileCache();
-			String[] usernames = server.getAllUsernames();
+			String[] usernames = EasyMappings.getNames(server);
 			for (String username : usernames) {
 				uuidList.add(playerCache.getGameProfileForUsername(username).getId());
 			}

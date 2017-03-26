@@ -50,6 +50,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IntHashMap;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -255,6 +256,10 @@ public class MCPrivateUtils {
 
 	public static void setEntityTeleportDirection(Entity entity, EnumFacing direction) {
 		ReflectionHelper.setPrivateValue(Entity.class, entity, direction, ReflectionUtils.determineSRG("teleportDirection"));
+	}
+
+	public static IntHashMap<Entity> getEntitiesForWorld(World world) {
+		return ReflectionHelper.getPrivateValue(World.class, world, ReflectionUtils.determineSRG("entitiesById"));
 	}
 
 }

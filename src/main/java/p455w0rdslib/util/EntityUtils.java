@@ -31,7 +31,7 @@ public class EntityUtils {
 		int blockX = MathUtils.floor(entity.posX);
 		int blockY = MathUtils.floor(entity.getEntityBoundingBox().minY - depth);
 		int blockZ = MathUtils.floor(entity.posZ);
-		return entity.worldObj.getBlockState(new BlockPos(blockX, blockY, blockZ));
+		return EasyMappings.world(entity).getBlockState(new BlockPos(blockX, blockY, blockZ));
 	}
 
 	public static Block getBlockBelowEntity(Entity entity, int depth) {
@@ -42,7 +42,7 @@ public class EntityUtils {
 		int blockX = MathUtils.floor(entity.posX);
 		int blockY = MathUtils.floor(entity.getEntityBoundingBox().maxY + depth);
 		int blockZ = MathUtils.floor(entity.posZ);
-		return entity.worldObj.getBlockState(new BlockPos(blockX, blockY, blockZ));
+		return EasyMappings.world(entity).getBlockState(new BlockPos(blockX, blockY, blockZ));
 	}
 
 	public static Block getBlockAboveEntity(Entity entity, int depth) {

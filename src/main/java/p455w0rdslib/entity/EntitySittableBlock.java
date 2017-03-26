@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import p455w0rdslib.util.EasyMappings;
 
 /**
  * @author p455w0rd
@@ -68,10 +69,10 @@ public class EntitySittableBlock extends Entity {
 
 	@Override
 	public void onEntityUpdate() {
-		if (!worldObj.isRemote) {
-			if (!isBeingRidden() || worldObj.isAirBlock(new BlockPos(blockPosX, blockPosY, blockPosZ))) {
+		if (!EasyMappings.world(this).isRemote) {
+			if (!isBeingRidden() || EasyMappings.world(this).isAirBlock(new BlockPos(blockPosX, blockPosY, blockPosZ))) {
 				setDead();
-				worldObj.updateComparatorOutputLevel(getPosition(), worldObj.getBlockState(getPosition()).getBlock());
+				EasyMappings.world(this).updateComparatorOutputLevel(getPosition(), EasyMappings.world(this).getBlockState(getPosition()).getBlock());
 			}
 		}
 	}

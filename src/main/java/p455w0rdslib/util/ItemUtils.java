@@ -57,7 +57,7 @@ public class ItemUtils {
 		if (stack.hasTagCompound()) {
 			entityitem.getEntityItem().setTagCompound(stack.getTagCompound().copy());
 		}
-		worldObj.spawnEntityInWorld(entityitem);
+		EasyMappings.spawn(worldObj, entityitem);
 	}
 
 	public static boolean readBoolean(ItemStack is, String key) {
