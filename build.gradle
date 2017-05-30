@@ -13,16 +13,16 @@ buildscript {
 
 apply plugin: "net.minecraftforge.gradle.forge"
 
-version = "1.10.2-" + getVersion("VERSION")
+version = "1.11.2-" + getVersion("VERSION")
 group = "p455w0rdslib"
 archivesBaseName = "p455w0rdslib"
 sourceCompatibility = targetCompatibility = "1.8"
 
 minecraft {
-	version = "1.10.2-12.18.3.2185"
+	version = "1.11.2-13.20.0.2310"
 	runDir = "run"
 	
-	mappings = "stable_29"
+	mappings = "snapshot_nodoc_20170530"
 	useDepAts = false
 }
 
