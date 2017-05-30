@@ -13,6 +13,7 @@ import net.minecraft.network.play.server.SPacketSetPassengers;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeHooks;
 
@@ -216,7 +217,7 @@ public class TeleportUtils {
 		entity.setLocationAndAngles(xCoord, yCoord, zCoord, yaw, pitch);
 		sourceWorld.updateEntityWithOptionalForce(entity, false);
 
-		Entity newEntity = EntityList.createEntityByName(EntityList.getEntityString(entity), targetWorld);
+		Entity newEntity = EntityList.createEntityByIDFromName(new ResourceLocation(EntityList.getEntityString(entity)), targetWorld);
 		if (newEntity != null) {
 			//newEntity = EntityUtils.cloneEntity(entity);
 			//newEntity.copyDataFromOld(entity);

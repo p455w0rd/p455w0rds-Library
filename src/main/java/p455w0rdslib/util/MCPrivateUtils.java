@@ -26,7 +26,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ListMultimap;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -78,7 +77,7 @@ public class MCPrivateUtils {
 		ReflectionHelper.setPrivateValue(Minecraft.class, Minecraft.getMinecraft(), packList, ReflectionUtils.determineSRG("defaultResourcePacks"));
 	}
 
-	public static List<LayerRenderer<AbstractClientPlayer>> getLayerRenderers(RenderPlayer renderPlayer) {
+	public static List<LayerRenderer<? extends EntityLivingBase>> getLayerRenderers(RenderLivingBase<?> renderPlayer) {
 		return ReflectionHelper.getPrivateValue(RenderLivingBase.class, renderPlayer, ReflectionUtils.determineSRG("layerRenderers"));
 	}
 

@@ -335,7 +335,7 @@ public class GuiUtils {
 		String s = null;
 		if ((slotIn == MCPrivateUtils.getGuiClickedSlot(gui)) && (MCPrivateUtils.getGuiDraggedStack(gui) != null) && (MCPrivateUtils.getGuiIsRightMouseClick(gui)) && (itemstack != null)) {
 			itemstack = itemstack.copy();
-			itemstack.stackSize /= 2;
+			itemstack.setCount(itemstack.getCount() / 2);
 		}
 		else if ((MCPrivateUtils.getGuiDragSplitting(gui)) && (MCPrivateUtils.getGuiDragSplittingSlots(gui).contains(slotIn)) && (itemstack1 != null)) {
 			if (MCPrivateUtils.getGuiDragSplittingSlots(gui).size() == 1) {
@@ -344,14 +344,14 @@ public class GuiUtils {
 			if ((Container.canAddItemToSlot(slotIn, itemstack1, true)) && (gui.inventorySlots.canDragIntoSlot(slotIn))) {
 				itemstack = itemstack1.copy();
 				flag = true;
-				Container.computeStackSize(MCPrivateUtils.getGuiDragSplittingSlots(gui), MCPrivateUtils.getGuiDragSplittingLimit(gui), itemstack, slotIn.getStack() == null ? 0 : slotIn.getStack().stackSize);
-				if (itemstack.stackSize > itemstack.getMaxStackSize()) {
+				Container.computeStackSize(MCPrivateUtils.getGuiDragSplittingSlots(gui), MCPrivateUtils.getGuiDragSplittingLimit(gui), itemstack, slotIn.getStack() == null ? 0 : slotIn.getStack().getCount());
+				if (itemstack.getCount() > itemstack.getMaxStackSize()) {
 					s = TextFormatting.YELLOW + "" + itemstack.getMaxStackSize();
-					itemstack.stackSize = itemstack.getMaxStackSize();
+					itemstack.setCount(itemstack.getMaxStackSize());
 				}
-				if (itemstack.stackSize > slotIn.getItemStackLimit(itemstack)) {
+				if (itemstack.getCount() > slotIn.getItemStackLimit(itemstack)) {
 					s = TextFormatting.YELLOW + "" + slotIn.getItemStackLimit(itemstack);
-					itemstack.stackSize = slotIn.getItemStackLimit(itemstack);
+					itemstack.setCount(slotIn.getItemStackLimit(itemstack));
 				}
 			}
 			else {
@@ -400,22 +400,22 @@ public class GuiUtils {
 		ItemStack itemstack = EasyMappings.player().inventory.getItemStack();
 
 		if (itemstack != null && MCPrivateUtils.getGuiDragSplitting(gui)) {
-			MCPrivateUtils.setGuiDragSplittingRemnant(gui, itemstack.stackSize);
+			MCPrivateUtils.setGuiDragSplittingRemnant(gui, itemstack.getCount());
 
 			for (Slot slot : MCPrivateUtils.getGuiDragSplittingSlots(gui)) {
 				ItemStack itemstack1 = itemstack.copy();
-				int i = slot.getStack() == null ? 0 : slot.getStack().stackSize;
+				int i = slot.getStack() == null ? 0 : slot.getStack().getCount();
 				Container.computeStackSize(MCPrivateUtils.getGuiDragSplittingSlots(gui), MCPrivateUtils.getGuiDragSplittingLimit(gui), itemstack1, i);
 
-				if (itemstack1.stackSize > itemstack1.getMaxStackSize()) {
-					itemstack1.stackSize = itemstack1.getMaxStackSize();
+				if (itemstack1.getCount() > itemstack1.getMaxStackSize()) {
+					itemstack1.setCount(itemstack1.getMaxStackSize());
 				}
 
-				if (itemstack1.stackSize > slot.getItemStackLimit(itemstack1)) {
-					itemstack1.stackSize = slot.getItemStackLimit(itemstack1);
+				if (itemstack1.getCount() > slot.getItemStackLimit(itemstack1)) {
+					itemstack1.setCount(slot.getItemStackLimit(itemstack1));
 				}
 
-				MCPrivateUtils.setGuiDragSplittingRemnant(gui, MCPrivateUtils.getGuiDragSplittingRemnant(gui) - (itemstack1.stackSize - i));
+				MCPrivateUtils.setGuiDragSplittingRemnant(gui, MCPrivateUtils.getGuiDragSplittingRemnant(gui) - (itemstack1.getCount() - i));
 			}
 		}
 	}

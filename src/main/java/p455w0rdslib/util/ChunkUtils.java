@@ -31,7 +31,7 @@ public class ChunkUtils {
 	}
 
 	public static ChunkPos getChunkPos(World world, BlockPos pos) {
-		return world.getChunkFromBlockCoords(pos).getChunkCoordIntPair();
+		return world.getChunkFromBlockCoords(pos).getPos();
 	}
 
 	public static class Callback implements LoadingCallback {

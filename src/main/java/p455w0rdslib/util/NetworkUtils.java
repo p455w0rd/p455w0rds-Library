@@ -20,8 +20,8 @@ public class NetworkUtils {
 	public static ItemStack readItemStack(ByteBuf dataIn) {
 		PacketBuffer buf = new PacketBuffer(dataIn);
 		NBTTagCompound nbt = EasyMappings.readNBT(buf);
-		ItemStack stack = ItemStack.loadItemStackFromNBT(nbt);
-		stack.stackSize = buf.readInt();
+		ItemStack stack = new ItemStack(nbt);
+		stack.setCount(buf.readInt());
 		return stack;
 	}
 
@@ -31,7 +31,7 @@ public class NetworkUtils {
 		itemStack.writeToNBT(nbt);
 		try {
 			EasyMappings.writeNBT(nbt, buf);
-			buf.writeInt(itemStack.stackSize);
+			buf.writeInt(itemStack.getCount());
 		}
 		catch (Exception e) {
 			e.printStackTrace();

@@ -108,7 +108,7 @@ public class ItemUtils {
 	}
 
 	public static ItemStack readStack(NBTTagCompound nbtTC, String key) {
-		return (nbtTC.hasKey(key) ? ItemStack.loadItemStackFromNBT(nbtTC) : null);
+		return (nbtTC.hasKey(key) ? new ItemStack(nbtTC) : null);
 	}
 
 	public static CapabilityDispatcher getCaps(ItemStack stack) {
@@ -136,7 +136,7 @@ public class ItemUtils {
 	}
 
 	public static boolean areStacksSameSize(ItemStack stackA, ItemStack stackB) {
-		return (stackA == null && stackB == null) || (stackA != null && stackB != null && stackA.stackSize == stackB.stackSize);
+		return (stackA == null && stackB == null) || (stackA != null && stackB != null && stackA.getCount() == stackB.getCount());
 	}
 
 }

@@ -78,7 +78,7 @@ public class EntityUtils {
 			clonedEntity = EntityList.createEntityFromNBT(entityNBT, MCUtils.getWorld());
 		}
 		else {
-			Class<? extends Entity> clazz = EntityList.NAME_TO_CLASS.get(EntityList.getEntityString(sourceEntity));
+			Class<? extends Entity> clazz = sourceEntity.getClass();
 			try {
 				clonedEntity = clazz.getConstructor(World.class).newInstance(MCUtils.getWorld());
 			}

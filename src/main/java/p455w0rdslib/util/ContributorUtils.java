@@ -13,10 +13,11 @@ import org.apache.commons.io.IOUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerCape;
 import net.minecraft.client.renderer.entity.layers.LayerElytra;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rdslib.LibGlobals;
@@ -113,11 +114,11 @@ public class ContributorUtils {
 	}
 
 	public static void addWings(LayerContributorWings.Type type) {
-		for (RenderPlayer renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
-			List<LayerRenderer<AbstractClientPlayer>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
+		for (RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
+			List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
 			for (int i = 0; i < r.size(); ++i) {
 				if (r.get(i) instanceof LayerElytra || r.get(i) instanceof LayerCape) {
-					renderPlayer.removeLayer(r.get(i));
+					r.remove(i);
 				}
 			}
 			renderPlayer.addLayer(layerWings = new LayerContributorWings());

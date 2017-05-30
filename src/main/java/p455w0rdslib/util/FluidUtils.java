@@ -6,28 +6,16 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fluids.capability.wrappers.FluidHandlerWrapper;
 
 /**
  * @author p455w0rd
  *
  */
-@SuppressWarnings("deprecation")
 public class FluidUtils {
 
 	public static IFluidHandler getFluidHandler(TileEntity te, EnumFacing facing) {
 		if (te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing)) {
 			return te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing);
-		}
-		else if (te instanceof net.minecraftforge.fluids.IFluidHandler) {
-			return getWrappedFluidHandler(te, facing);
-		}
-		return null;
-	}
-
-	public static IFluidHandler getWrappedFluidHandler(TileEntity te, EnumFacing facing) {
-		if (te instanceof net.minecraftforge.fluids.IFluidHandler) {
-			return new FluidHandlerWrapper((net.minecraftforge.fluids.IFluidHandler) te, facing);
 		}
 		return null;
 	}

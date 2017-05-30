@@ -12,6 +12,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -34,7 +35,7 @@ public class InventoryUtils {
 	public static ItemStack getArmorPiece(EntityEquipmentSlot slot) {
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			EntityPlayer player = P455w0rdsLib.PROXY.getPlayer();
-			ItemStack[] armorStack = player.inventory.armorInventory;
+			NonNullList<ItemStack> armorStack = player.inventory.armorInventory;
 			int slotNum = 0;
 			switch (slot) {
 			case HEAD:
@@ -51,7 +52,7 @@ public class InventoryUtils {
 				slotNum = 0;
 				break;
 			}
-			return armorStack[slotNum];
+			return armorStack.get(slotNum);
 		}
 		return null;
 	}
@@ -167,16 +168,16 @@ public class InventoryUtils {
 		}
 		int openSlot = -1;
 		for (int i = startIndex; i <= endIndex; i++) {
-			if (ItemStack.areItemStacksEqual(stack, inventory[i]) && inventory[i].getMaxStackSize() > inventory[i].stackSize) {
-				int hold = inventory[i].getMaxStackSize() - inventory[i].stackSize;
-				if (hold >= stack.stackSize) {
-					inventory[i].stackSize += stack.stackSize;
+			if (ItemStack.areItemStacksEqual(stack, inventory[i]) && inventory[i].getMaxStackSize() > inventory[i].getCount()) {
+				int hold = inventory[i].getMaxStackSize() - inventory[i].getCount();
+				if (hold >= stack.getCount()) {
+					inventory[i].grow(stack.getCount());
 					stack = null;
 					return true;
 				}
 				else {
-					stack.stackSize -= hold;
-					inventory[i].stackSize += hold;
+					stack.shrink(hold);
+					inventory[i].grow(hold);
 				}
 			}
 			else if (inventory[i] == null && openSlot == -1) {
@@ -200,7 +201,7 @@ public class InventoryUtils {
 		if (stack == null || inventory == null) {
 			return null;
 		}
-		int stackSize = stack.stackSize;
+		int stackSize = stack.getCount();
 		if (inventory instanceof ISidedInventory) {
 			ISidedInventory sidedInv = (ISidedInventory) inventory;
 			int slots[] = sidedInv.getSlotsForFace(side);
@@ -236,7 +237,7 @@ public class InventoryUtils {
 				}
 			}
 		}
-		if (stack == null || stack.stackSize != stackSize) {
+		if (stack == null || stack.getCount() != stackSize) {
 			inventory.markDirty();
 		}
 		return stack;
@@ -300,7 +301,7 @@ public class InventoryUtils {
 			}
 			else {
 				ItemStack slotStack = inv.getStackInSlot(i);
-				if (ItemStack.areItemStacksEqual(stack, slotStack) && slotStack.stackSize < slotStack.getMaxStackSize()) {
+				if (ItemStack.areItemStacksEqual(stack, slotStack) && slotStack.getCount() < slotStack.getMaxStackSize()) {
 					hasAvailableSlot = true;
 					break;
 				}
@@ -318,7 +319,7 @@ public class InventoryUtils {
 			}
 			else {
 				ItemStack slotStack = handler.getStackInSlot(i);
-				if (ItemStack.areItemStacksEqual(stack, slotStack) && slotStack.stackSize < slotStack.getMaxStackSize()) {
+				if (ItemStack.areItemStacksEqual(stack, slotStack) && slotStack.getCount() < slotStack.getMaxStackSize()) {
 					hasAvailableSlot = true;
 					break;
 				}
@@ -367,6 +368,11 @@ public class InventoryUtils {
 			public void setStackInSlot(int slot, ItemStack stack) {
 				handler.setStackInSlot(slot, stack);
 			}
+
+			@Override
+			public int getSlotLimit(int slot) {
+				return handler.getSlotLimit(slot);
+			}
 		};
 	}
 
@@ -391,6 +397,11 @@ public class InventoryUtils {
 			@Override
 			public ItemStack extractItem(int slot, int amount, boolean simulate) {
 				return handler.extractItem(slot, amount, simulate);
+			}
+
+			@Override
+			public int getSlotLimit(int slot) {
+				return handler.getSlotLimit(slot);
 			}
 
 		};
@@ -486,6 +497,11 @@ public class InventoryUtils {
 			@Override
 			public void clear() {
 				inventory.clear();
+			}
+
+			@Override
+			public boolean isEmpty() {
+				return inventory.isEmpty();
 			}
 
 		};
@@ -598,24 +614,29 @@ public class InventoryUtils {
 				return inventory.canExtractItem(index, stack, direction);
 			}
 
+			@Override
+			public boolean isEmpty() {
+				return inventory.isEmpty();
+			}
+
 		};
 	}
 
 	public static ItemStack insertMergeable(IInventory inventory, int slot, ItemStack stack, ItemStack existingStack) {
 		int stackLimit = Math.min(inventory.getInventoryStackLimit(), stack.getMaxStackSize());
-		if (existingStack.stackSize >= stackLimit) {
+		if (existingStack.getCount() >= stackLimit) {
 			return stack;
 		}
-		if (stack.stackSize + existingStack.stackSize > stackLimit) {
-			int stackDiff = stackLimit - existingStack.stackSize;
-			existingStack.stackSize = stackLimit;
-			stack.stackSize -= stackDiff;
+		if (stack.getCount() + existingStack.getCount() > stackLimit) {
+			int stackDiff = stackLimit - existingStack.getCount();
+			existingStack.setCount(stackLimit);
+			stack.shrink(stackDiff);
 			inventory.setInventorySlotContents(slot, existingStack);
 			return stack;
 		}
-		existingStack.stackSize += stack.stackSize;
+		existingStack.grow(stack.getCount());
 		inventory.setInventorySlotContents(slot, existingStack);
-		return stackLimit >= stack.stackSize ? null : stack.splitStack(stack.stackSize - stackLimit);
+		return stackLimit >= stack.getCount() ? null : stack.splitStack(stack.getCount() - stackLimit);
 	}
 
 	public static ItemStack insertEmpty(IInventory inventory, int slot, ItemStack stack) {
@@ -624,7 +645,7 @@ public class InventoryUtils {
 		}
 		int stackLimit = inventory.getInventoryStackLimit();
 		inventory.setInventorySlotContents(slot, stack.copy());
-		return stackLimit >= stack.stackSize ? null : stack.splitStack(stack.stackSize - stackLimit);
+		return stackLimit >= stack.getCount() ? null : stack.splitStack(stack.getCount() - stackLimit);
 	}
 
 	public static ItemStack insertStack(TileEntity tile, ItemStack stack) {
@@ -679,8 +700,8 @@ public class InventoryUtils {
 				if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot)) {
 					continue;
 				}
-				m = Math.min(stack.getMaxStackSize(), inv.getStackInSlot(slot).getMaxStackSize()) - stackInSlot.stackSize;
-				if (stack.stackSize < m) {
+				m = Math.min(stack.getMaxStackSize(), inv.getStackInSlot(slot).getMaxStackSize()) - stackInSlot.getCount();
+				if (stack.getCount() < m) {
 					return true;
 				}
 			}
@@ -707,12 +728,12 @@ public class InventoryUtils {
 					return stack;
 				}
 
-				m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - stackInSlot.stackSize;
+				m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - stackInSlot.getCount();
 
-				if (stack.stackSize <= m) {
+				if (stack.getCount() <= m) {
 					if (!simulate) {
 						ItemStack copy = stack.copy();
-						copy.stackSize += stackInSlot.stackSize;
+						copy.grow(stackInSlot.getCount());
 						inv.setInventorySlotContents(slot, copy);
 						inv.markDirty();
 					}
@@ -723,20 +744,20 @@ public class InventoryUtils {
 					stack = stack.copy();
 					if (!simulate) {
 						ItemStack copy = stack.splitStack(m);
-						copy.stackSize += stackInSlot.stackSize;
+						copy.grow(stackInSlot.getCount());
 						inv.setInventorySlotContents(slot, copy);
 						inv.markDirty();
 						return stack;
 					}
 					else {
-						stack.stackSize -= m;
+						stack.shrink(m);
 						return stack;
 					}
 				}
 			}
 			else {
 				m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit());
-				if (m < stack.stackSize) {
+				if (m < stack.getCount()) {
 					// copy the stack to not modify the original one
 					stack = stack.copy();
 					if (!simulate) {
@@ -745,7 +766,7 @@ public class InventoryUtils {
 						return stack;
 					}
 					else {
-						stack.stackSize -= m;
+						stack.shrink(m);
 						return stack;
 					}
 				}
@@ -776,13 +797,13 @@ public class InventoryUtils {
 
 			if (ItemStack.areItemsEqual(itemstack1, itemstack)) {
 				int j = Math.min(inv.getInventoryStackLimit(), itemstack1.getMaxStackSize());
-				int k = Math.min(itemstack.stackSize, j - itemstack1.stackSize);
+				int k = Math.min(itemstack.getCount(), j - itemstack1.getCount());
 
 				if (k > 0) {
-					itemstack1.stackSize += k;
-					itemstack.stackSize -= k;
+					itemstack1.grow(k);
+					itemstack.shrink(k);
 
-					if (itemstack.stackSize <= 0) {
+					if (itemstack.getCount() <= 0) {
 						inv.markDirty();
 						return null;
 					}
@@ -790,7 +811,7 @@ public class InventoryUtils {
 			}
 		}
 
-		if (itemstack.stackSize != stack.stackSize) {
+		if (itemstack.getCount() != stack.getCount()) {
 			inv.markDirty();
 		}
 

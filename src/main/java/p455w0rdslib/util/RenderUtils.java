@@ -90,7 +90,7 @@ public class RenderUtils {
 	}
 
 	public static FontRenderer getFontRenderer() {
-		return mc().fontRendererObj;
+		return mc().fontRenderer;
 	}
 
 	public static TextureManager getRenderEngine() {
@@ -1022,7 +1022,7 @@ public class RenderUtils {
 				entity = EntityList.createEntityFromNBT(entityNBT, EasyMappings.world());
 			}
 			else {
-				int id = EntityList.getIDFromString(entityName);
+				int id = EntityList.getID(EntityList.getClass(new ResourceLocation(entityName)));
 				Class<? extends Entity> clazz = EntityList.getClassFromID(id);
 				try {
 					entity = clazz.getConstructor(World.class).newInstance(EasyMappings.world());

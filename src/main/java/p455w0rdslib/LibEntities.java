@@ -1,5 +1,6 @@
 package p455w0rdslib;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import p455w0rdslib.entity.EntitySittableBlock;
 
@@ -16,7 +17,7 @@ public class LibEntities {
 	}
 
 	public static void init() {
-		EntityRegistry.registerModEntity(EntitySittableBlock.class, "ArmorStand", nextID(), P455w0rdsLib.INSTANCE, 80, 3, false);
+		EntityRegistry.registerModEntity(new ResourceLocation(LibGlobals.MODID, "sitting_entity"), EntitySittableBlock.class, "ArmorStand", nextID(), P455w0rdsLib.INSTANCE, 80, 3, false);
 	}
 
 }
