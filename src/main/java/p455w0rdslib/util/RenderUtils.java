@@ -1,5 +1,14 @@
 package p455w0rdslib.util;
 
+import static net.minecraft.client.renderer.GlStateManager.blendFunc;
+import static net.minecraft.client.renderer.GlStateManager.enableBlend;
+import static net.minecraft.client.renderer.GlStateManager.enableDepth;
+import static net.minecraft.client.renderer.GlStateManager.enableRescaleNormal;
+import static net.minecraft.client.renderer.GlStateManager.popMatrix;
+import static net.minecraft.client.renderer.GlStateManager.pushMatrix;
+import static net.minecraft.client.renderer.GlStateManager.rotate;
+import static net.minecraft.client.renderer.GlStateManager.scale;
+
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -24,28 +33,35 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityBeaconRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -77,8 +93,24 @@ public class RenderUtils {
 		return MCUtils.mc();
 	}
 
+	public static BlockModelShapes getBlockModelShapes() {
+		return getBlockRendererDispatcher().getBlockModelShapes();
+	}
+
+	public static ItemRenderer getItemRenderer() {
+		return mc().getItemRenderer();
+	}
+
+	public static RenderPlayer getRenderPlayer(AbstractClientPlayer player) {
+		return (RenderPlayer) getRenderManager().getEntityRenderObject(player);
+	}
+
 	public static RenderItem getRenderItem() {
 		return mc().getRenderItem();
+	}
+
+	public static BlockRendererDispatcher getBlockRendererDispatcher() {
+		return mc().getBlockRendererDispatcher();
 	}
 
 	public static RenderManager getRenderManager() {
@@ -95,6 +127,18 @@ public class RenderUtils {
 
 	public static TextureManager getRenderEngine() {
 		return mc().renderEngine;
+	}
+
+	public static TextureMap getBlocksTextureMap() {
+		return mc().getTextureMapBlocks();
+	}
+
+	public static TextureAtlasSprite getSprite(String spritePath) {
+		return getBlocksTextureMap().getAtlasSprite(spritePath);
+	}
+
+	public static TextureAtlasSprite getSprite(ResourceLocation location) {
+		return getSprite(location.toString());
 	}
 
 	public static float getPartialTicks() {
@@ -1041,40 +1085,7 @@ public class RenderUtils {
 	}
 
 	public static void renderEntity(Entity entity, int xPos, int yPos, float scale) {
-		GlStateManager.pushMatrix();
-		GlStateManager.color(1f, 1f, 1f);
-		GlStateManager.enableRescaleNormal();
-		GlStateManager.enableColorMaterial();
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(xPos + 8, yPos + 24, 50F);
-		GlStateManager.scale(-scale, scale, scale);
-		GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
-		GlStateManager.rotate(135F, 0.0F, 1.0F, 0.0F);
-		RenderHelper.enableStandardItemLighting();
-		GlStateManager.rotate(-135F, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(0.0F, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(0.0F, 1.0F, 0.0F, 0.0F);
-		//        entity.renderYawOffset = entity.rotationYaw = entity.prevRotationYaw = entity.prevRotationYawHead = entity.rotationYawHead = 0;//this.rotateTurret;
-		entity.rotationPitch = 0.0F;
-		GlStateManager.translate(0.0F, (float) entity.getYOffset(), 0.0F);
-		Minecraft.getMinecraft().getRenderManager().playerViewY = 180F;
-		try {
-			Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
-		}
-		catch (Exception e) {
-		}
-		GlStateManager.popMatrix();
-		RenderHelper.disableStandardItemLighting();
-
-		GlStateManager.disableRescaleNormal();
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		GlStateManager.disableLighting();
-		GlStateManager.popMatrix();
-		GlStateManager.enableDepth();
-		GlStateManager.disableColorMaterial();
-		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-		GlStateManager.disableTexture2D();
-		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+		renderEntity(entity, xPos, yPos, scale, 0.0f);
 	}
 
 	public static void renderLivingEntity(int posX, int posY, int scale, float mouseX, float mouseY, EntityLivingBase ent) {
@@ -1115,7 +1126,7 @@ public class RenderUtils {
 		GlStateManager.translate(0.0F, 0.0F, 0.0F);
 		RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
 		rendermanager.setPlayerViewY(180.0F);
-		rendermanager.setRenderShadow(false);
+		//rendermanager.setRenderShadow(false);
 		rendermanager.doRenderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
 		rendermanager.setRenderShadow(true);
 		/*
@@ -1131,6 +1142,76 @@ public class RenderUtils {
 		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
 		GlStateManager.disableTexture2D();
 		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+	}
+
+	public static void renderEntity(Entity entity, int xPos, int yPos, float scale, float rot) {
+		GlStateManager.pushMatrix();
+		GlStateManager.color(1f, 1f, 1f);
+		GlStateManager.enableRescaleNormal();
+		GlStateManager.enableColorMaterial();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(xPos + 8, yPos + 24, 50F);
+		GlStateManager.scale(-scale, scale, scale);
+		GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
+		GlStateManager.rotate(135F, 0.0F, 1.0F, 0.0F);
+		RenderHelper.enableStandardItemLighting();
+		GlStateManager.rotate(-135F, 0.0F, 1.0F, 0.0F);
+		GlStateManager.rotate(rot, 0.0F, 1.0F, 0.0F);
+		GlStateManager.rotate(0.0F, 1.0F, 0.0F, 0.0F);
+		//        entity.renderYawOffset = entity.rotationYaw = entity.prevRotationYaw = entity.prevRotationYawHead = entity.rotationYawHead = 0;//this.rotateTurret;
+		entity.rotationPitch = 0.0F;
+		GlStateManager.translate(0.0F, (float) entity.getYOffset(), 0.0F);
+		Minecraft.getMinecraft().getRenderManager().playerViewY = 180F;
+		try {
+			Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
+		}
+		catch (Exception e) {
+			//
+		}
+		GlStateManager.popMatrix();
+		RenderHelper.disableStandardItemLighting();
+
+		GlStateManager.disableRescaleNormal();
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.disableLighting();
+		GlStateManager.popMatrix();
+		GlStateManager.enableDepth();
+		GlStateManager.disableColorMaterial();
+		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+		GlStateManager.disableTexture2D();
+		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+	}
+
+	public static void renderScaledItemStack(ItemStack stack, int x, int y, float scale) {
+		renderScaledItemStack(stack, x, y, scale);
+	}
+
+	public static void renderScaledItemStack(ItemStack stack, int x, int y, float scale, float rotation) {//broken
+		pushMatrix();
+		enableBlend();
+		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.translate(x * -5 / scale, y * -5 / scale, 0.0);
+		scale(scale, scale, 1.0F);
+
+		rotate(rotation, 0.0f, 1.0f, 0.0f);
+		RenderHelper.enableGUIStandardItemLighting();
+		//
+		enableRescaleNormal();
+		enableDepth();
+		getRenderItem().renderItemAndEffectIntoGUI(stack, 0, 0);
+		//getRenderItem().renderItemAndEffectIntoGUI(stack, (int) (x / scale), (int) (y / scale));
+		//getItemRenderer().renderItem(EasyMappings.player(), stack, TransformType.FIXED);
+		//getRenderItem().renderItem(stack, net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(getRenderItem().getItemModelWithOverrides(stack, null, EasyMappings.player()), ItemCameraTransforms.TransformType.GUI, false));
+		//rotate(0.0f, 0.0f, -(rotation), 0.0f);
+		//translate(x + 0.5, 0.0, y + 0.5);
+		rotate(--rotation, 0.0f, 1.0f, 0.0f);
+		//GlStateManager.translate(-(x * 2 / scale), 0.0, -(y * 2 / scale));
+		RenderHelper.disableStandardItemLighting();
+		popMatrix();
+	}
+
+	public static void drawTextRGBA(FontRenderer font, String s, int x, int y, int r, int g, int b, int a) {
+		font.drawString(s, x, y, (a << 24) + (r << 16) + (g << 8) + (b));
 	}
 
 }
