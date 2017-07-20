@@ -9,11 +9,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
+import p455w0rdslib.LibGlobals;
 import p455w0rdslib.util.MCPrivateUtils;
 import p455w0rdslib.util.RenderUtils;
 
 /**
- * @author brandon3055
+ * @author brandon3055 - modified by TheRealp455w0rd
  *
  */
 public class ModelContributorWings extends ModelBase {
@@ -96,7 +97,7 @@ public class ModelContributorWings extends ModelBase {
 			}
 		}
 
-		float animation = (float) ((float) Math.sin(Minecraft.getMinecraft().world.getWorldTime() + Minecraft.getMinecraft().getRenderPartialTicks()) / speed);
+		float animation = (float) Math.sin((LibGlobals.ELAPSED_TICKS + Minecraft.getMinecraft().getRenderPartialTicks()) / speed) * 0.5F;
 
 		if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isElytraFlying()) {
 			float f4 = 1.0F;
