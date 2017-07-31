@@ -55,7 +55,7 @@ public class ItemUtils {
 		EntityItem entityitem = new EntityItem(worldObj, x + d0, y + d1, z + d2, stack);
 		entityitem.setPickupDelay(10);
 		if (stack.hasTagCompound()) {
-			entityitem.getEntityItem().setTagCompound(stack.getTagCompound().copy());
+			entityitem.getItem().setTagCompound(stack.getTagCompound().copy());
 		}
 		EasyMappings.spawn(worldObj, entityitem);
 	}
@@ -121,12 +121,12 @@ public class ItemUtils {
 		if (newItem == item && stack != null && getCaps(stack) != null) //Item Didn't change but refreshed
 		{
 			net.minecraftforge.common.capabilities.ICapabilityProvider parent = item.initCapabilities(stack, getCaps(stack).serializeNBT());
-			MCPrivateUtils.setItemStackCapabilities(stack, net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(item, stack, parent));
+			MCPrivateUtils.setItemStackCapabilities(stack, net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(stack, parent));
 		}
 		else if (newItem != item && newItem != null) // Item Changed
 		{
 			net.minecraftforge.common.capabilities.ICapabilityProvider parent = newItem.initCapabilities(stack, capNBT);
-			MCPrivateUtils.setItemStackCapabilities(stack, net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(newItem, stack, parent));
+			MCPrivateUtils.setItemStackCapabilities(stack, net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(stack, parent));
 		}
 		if (capNBT != null && getCaps(stack) != null) {
 			getCaps(stack).deserializeNBT(capNBT);

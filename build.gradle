@@ -7,22 +7,22 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
+		classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
 	}
 }
 
 apply plugin: "net.minecraftforge.gradle.forge"
 
-version = "1.11.2-" + getVersion("VERSION")
+version = "1.12-" + getVersion("VERSION")
 group = "p455w0rdslib"
 archivesBaseName = "p455w0rdslib"
 sourceCompatibility = targetCompatibility = "1.8"
 
 minecraft {
-	version = "1.11.2-13.20.0.2310"
+	version = "1.12-14.21.1.2415"
 	runDir = "run"
 	
-	mappings = "snapshot_nodoc_20170530"
+	mappings = "snapshot_nodoc_20170711"
 	useDepAts = false
 }
 
@@ -32,15 +32,14 @@ repositories {
 		url = "http://maven.epoxide.xyz"
 	}
 	maven {
-		name = "tterrag"
-		url = "http://maven.tterrag.com"
-	}
+        name = "CoFH Maven"
+        url = "http://maven.covers1624.net"
+    }
 }
 
 dependencies {
-	deobfCompile "net.darkhax.tesla:Tesla:1.11-1.3.0.52"
-	//compile "com.enderio:EnderIO:1.10.2-3.0.1.147_beta"
-	//compile "com.enderio.core:EnderCore:1.10.2-0.4.1.61-beta"
+	deobfCompile "net.darkhax.tesla:Tesla-1.12:1.0.61"
+	deobfCompile "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
 }
 
 processResources {

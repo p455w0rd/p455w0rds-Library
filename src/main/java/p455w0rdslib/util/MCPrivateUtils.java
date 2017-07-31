@@ -58,8 +58,8 @@ import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
-import net.minecraftforge.fml.common.registry.RegistryDelegate;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.registries.IRegistryDelegate;
 
 /**
  * This class is has methods which use ATs and/or Reflection<br>
@@ -181,7 +181,7 @@ public class MCPrivateUtils {
 		ReflectionHelper.setPrivateValue(ItemStack.class, stack, item, ReflectionUtils.determineSRG("item"));
 	}
 
-	public static void setItemStackDelegate(ItemStack stack, RegistryDelegate<Item> delegate) {
+	public static void setItemStackDelegate(ItemStack stack, IRegistryDelegate<Item> delegate) {
 		ReflectionHelper.setPrivateValue(ItemStack.class, stack, delegate, "delegate");
 	}
 

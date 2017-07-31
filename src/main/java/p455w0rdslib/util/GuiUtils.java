@@ -9,10 +9,10 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -120,7 +120,7 @@ public class GuiUtils {
 		double minV = icon.getMinV();
 		double maxV = icon.getMaxV();
 
-		VertexBuffer buffer = Tessellator.getInstance().getBuffer();
+		BufferBuilder buffer = Tessellator.getInstance().getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		buffer.pos(x + 0, y + height, MCPrivateUtils.getGuiZLevel(gui)).tex(minU, minV + (maxV - minV) * height / 16F).endVertex();
 		buffer.pos(x + width, y + height, MCPrivateUtils.getGuiZLevel(gui)).tex(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).endVertex();
@@ -196,7 +196,7 @@ public class GuiUtils {
 		float uScale = 1f / 0x100;
 		float vScale = 1f / 0x100;
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer wr = tessellator.getBuffer();
+		BufferBuilder wr = tessellator.getBuffer();
 		wr.begin(7, DefaultVertexFormats.POSITION_TEX);
 		wr.pos(x, y + height, zLevel).tex(u * uScale, ((v + height) * vScale)).endVertex();
 		wr.pos(x + width, y + height, zLevel).tex((u + width) * uScale, ((v + height) * vScale)).endVertex();
@@ -312,7 +312,7 @@ public class GuiUtils {
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		GlStateManager.shadeModel(7425);
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		BufferBuilder vertexbuffer = tessellator.getBuffer();
 		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
 		vertexbuffer.pos(right, top, MCPrivateUtils.getGuiZLevel(gui)).color(f1, f2, f3, f).endVertex();
 		vertexbuffer.pos(left, top, MCPrivateUtils.getGuiZLevel(gui)).color(f1, f2, f3, f).endVertex();
@@ -361,7 +361,7 @@ public class GuiUtils {
 		}
 		MCPrivateUtils.setGuiZLevel(gui, 100.0F);
 		MCPrivateUtils.setGuiScreenRendererZLevel(gui, 100.0F);
-		if ((itemstack == null) && (slotIn.canBeHovered())) {
+		if ((itemstack == null) && (slotIn.isEnabled())) {
 			TextureAtlasSprite textureatlassprite = slotIn.getBackgroundSprite();
 			if (textureatlassprite != null) {
 				GlStateManager.disableLighting();
@@ -387,7 +387,7 @@ public class GuiUtils {
 
 	public static void drawTexturedModalRect(Gui gui, int xCoord, int yCoord, TextureAtlasSprite textureSprite, int widthIn, int heightIn) {
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		BufferBuilder vertexbuffer = tessellator.getBuffer();
 		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
 		vertexbuffer.pos(xCoord + 0, yCoord + heightIn, MCPrivateUtils.getGuiZLevel(gui)).tex(textureSprite.getMinU(), textureSprite.getMaxV()).endVertex();
 		vertexbuffer.pos(xCoord + widthIn, yCoord + heightIn, MCPrivateUtils.getGuiZLevel(gui)).tex(textureSprite.getMaxU(), textureSprite.getMaxV()).endVertex();

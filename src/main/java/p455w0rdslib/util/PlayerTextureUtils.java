@@ -34,9 +34,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public class PlayerTextureUtils {
 
-	private static final MethodHandle GET_PLAYER_INFO = ReflectionUtils.findMethod(AbstractClientPlayer.class, new String[] {
-			"getPlayerInfo", "func_175155_b"
-	}, new Class[0]);
+	private static final MethodHandle GET_PLAYER_INFO = ReflectionUtils.findMethod(AbstractClientPlayer.class, "getPlayerInfo", "func_175155_b", new Class[0]);
 	private static final MethodHandle GET_PLAYER_TEXTURES = ReflectionUtils.findFieldGetter(NetworkPlayerInfo.class, "playerTextures", "field_187107_a");
 
 	private static NetworkPlayerInfo getPlayerInfo(AbstractClientPlayer player) {

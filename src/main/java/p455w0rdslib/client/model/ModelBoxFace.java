@@ -2,7 +2,7 @@ package p455w0rdslib.client.model;
 
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import p455w0rdslib.util.MCPrivateUtils;
 
 /**
@@ -18,7 +18,7 @@ public class ModelBoxFace extends ModelBox {
 	}
 
 	@Override
-	public void render(VertexBuffer renderer, float scale) {
+	public void render(BufferBuilder renderer, float scale) {
 		MCPrivateUtils.getQuadList(this)[face].draw(renderer, scale);
 	}
 }

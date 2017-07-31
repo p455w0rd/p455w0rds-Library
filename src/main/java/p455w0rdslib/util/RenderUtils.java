@@ -39,6 +39,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -49,7 +50,6 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -58,6 +58,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityBeaconRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -102,7 +103,7 @@ public class RenderUtils {
 	}
 
 	public static RenderPlayer getRenderPlayer(AbstractClientPlayer player) {
-		return (RenderPlayer) getRenderManager().getEntityRenderObject(player);
+		return (RenderPlayer) getRenderManager().<AbstractClientPlayer>getEntityRenderObject(player);
 	}
 
 	public static RenderItem getRenderItem() {
@@ -131,6 +132,10 @@ public class RenderUtils {
 
 	public static TextureMap getBlocksTextureMap() {
 		return mc().getTextureMapBlocks();
+	}
+
+	public static IReloadableResourceManager getResourceManager() {
+		return (IReloadableResourceManager) mc().getResourceManager();
 	}
 
 	public static TextureAtlasSprite getSprite(String spritePath) {
@@ -254,7 +259,7 @@ public class RenderUtils {
 			q.rotateWithMagnitude(v4);
 		}
 		Tessellator t = Tessellator.getInstance();
-		VertexBuffer vb = t.getBuffer();
+		BufferBuilder vb = t.getBuffer();
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		vb.pos(px + v1.getX() - iPX, py + v1.getY() - iPY, pz + v1.getZ() - iPZ).tex(u, v + vLength).endVertex();
 		vb.pos(px + v2.getX() - iPX, py + v2.getY() - iPY, pz + v2.getZ() - iPZ).tex(u + uLength, v + vLength).endVertex();
@@ -327,7 +332,7 @@ public class RenderUtils {
 		Vector3 perpTo = perp.multiply(size);
 
 		Tessellator tes = Tessellator.getInstance();
-		VertexBuffer buf = tes.getBuffer();
+		BufferBuilder buf = tes.getBuffer();
 		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
 		double u = 0;
@@ -367,9 +372,9 @@ public class RenderUtils {
 	public static void renderSpiral(TextureAtlasSprite tex, int src, int dst, double start, double end, double time, double theta0, double x, double y, double z) {
 
 		Tessellator tes = Tessellator.getInstance();
-		VertexBuffer vertexBuffer = tes.getBuffer();
+		BufferBuilder vertexBuffer = tes.getBuffer();
 		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		//VertexBuffer vertexBuffer = ccrs.startDrawing(7, DefaultVertexFormats.POSITION_TEX);
+		//BufferBuilder vertexBuffer = ccrs.startDrawing(7, DefaultVertexFormats.POSITION_TEX);
 		vertexBuffer.setTranslation(x, y, z);
 
 		Vector3[] last = new Vector3[] {
@@ -521,7 +526,7 @@ public class RenderUtils {
 		GlStateManager.depthMask(true);
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		BufferBuilder vertexbuffer = tessellator.getBuffer();
 		double d0 = totalWorldTime + partialTicks;
 		double d1 = height < 0 ? d0 : -d0;
 		double d2 = MathHelper.frac(d1 * 0.2D - MathUtils.floor(d1 * 0.1D));
@@ -820,7 +825,7 @@ public class RenderUtils {
 
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		BufferBuilder vertexbuffer = tessellator.getBuffer();
 		double d0 = totalWorldTime + partialTicks;
 		double d1 = height < 0 ? d0 : -d0;
 		double d2 = MathHelper.frac(d1 * 0.2D - MathUtils.floor(d1 * 0.1D));

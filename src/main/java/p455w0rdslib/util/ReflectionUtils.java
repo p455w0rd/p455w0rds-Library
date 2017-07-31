@@ -70,13 +70,13 @@ public class ReflectionUtils {
 		return MCUtils.isDeobf() ? string : zLevel().containsKey(clazz) ? zLevel().get(clazz) : "";
 	}
 
-	public static <T> MethodHandle findMethod(Class<T> clazz, String[] methodNames, Class<?>... methodTypes) {
-		Method method = ReflectionHelper.findMethod(clazz, null, methodNames, methodTypes);
+	public static <T> MethodHandle findMethod(Class<T> clazz, String methodName, String obfMethodName, Class<?>... methodTypes) {
+		Method method = ReflectionHelper.findMethod(clazz, methodName, obfMethodName, methodTypes);
 		try {
 			return MethodHandles.lookup().unreflect(method);
 		}
 		catch (IllegalAccessException e) {
-			throw new ReflectionHelper.UnableToFindMethodException(methodNames, e);
+			throw new ReflectionHelper.UnableToFindMethodException(e);
 		}
 	}
 

@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -220,7 +221,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 
 	@Override
 	protected void renderToolTip(ItemStack stack, int x, int y) {
-		List<String> list = stack.getTooltip(EasyMappings.player(), mc.gameSettings.advancedItemTooltips);
+		List<String> list = stack.getTooltip(EasyMappings.player(), mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
 
 		for (int i = 0; i < list.size(); ++i) {
 			if (i == 0) {
