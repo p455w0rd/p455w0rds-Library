@@ -19,11 +19,10 @@ archivesBaseName = "p455w0rdslib"
 sourceCompatibility = targetCompatibility = "1.8"
 
 minecraft {
-	version = "1.12-14.21.1.2415"
+	version = "1.12.2-14.23.0.2493"
+	mappings = "snapshot_20170624"
 	runDir = "run"
-	
-	mappings = "snapshot_nodoc_20170711"
-	useDepAts = false
+	useDepAts = true
 }
 
 repositories {
