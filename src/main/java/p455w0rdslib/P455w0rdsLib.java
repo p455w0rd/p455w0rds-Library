@@ -12,7 +12,7 @@ import p455w0rdslib.proxy.CommonProxy;
  * @author p455w0rd
  *
  */
-@Mod(modid = LibGlobals.MODID, name = LibGlobals.NAME, version = LibGlobals.VERSION, dependencies = LibGlobals.DEPENDENCIES)
+@Mod(modid = LibGlobals.MODID, name = LibGlobals.NAME, version = LibGlobals.VERSION, dependencies = LibGlobals.DEPENDENCIES, acceptedMinecraftVersions = "[1.12,1.12.2]")
 public class P455w0rdsLib {
 
 	@SidedProxy(clientSide = LibGlobals.CLIENT_PROXY, serverSide = LibGlobals.SERVER_PROXY)
