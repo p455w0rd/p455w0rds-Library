@@ -11,7 +11,7 @@ public class LibGlobals {
 	public static final String NAME = "p455w0rd's Library";
 	public static final String SERVER_PROXY = "p455w0rdslib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rdslib.proxy.ClientProxy";
-	public static final String DEPENDENCIES = "after:mantle;after:tconstruct;after:enderio;after:projecte;after:tesla";
+	public static final String DEPENDENCIES = "required-after:redstoneflux;after:mantle;after:tconstruct;after:enderio;after:projecte;after:tesla";
 	public static final String CONFIG_FILE = "config/p455w0rdsLib.cfg";
 	public static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(0, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
 	public static int ELAPSED_TICKS = 0;

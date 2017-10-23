@@ -435,6 +435,7 @@ public class GuiUtils {
 		MCPrivateUtils.getGuiScreenRenderItem(gui).renderItemOverlayIntoGUI(font, stack, x, y - (MCPrivateUtils.getGuiDraggedStack(gui) == null ? 0 : 8), altText);
 		MCPrivateUtils.setGuiScreenRendererZLevel(gui, 0.0F);
 		MCPrivateUtils.setGuiZLevel(gui, 0.0F);
+		GlStateManager.translate(0.0F, 0.0F, -32.0F);
 	}
 
 }
