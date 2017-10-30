@@ -24,6 +24,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import p455w0rdslib.handlers.ProcessHandlerClient;
 
 /**
  * @author p455w0rd
@@ -34,6 +35,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
+		ProcessHandlerClient.init();
 	}
 
 	@Override

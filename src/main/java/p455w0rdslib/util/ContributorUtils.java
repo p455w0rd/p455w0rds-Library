@@ -20,11 +20,15 @@ import net.minecraft.client.renderer.entity.layers.LayerCape;
 import net.minecraft.client.renderer.entity.layers.LayerElytra;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rdslib.LibGlobals;
+import p455w0rdslib.api.IProcess;
 import p455w0rdslib.client.render.LayerContributorWings;
 import p455w0rdslib.client.render.LayerContributorWings.Type;
+import p455w0rdslib.handlers.ProcessHandler;
+import p455w0rdslib.handlers.ProcessHandlerClient;
 
 /**
  * @author p455w0rd
@@ -38,8 +42,40 @@ public class ContributorUtils {
 	public static Map<AbstractClientPlayer, LayerContributorWings.Type> REGISTRY = new LinkedHashMap<>();
 	public static List<AbstractClientPlayer> SPECIAL_PLAYERS = Lists.newArrayList();
 	public static LayerContributorWings layerWings;
+	private static DLThread thread;
 
 	public static void queuePlayerCosmetics(AbstractClientPlayer player) {
+		thread = new DLThread();
+		thread.setDaemon(true);
+		thread.start();
+
+		IProcess process = new IProcess() {
+			@Override
+			public void updateProcess() {
+				if (thread.isFinished()) {
+					thread = null;
+					Minecraft.getMinecraft().addScheduledTask(() -> {
+						ContributorUtils.addCosmetic(player);
+					});
+				}
+				else if (thread.isFailed()) {
+					thread = null;
+				}
+			}
+
+			@Override
+			public boolean isDead() {
+				return thread == null;
+			}
+		};
+
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			ProcessHandlerClient.addProcess(process);
+		}
+		else {
+			ProcessHandler.addProcess(process);
+		}
+		/*
 		LibGlobals.THREAD_POOL.submit(() -> {
 			try {
 				PATRON_LIST = ContributorUtils.getPatronList();
@@ -55,6 +91,7 @@ public class ContributorUtils {
 				ContributorUtils.addCosmetic(player);
 			});
 		});
+		*/
 	}
 
 	private static void addCosmetic(AbstractClientPlayer player) {
@@ -299,4 +336,49 @@ public class ContributorUtils {
 		}
 		return null;
 	}
+
+	public static class DLThread extends Thread {
+
+		private boolean finished = false;
+		private boolean failed = false;
+
+		public DLThread() {
+			super("TheRealp455w0rd Contributors DL Thread");
+		}
+
+		@Override
+		public void run() {
+			super.run();
+
+			try {
+				List<String> entries = new ArrayList<String>();
+				HttpURLConnection con;
+				con = (HttpURLConnection) new URL("http://p455w0rd.net/mc/patrons.txt").openConnection();
+				con.setConnectTimeout(1000);
+				InputStream in2 = con.getInputStream();
+				entries = IOUtils.readLines(in2);
+				if (!entries.isEmpty()) {
+					PATRON_LIST = entries;
+				}
+				in2.close();
+				con.disconnect();
+				finished = true;
+				failed = PATRON_LIST.isEmpty();
+			}
+			catch (Exception e) {
+				failed = true;
+				e.printStackTrace();
+			}
+
+		}
+
+		public boolean isFinished() {
+			return finished;
+		}
+
+		public boolean isFailed() {
+			return failed;
+		}
+	}
+
 }

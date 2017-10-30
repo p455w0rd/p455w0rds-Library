@@ -30,6 +30,7 @@ import p455w0rdslib.LibConfig;
 import p455w0rdslib.LibEntities;
 import p455w0rdslib.LibEvents;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
+import p455w0rdslib.handlers.ProcessHandler;
 
 /**
  * @author p455w0rd
@@ -41,6 +42,7 @@ public class CommonProxy {
 		LibConfig.init();
 		//ForgeChunkManager.setForcedChunkLoadingCallback(P455w0rdsLib.INSTANCE, Callback.getInstance());
 		CapabilityChunkLoader.init();
+		ProcessHandler.init();
 	}
 
 	public void init(FMLInitializationEvent e) {
