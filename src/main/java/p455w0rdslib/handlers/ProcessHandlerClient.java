@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -32,14 +34,23 @@ public class ProcessHandlerClient {
 		if (event.phase == TickEvent.Phase.START) {
 
 			Iterator<IProcess> i = processes.iterator();
+			List<IProcess> toBeRemoved = Lists.newArrayList();
 
 			while (i.hasNext()) {
 				IProcess process = i.next();
 				if (process.isDead()) {
-					i.remove();
+					toBeRemoved.add(process);
 				}
 				else {
 					process.updateProcess();
+				}
+			}
+
+			if (!toBeRemoved.isEmpty()) {
+				for (IProcess p : toBeRemoved) {
+					if (processes.contains(p)) {
+						processes.remove(p);
+					}
 				}
 			}
 
