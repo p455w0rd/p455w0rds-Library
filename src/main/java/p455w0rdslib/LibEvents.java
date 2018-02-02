@@ -34,6 +34,48 @@ public class LibEvents {
 		}
 		if (FMLClientHandler.instance().getWorldClient() != null) {
 			LibGlobals.ELAPSED_TICKS++;
+			//if (LibGlobals.TIME % 50 == 0) {
+			LibGlobals.TIME2++;
+			//}
+			if (LibGlobals.TIME2 > 360) {
+				LibGlobals.TIME2 = 0;
+			}
+			if (LibGlobals.TURN == 0) {
+				LibGlobals.GREEN += 15;
+				if (LibGlobals.GREEN == 255) {
+					LibGlobals.TURN = 1;
+				}
+			}
+			if (LibGlobals.TURN == 1) {
+				LibGlobals.RED -= 15;
+				if (LibGlobals.RED == 0) {
+					LibGlobals.TURN = 2;
+				}
+			}
+			if (LibGlobals.TURN == 2) {
+				LibGlobals.BLUE += 15;
+				if (LibGlobals.BLUE == 255) {
+					LibGlobals.TURN = 3;
+				}
+			}
+			if (LibGlobals.TURN == 3) {
+				LibGlobals.GREEN -= 15;
+				if (LibGlobals.GREEN == 0) {
+					LibGlobals.TURN = 4;
+				}
+			}
+			if (LibGlobals.TURN == 4) {
+				LibGlobals.RED += 15;
+				if (LibGlobals.RED == 255) {
+					LibGlobals.TURN = 5;
+				}
+			}
+			if (LibGlobals.TURN == 5) {
+				LibGlobals.BLUE -= 15;
+				if (LibGlobals.BLUE == 0) {
+					LibGlobals.TURN = 0;
+				}
+			}
 		}
 	}
 

@@ -15,6 +15,12 @@ public class LibGlobals {
 	public static final String CONFIG_FILE = "config/p455w0rdsLib.cfg";
 	public static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(0, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
 	public static int ELAPSED_TICKS = 0;
+	public static int RED = 255;
+	public static int GREEN = 0;
+	public static int BLUE = 0;
+	public static int TURN = 0;
+	public static float TIME = 0.0F;
+	public static float TIME2 = 0.0F;
 	public static boolean IS_CONTRIBUTOR = false;
 
 	public static class ConfigOptions {

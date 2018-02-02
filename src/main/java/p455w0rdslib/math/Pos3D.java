@@ -114,8 +114,8 @@ public class Pos3D extends Vec3d {
 	 * @param z - amount to translate on the z axis
 	 * @return the translated Pos3D
 	 */
-	public Pos3D translate(double x, double y, double z) {
-		return new Pos3D(x + x, y + y, z + z);
+	public Pos3D translate(double xx, double yy, double zz) {
+		return new Pos3D(xx + x, yy + y, zz + z);
 	}
 
 	/**
@@ -234,8 +234,8 @@ public class Pos3D extends Vec3d {
 	 * @param z - z value to scale by
 	 * @return scaled Pos3D
 	 */
-	public Pos3D scale(double x, double y, double z) {
-		return new Pos3D(x * x, y * y, z * z);
+	public Pos3D scale(double xx, double yy, double zz) {
+		return new Pos3D(xx * x, yy * y, zz * z);
 	}
 
 	@Override

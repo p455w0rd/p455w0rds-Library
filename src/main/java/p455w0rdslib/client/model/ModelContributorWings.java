@@ -1,8 +1,13 @@
 package p455w0rdslib.client.model;
 
+import java.awt.Color;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
@@ -10,6 +15,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import p455w0rdslib.LibGlobals;
+import p455w0rdslib.client.particle.ParticleWings;
+import p455w0rdslib.client.render.LayerContributorWings;
+import p455w0rdslib.math.Pos3D;
+import p455w0rdslib.util.ContributorUtils;
 import p455w0rdslib.util.MCPrivateUtils;
 import p455w0rdslib.util.RenderUtils;
 
@@ -112,6 +121,33 @@ public class ModelContributorWings extends ModelBase {
 			animation = -3 + (f1 * 2);
 		}
 
+		if (Minecraft.getMinecraft().gameSettings.particleSetting == 0 && entity instanceof EntityPlayerSP) {
+			EntityPlayerSP player = (EntityPlayerSP) entity;
+			if (ContributorUtils.isContributor(player) && ContributorUtils.isPlayerSuperSpecial(player)) {
+				if (player.getEntityWorld() != null && player.getEntityWorld().rand.nextInt(101) <= 5) {
+					Pos3D userPos = new Pos3D(player).translate(0, 1.8, 0);
+					float rnga = player.getEntityWorld().rand.nextFloat();
+					float rngb = 0.0f - player.getEntityWorld().rand.nextFloat();
+					float rng = rnga + rngb;
+					float yheight = -0.5f;
+					yheight -= Math.abs(rng) / 4.5f;
+					Pos3D vLeft = new Pos3D(rng, yheight + 0.12, -0.25).rotatePitch(0).rotateYaw(player.renderYawOffset);
+					Pos3D v = userPos.translate(vLeft).translate(new Pos3D(player.motionX, player.motionY, player.motionZ).scale(0.5));
+					ParticleManager pm = Minecraft.getMinecraft().effectRenderer;
+					Particle particle = new ParticleWings(player.getEntityWorld(), v.x, v.y, v.z);
+					if (ContributorUtils.getWingType(player) == LayerContributorWings.Type.RAINBOW) {
+						particle.setRBGColorF(LibGlobals.RED / 255.0F, LibGlobals.GREEN / 255.0F, LibGlobals.BLUE / 255.0F);
+					}
+					else {
+						Color color = ContributorUtils.getWingType(player).getColor();
+						particle.setRBGColorF(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F);
+					}
+					particle.setAlphaF(1.0f);
+					particle.setMaxAge(24);
+					pm.addEffect(particle);
+				}
+			}
+		}
 		if (entity.isSneaking()) {
 			leftBaseStem.rotateAngleX = 1.0F;
 			rightBaseStem.rotateAngleX = 1.0F;

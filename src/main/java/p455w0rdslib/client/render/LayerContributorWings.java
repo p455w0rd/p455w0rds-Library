@@ -5,6 +5,7 @@ import java.awt.Color;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
@@ -56,6 +57,9 @@ public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer
 	public static void renderEnchantedGlint(RenderLivingBase<?> p_188364_0_, EntityLivingBase p_188364_1_, ModelBase model, float p_188364_3_, float p_188364_4_, float p_188364_5_, float p_188364_6_, float p_188364_7_, float p_188364_8_, float p_188364_9_, LayerContributorWings.Type type) {
 		float f = p_188364_1_.ticksExisted + p_188364_5_;
 		Color color = type.getColor();
+		if (color == null) {
+			color = new Color(LibGlobals.RED, LibGlobals.GREEN, LibGlobals.BLUE, 255);
+		}
 		p_188364_0_.bindTexture(new ResourceLocation("textures/misc/enchanted_item_glint.png"));
 		GlStateManager.enableBlend();
 		GlStateManager.depthFunc(514);
@@ -65,6 +69,7 @@ public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer
 
 		for (int i = 0; i < 2; ++i) {
 			GlStateManager.disableLighting();
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
 			float f2 = 0.76F;
 			GlStateManager.color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, color.getAlpha() / 255.0F);
@@ -98,9 +103,11 @@ public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer
 			BLOOD2("textures/models/wings_r2.png", new Color(128, 0, 0, 255), "_RWINGS2"),
 			BLUE("textures/models/wings_b.png", new Color(0.50F, 0.25F, 0.75F, 1.0F), "_BWINGS"),
 			XMAS("textures/models/wings_xmas.png", new Color(0xFF808080), "_XMAS"),
-			PURPLE("textures/models/wings_p.png", new Color(0xFF620292), "_PURPLE"),
-			PURPLE2("textures/models/wings_p2.png", new Color(0xFF620292), "_PURPLE2"),
+			PURPLE("textures/models/wings_p.png", new Color(148, 3, 221, 255), "_PURPLE"),
+			PURPLE2("textures/models/wings_p2.png", new Color(148, 3, 221, 255), "_PURPLE2"),
 			GOLD("textures/models/wings_g.png", new Color(0xFFf8ea04), "_GOLD"),
+			SIVER("textures/models/wings_silver.png", new Color(0xFFFFFFFF), "_SILVER"),
+			RAINBOW("textures/models/wings_silver.png", null, "_RAINBOW"),
 			CARBON("textures/models/wings.png", new Color(0.50F, 0.25F, 0.75F, 1.0F), "_CARBON");
 
 		String textureLoc;
