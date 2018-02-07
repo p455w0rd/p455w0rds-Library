@@ -107,7 +107,7 @@ public class ContributorUtils {
 			PlayerTextureUtils.setElytra(player, MMD_CAPE_LOCATION);
 			return;
 		}
-		
+
 		if (doesPlayerHaveEmeraldWings(player)) {
 			addWings(LayerContributorWings.Type.EMERALD);
 			registerContributor(player, LayerContributorWings.Type.EMERALD);
@@ -244,7 +244,7 @@ public class ContributorUtils {
 			}
 			return false;
 		}
-	
+
 		public static boolean doesPlayerHaveMMDCape(AbstractClientPlayer player) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
 				String uuid = player.getUniqueID().toString() + "_MMD";
@@ -255,7 +255,7 @@ public class ContributorUtils {
 			}
 			return false;
 		}
-	
+
 	public static boolean doesPlayerHaveEmeraldWings(AbstractClientPlayer player) {
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
 			String uuid = player.getUniqueID().toString() + "_EWINGS";
@@ -266,7 +266,7 @@ public class ContributorUtils {
 		}
 		return false;
 	}
-	
+
 	public static boolean doesPlayerHaveBloodWings(AbstractClientPlayer player) {
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
 			String uuid = player.getUniqueID().toString() + "_RWINGS";
@@ -277,7 +277,7 @@ public class ContributorUtils {
 		}
 		return false;
 	}
-	
+
 	public static boolean doesPlayerHaveBlueWings(AbstractClientPlayer player) {
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
 			String uuid = player.getUniqueID().toString() + "_BWINGS";
@@ -309,25 +309,18 @@ public class ContributorUtils {
 			return true;
 		}
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			for (Type type : LayerContributorWings.Type.values()) {
-				String uuid = player.getUniqueID().toString() + "" + type.getIdentifier();
-				if (!PATRON_LIST.get(i).split("_")[1].contains("#")) {
-					continue;
-				}
-				return true;
+			if (!PATRON_LIST.get(i).split("_")[1].contains("#")) {
+				continue;
 			}
+			return true;
 		}
 		return false;
 	}
 
 	public static boolean isPlayerSuperSpecial(AbstractClientPlayer player) {
-		if (SPECIAL_PLAYERS.contains(player)) {
-			return true;
-		}
-		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			for (Type type : LayerContributorWings.Type.values()) {
-				String uuid = player.getUniqueID().toString() + "" + type.getIdentifier();
-				if (!PATRON_LIST.get(i).equals(uuid + "#!")) {
+		if (isPlayerSpecial(player)) {
+			for (int i = 0; i < PATRON_LIST.size(); ++i) {
+				if (!PATRON_LIST.get(i).split("_")[1].contains("!")) {
 					continue;
 				}
 				return true;
