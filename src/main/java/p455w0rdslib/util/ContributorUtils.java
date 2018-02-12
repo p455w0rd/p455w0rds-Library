@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.entity.layers.LayerCape;
 import net.minecraft.client.renderer.entity.layers.LayerElytra;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -107,7 +108,7 @@ public class ContributorUtils {
 			PlayerTextureUtils.setElytra(player, MMD_CAPE_LOCATION);
 			return;
 		}
-
+		
 		if (doesPlayerHaveEmeraldWings(player)) {
 			addWings(LayerContributorWings.Type.EMERALD);
 			registerContributor(player, LayerContributorWings.Type.EMERALD);
@@ -166,6 +167,15 @@ public class ContributorUtils {
 	public static LayerContributorWings.Type getWingType(AbstractClientPlayer player) {
 		if (player != null) {
 			if (REGISTRY.containsKey(player)) {
+				return REGISTRY.get(player);
+			}
+		}
+		return null;
+	}
+
+	public static LayerContributorWings.Type getWingType(String uuid) {
+		for (EntityPlayer player : REGISTRY.keySet()) {
+			if (uuid.contains(player.getUniqueID().toString())) {
 				return REGISTRY.get(player);
 			}
 		}
@@ -244,7 +254,7 @@ public class ContributorUtils {
 			}
 			return false;
 		}
-
+	
 		public static boolean doesPlayerHaveMMDCape(AbstractClientPlayer player) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
 				String uuid = player.getUniqueID().toString() + "_MMD";
@@ -255,7 +265,7 @@ public class ContributorUtils {
 			}
 			return false;
 		}
-
+	
 	public static boolean doesPlayerHaveEmeraldWings(AbstractClientPlayer player) {
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
 			String uuid = player.getUniqueID().toString() + "_EWINGS";
@@ -266,7 +276,7 @@ public class ContributorUtils {
 		}
 		return false;
 	}
-
+	
 	public static boolean doesPlayerHaveBloodWings(AbstractClientPlayer player) {
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
 			String uuid = player.getUniqueID().toString() + "_RWINGS";
@@ -277,7 +287,7 @@ public class ContributorUtils {
 		}
 		return false;
 	}
-
+	
 	public static boolean doesPlayerHaveBlueWings(AbstractClientPlayer player) {
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
 			String uuid = player.getUniqueID().toString() + "_BWINGS";
@@ -294,7 +304,7 @@ public class ContributorUtils {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
 				for (Type type : LayerContributorWings.Type.values()) {
 					String uuid = player.getUniqueID().toString() + "" + type.getIdentifier();
-					if (!uuid.equals(PATRON_LIST.get(i)) && !isPlayerSpecial(uuid, PATRON_LIST.get(i))) {
+					if (!uuid.contains(PATRON_LIST.get(i)) && !isPlayerSpecial(uuid, PATRON_LIST.get(i))) {
 						continue;
 					}
 					return true;
@@ -330,7 +340,31 @@ public class ContributorUtils {
 	}
 
 	public static boolean isPlayerSpecial(String uuid, String comparison) {
-		return comparison.equals(uuid + "#") || comparison.equals(uuid + "#!");
+		return comparison.contains(uuid) && comparison.contains("#");
+	}
+
+	public static boolean isPlayerSpecial(String uuid) {
+		if (!PATRON_LIST.isEmpty()) {
+			for (int i = 0; i < PATRON_LIST.size(); ++i) {
+				if (!PATRON_LIST.get(i).split("_")[1].contains("#")) {
+					continue;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isPlayerSuperSpecial(String uuid) {
+		if (!PATRON_LIST.isEmpty() && isPlayerSpecial(uuid)) {
+			for (int i = 0; i < PATRON_LIST.size(); ++i) {
+				if (!PATRON_LIST.get(i).split("_")[1].contains("!")) {
+					continue;
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static Type getWingTypeForPlayer(AbstractClientPlayer player) {
