@@ -2,11 +2,17 @@ package p455w0rdslib.util;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.UniversalBucket;
 
 /**
  * @author p455w0rd
@@ -28,6 +34,22 @@ public class ItemUtils {
 
 	public static ItemStack getBoots(EntityPlayer player) {
 		return player.inventory.getStackInSlot(36);
+	}
+
+	public static boolean compareStacks(ItemStack stack1, ItemStack stack2) {
+		if (stack1 == null || stack2 == null) {
+			return stack1 == stack2;
+		}
+		if (stack1.getItem() != stack2.getItem()) {
+			return false;
+		}
+		if (stack1.getItemDamage() != stack2.getItemDamage()) {
+			return false;
+		}
+		if (!ItemStack.areItemStackTagsEqual(stack1, stack2)) {
+			return false;
+		}
+		return true;
 	}
 
 	public static boolean areItemTagsEqual(ItemStack is1, ItemStack itemStackIn) {
@@ -137,6 +159,33 @@ public class ItemUtils {
 
 	public static boolean areStacksSameSize(ItemStack stackA, ItemStack stackB) {
 		return (stackA == null && stackB == null) || (stackA != null && stackB != null && stackA.stackSize == stackB.stackSize);
+	}
+
+	public static ItemStack getItemBlockWithInventory(IInventory inventory, ItemStack stack) {
+		if (stack != null && stack.getItem() instanceof ItemBlock && inventory != null && inventory.getSizeInventory() > 0) {
+			if (!stack.hasTagCompound()) {
+				stack.setTagCompound(new NBTTagCompound());
+			}
+			NBTTagCompound stackNBT = stack.getSubCompound("BlockEntityTag", true);
+			NBTTagList stackList = new NBTTagList();
+			for (int i = 0; i < inventory.getSizeInventory(); i++) {
+				if (inventory.getStackInSlot(i) == null) {
+					continue;
+				}
+				NBTTagCompound slotNBT = new NBTTagCompound();
+				slotNBT.setByte("Slot", (byte) i);
+				inventory.getStackInSlot(i).writeToNBT(slotNBT);
+				stackList.appendTag(slotNBT);
+			}
+			stackNBT.setTag("Items", stackList);
+			stack.setTagInfo("BlockEntityTag", stackNBT);
+			return stack;
+		}
+		return null;
+	}
+
+	public static ItemStack getBucketWithFluid(Fluid fluid) {
+		return UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid);
 	}
 
 }

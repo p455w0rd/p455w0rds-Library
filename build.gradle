@@ -19,7 +19,7 @@ archivesBaseName = "p455w0rdslib"
 sourceCompatibility = targetCompatibility = "1.8"
 
 minecraft {
-	version = "1.10.2-12.18.3.2185"
+	version = "1.10.2-12.18.3.2272"
 	runDir = "run"
 	
 	mappings = "stable_29"
@@ -38,7 +38,7 @@ repositories {
 }
 
 dependencies {
-	compile "net.darkhax.tesla:Tesla:1.10.2-1.2.1.50"
+	deobfCompile "net.darkhax.tesla:Tesla:1.10.2-1.2.1.50"
 	//compile "com.enderio:EnderIO:1.10.2-3.0.1.147_beta"
 	//compile "com.enderio.core:EnderCore:1.10.2-0.4.1.61-beta"
 }

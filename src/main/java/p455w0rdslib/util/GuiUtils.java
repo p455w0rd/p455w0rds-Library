@@ -1,5 +1,14 @@
 package p455w0rdslib.util;
 
+import static net.minecraft.client.renderer.GlStateManager.blendFunc;
+import static net.minecraft.client.renderer.GlStateManager.enableBlend;
+import static net.minecraft.client.renderer.GlStateManager.enableDepth;
+import static net.minecraft.client.renderer.GlStateManager.enableRescaleNormal;
+import static net.minecraft.client.renderer.GlStateManager.popMatrix;
+import static net.minecraft.client.renderer.GlStateManager.pushMatrix;
+import static net.minecraft.client.renderer.GlStateManager.scale;
+
+import java.awt.Color;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -10,12 +19,17 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -435,6 +449,152 @@ public class GuiUtils {
 		MCPrivateUtils.getGuiScreenRenderItem(gui).renderItemOverlayIntoGUI(font, stack, x, y - (MCPrivateUtils.getGuiDraggedStack(gui) == null ? 0 : 8), altText);
 		MCPrivateUtils.setGuiScreenRendererZLevel(gui, 0.0F);
 		MCPrivateUtils.setGuiZLevel(gui, 0.0F);
+	}
+
+	public static void drawEntityOnScreen(int posX, int posY, float scale, float mouseX, float mouseY, EntityLivingBase ent) {
+		GlStateManager.enableColorMaterial();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(posX, posY, 50.0F);
+		GlStateManager.scale((-scale), scale, scale);
+		GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+		float f = ent.renderYawOffset;
+		float f1 = ent.rotationYaw;
+		float f2 = ent.rotationPitch;
+		float f3 = ent.prevRotationYawHead;
+		float f4 = ent.rotationYawHead;
+		GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
+		RenderHelper.enableStandardItemLighting();
+		GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
+		GlStateManager.rotate(-((float) Math.atan(mouseY / 40.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
+		ent.renderYawOffset = (float) Math.atan(mouseX / 40.0F) * 20.0F;
+		ent.rotationYaw = (float) Math.atan(mouseX / 40.0F) * 40.0F;
+		ent.rotationPitch = -((float) Math.atan(mouseY / 40.0F)) * 20.0F;
+		ent.rotationYawHead = ent.rotationYaw;
+		ent.prevRotationYawHead = ent.rotationYaw;
+		GlStateManager.translate(0.0F, 0.0F, 0.0F);
+		RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+		rendermanager.setPlayerViewY(180.0F);
+		rendermanager.setRenderShadow(false);
+		rendermanager.doRenderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
+		rendermanager.setRenderShadow(true);
+		ent.renderYawOffset = f;
+		ent.rotationYaw = f1;
+		ent.rotationPitch = f2;
+		ent.prevRotationYawHead = f3;
+		ent.rotationYawHead = f4;
+		GlStateManager.popMatrix();
+		RenderHelper.disableStandardItemLighting();
+		GlStateManager.disableRescaleNormal();
+		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+		GlStateManager.disableTexture2D();
+		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+	}
+
+	public static void drawEntityOnScreenWithRotation(int posX, int posY, float scale, float rotation, EntityLivingBase ent) {
+		drawEntityOnScreen(posX, posY, scale, rotation, 0.0f, ent);
+	}
+
+	public static void drawScaledEntityFollowMouse(EntityLivingBase livingEntity, int x, int y, float scale, float mouseX, float mouseY) {
+		pushMatrix();
+		enableBlend();
+		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		scale(scale, scale, 1.0F);
+		RenderHelper.enableGUIStandardItemLighting();
+		enableRescaleNormal();
+		enableDepth();
+		drawEntityOnScreen(x, y, scale, mouseX, mouseY, livingEntity);
+		RenderHelper.disableStandardItemLighting();
+		popMatrix();
+	}
+
+	public static void drawScaledEntityWithRotation(EntityLivingBase livingEntity, int x, int y, float scale, float rotation) {
+		pushMatrix();
+		enableBlend();
+		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		scale(scale, scale, 1.0F);
+		RenderHelper.enableGUIStandardItemLighting();
+		enableRescaleNormal();
+		enableDepth();
+		drawEntityOnScreenWithRotation(x, y, scale, rotation, livingEntity);
+		RenderHelper.disableStandardItemLighting();
+		popMatrix();
+	}
+
+	public static void drawCenteredTextGlowing(FontRenderer font, String s, int x, int y) {
+		drawTextGlowing(font, s, x - font.getStringWidth(s) / 2, y);
+	}
+
+	public static void drawTextGlowing(FontRenderer font, String s, int x, int y) {
+		float sine = 0.5f * ((float) Math.sin(Math.toRadians(4.0f * (Minecraft.getMinecraft().world.getTotalWorldTime() + Minecraft.getMinecraft().getRenderPartialTicks()))) + 1.0f);
+		RenderUtils.drawTextRGBA(font, s, x - 1, y, 0, 0, 0, 64);
+		RenderUtils.drawTextRGBA(font, s, x + 1, y, 0, 0, 0, 64);
+		RenderUtils.drawTextRGBA(font, s, x, y - 1, 0, 0, 0, 64);
+		RenderUtils.drawTextRGBA(font, s, x, y + 1, 0, 0, 0, 64);
+		RenderUtils.drawTextRGBA(font, s, x - 2, y, 0, 0, 0, 40);
+		RenderUtils.drawTextRGBA(font, s, x + 2, y, 0, 0, 0, 40);
+		RenderUtils.drawTextRGBA(font, s, x, y - 2, 0, 0, 0, 40);
+		RenderUtils.drawTextRGBA(font, s, x, y + 2, 0, 0, 0, 40);
+		RenderUtils.drawTextRGBA(font, s, x - 1, y + 1, 0, 0, 0, 40);
+		RenderUtils.drawTextRGBA(font, s, x + 1, y - 1, 0, 0, 0, 40);
+		RenderUtils.drawTextRGBA(font, s, x - 1, y - 1, 0, 0, 0, 40);
+		RenderUtils.drawTextRGBA(font, s, x + 1, y + 1, 0, 0, 0, 40);
+		font.drawString(s, x, y, 0xff11bb11);
+	}
+
+	public static void drawTextGlowingAuraTransparent(FontRenderer font, String s, int x, int y, int r, int g, int b, int a) {
+		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
+		font.drawString(s, x, y, intColor(r, g, b) + (a << 24));
+		RenderUtils.drawTextRGBA(font, s, x - 1, y, r, g, b, (40 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x + 1, y, r, g, b, (40 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x, y - 1, r, g, b, (40 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x, y + 1, r, g, b, (40 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x - 2, y, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x + 2, y, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x, y - 2, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x, y + 2, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x - 1, y + 1, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x + 1, y - 1, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x - 1, y - 1, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x + 1, y + 1, r, g, b, (20 * a) / 255);
+		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+	}
+
+	public static void drawTextGlowingAuraTransparent(FontRenderer font, String s, int x, int y, int a) {
+		float sine = 0.5f * ((float) Math.sin(Math.toRadians(4.0f * (Minecraft.getMinecraft().world.getTotalWorldTime() + Minecraft.getMinecraft().getRenderPartialTicks()))) + 1.0f);
+		drawTextGlowingAuraTransparent(font, s, x, y, a, new Color(16, 64 + (int) (64 * sine), 255));
+	}
+
+	public static void drawTextGlowingAuraTransparent(FontRenderer font, String s, int x, int y, int a, Color color) {
+		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
+		int b = color.getBlue();
+		int g = color.getGreen();
+		int r = color.getRed();
+		font.drawString(s, x, y, intColor(r, g, b) + (a << 24));
+		RenderUtils.drawTextRGBA(font, s, x - 2, y, r, g, b, (40 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x + 2, y, r, g, b, (40 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x, y - 2, r, g, b, (40 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x, y + 2, r, g, b, (40 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x - 4, y, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x + 4, y, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x, y - 4, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x, y + 4, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x - 1, y + 2, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x + 1, y - 2, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x - 1, y - 2, r, g, b, (20 * a) / 255);
+		RenderUtils.drawTextRGBA(font, s, x + 1, y + 2, r, g, b, (20 * a) / 255);
+		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+	}
+
+	public static int intColor(int r, int g, int b) {
+		return (r * 65536 + g * 256 + b);
+	}
+
+	public static void drawText(FontRenderer font, String s, int x, int y, int color) {
+		RenderUtils.drawTextRGBA(font, s, x - 1, y, 0, 0, 0, 64);
+		RenderUtils.drawTextRGBA(font, s, x + 1, y, 0, 0, 0, 64);
+		RenderUtils.drawTextRGBA(font, s, x, y - 1, 0, 0, 0, 64);
+		RenderUtils.drawTextRGBA(font, s, x, y + 1, 0, 0, 0, 64);
+		font.drawString(s, x, y, color);
 	}
 
 }

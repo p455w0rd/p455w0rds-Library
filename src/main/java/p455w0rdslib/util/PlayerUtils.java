@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -23,6 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rdslib.LibRegistry;
 import p455w0rdslib.P455w0rdsLib;
 
@@ -98,25 +100,39 @@ public class PlayerUtils {
 		if (!ProxiedUtils.isSMP()) {
 			return true;
 		}
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			if (sender instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) sender;
-				return player.capabilities.isCreativeMode || player.isSpectator();
+		if (sender instanceof EntityPlayer) {
+			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+				return isOPClient((EntityPlayer) sender);
 			}
-		}
-		else if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
-			if (sender instanceof EntityPlayerMP) {
-				EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(sender.getName());
-				if (player != null && player.getGameProfile() != null) {
-					UserListOpsEntry userentry = ((EntityPlayerMP) player).mcServer.getPlayerList().getOppedPlayers().getEntry(player.getGameProfile());
-					return userentry != null && userentry.getPermissionLevel() >= 4;
-				}
+			else if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
+				return isOPServer((EntityPlayer) sender);
 			}
 		}
 		if (sender instanceof TileEntityCommandBlock) {
 			return true;
 		}
 		return sender.getName().equalsIgnoreCase("@") || sender.getName().equals("Server");
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static boolean isOPClient(EntityPlayer sender) {
+		if (sender instanceof EntityPlayerSP) {
+			EntityPlayerSP player = (EntityPlayerSP) sender;
+			return player.capabilities.isCreativeMode || player.isSpectator();
+		}
+		return false;
+	}
+
+	@SideOnly(Side.SERVER)
+	private static boolean isOPServer(EntityPlayer sender) {
+		if (sender instanceof EntityPlayerMP) {
+			EntityPlayerMP player = (EntityPlayerMP) sender.getEntityWorld().getPlayerEntityByName(sender.getName());
+			if (player != null && player.getGameProfile() != null) {
+				UserListOpsEntry userentry = player.mcServer.getPlayerList().getOppedPlayers().getEntry(player.getGameProfile());
+				return userentry != null && userentry.getPermissionLevel() >= 4;
+			}
+		}
+		return false;
 	}
 
 	public static List<UUID> getFullPlayerList() {

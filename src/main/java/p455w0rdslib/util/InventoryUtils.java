@@ -88,6 +88,41 @@ public class InventoryUtils {
 		return false;
 	}
 
+	public static int testInventoryInsertion(IInventory inventory, ItemStack item) {
+		if (item == null || item.stackSize == 0) {
+			return 0;
+		}
+		if (inventory == null) {
+			return 0;
+		}
+		int slotCount = inventory.getSizeInventory();
+		int itemSizeCounter = item.stackSize;
+		for (int i = 0; i < slotCount && itemSizeCounter > 0; i++) {
+
+			if (!inventory.isItemValidForSlot(i, item)) {
+				continue;
+			}
+			ItemStack inventorySlot = inventory.getStackInSlot(i);
+			if (inventorySlot == null) {
+				itemSizeCounter -= Math.min(Math.min(itemSizeCounter, inventory.getInventoryStackLimit()), item.getMaxStackSize());
+			}
+			else if (areMergeCandidates(item, inventorySlot)) {
+
+				int space = inventorySlot.getMaxStackSize() - inventorySlot.stackSize;
+				itemSizeCounter -= Math.min(itemSizeCounter, space);
+			}
+		}
+		if (itemSizeCounter != item.stackSize) {
+			itemSizeCounter = Math.max(itemSizeCounter, 0);
+			return item.stackSize - itemSizeCounter;
+		}
+		return 0;
+	}
+
+	public static boolean areMergeCandidates(ItemStack source, ItemStack target) {
+		return source.isItemEqual(target) && ItemStack.areItemStackTagsEqual(source, target) && target.stackSize < target.getMaxStackSize();
+	}
+
 	public static boolean moveStackToInventory(ItemStack itemStackIn, List<Slot> inventorySlots) {
 		for (int i = 0; i <= 36; i++) {
 			Slot possiblyOpenSlot = inventorySlots.get(i);
@@ -226,13 +261,15 @@ public class InventoryUtils {
 			int invSize = inventory.getSizeInventory();
 			for (int i = 0; i < invSize && stack != null; i++) {
 				ItemStack existingStack = inventory.getStackInSlot(i);
-				if (ItemStack.areItemStacksEqual(stack, existingStack)) {
+				if (ItemStack.areItemsEqual(stack, existingStack)) {
 					stack = insertMergeable(inventory, i, stack, existingStack);
+					break;
 				}
 			}
 			for (int i = 0; i < invSize && stack != null; i++) {
 				if (inventory.getStackInSlot(i) == null) {
 					stack = insertEmpty(inventory, i, stack);
+					break;
 				}
 			}
 		}
@@ -795,6 +832,49 @@ public class InventoryUtils {
 		}
 
 		return itemstack;
+	}
+
+	private static boolean canInsertItemInSlot(IInventory inventoryIn, ItemStack stack, int index, EnumFacing side) {
+		return !inventoryIn.isItemValidForSlot(index, stack) ? false : !(inventoryIn instanceof ISidedInventory) || ((ISidedInventory) inventoryIn).canInsertItem(index, stack, side);
+	}
+
+	public static boolean canInsertStack(IInventory inventoryIn, ItemStack stackIn, int index, EnumFacing side) {
+		boolean flag = false;
+		ItemStack itemstack = inventoryIn.getStackInSlot(index);
+		if (itemstack == null) {
+			flag = true;
+		}
+		else {
+			ItemStack stack = stackIn.copy();
+			if (canInsertItemInSlot(inventoryIn, stack, index, side)) {
+				if (canCombine(itemstack, stack)) {
+					//Forge: BUGFIX: Again, make things respect max stack sizes.
+					int max = Math.min(stack.getMaxStackSize(), inventoryIn.getInventoryStackLimit());
+					if (max > itemstack.stackSize) {
+						int i = max - itemstack.stackSize;
+						int j = Math.min(stack.stackSize, i);
+						stack.stackSize -= j;
+						itemstack.stackSize += j;
+						flag = j > 0;
+					}
+				}
+
+			}
+		}
+		return flag;
+	}
+
+	public static boolean canInsertStack(IInventory inventory, ItemStack stack) {
+		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+			if (canInsertStack(inventory, stack, i, null)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean canCombine(ItemStack stack1, ItemStack stack2) {
+		return stack1.getItem() != stack2.getItem() ? false : (stack1.getMetadata() != stack2.getMetadata() ? false : (stack1.stackSize > stack1.getMaxStackSize() ? false : ItemStack.areItemStackTagsEqual(stack1, stack2)));
 	}
 
 }

@@ -77,7 +77,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		for (IGuiElement element : getElements()) {
 			element.onMousePressed(mouseX - ((width - xSize) / 2), mouseY - ((height - ySize) / 2), mouseButton);
 		}
@@ -204,7 +204,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 		return this;
 	}
 
-	public boolean isMouseOverSlot(Slot slotIn, int mouseX, int mouseY) {
+	public boolean isMouseHoveringSlot(Slot slotIn, int mouseX, int mouseY) {
 		return isMouseOver(EasyMappings.slotPosX(slotIn), EasyMappings.slotPosY(slotIn), 16, 16, mouseX, mouseY);
 	}
 

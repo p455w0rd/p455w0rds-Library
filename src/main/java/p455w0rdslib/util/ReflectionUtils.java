@@ -48,6 +48,7 @@ public class ReflectionUtils {
 		list.put("lastPortalVec", "field_181017_ao");
 		list.put("teleportDirection", "field_181018_ap");
 		list.put("entitiesById", "field_175729_l");
+		list.put("aiArrowAttack", "field_85037_d");
 		return list;
 	}
 

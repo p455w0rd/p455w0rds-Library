@@ -40,7 +40,9 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAIAttackRangedBow;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -56,9 +58,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
@@ -260,6 +264,18 @@ public class MCPrivateUtils {
 
 	public static IntHashMap<Entity> getEntitiesForWorld(World world) {
 		return ReflectionHelper.getPrivateValue(World.class, world, ReflectionUtils.determineSRG("entitiesById"));
+	}
+
+	public static void setSkeletonBowAI(EntitySkeleton skeleton, EntityAIAttackRangedBow ai) {
+		ReflectionHelper.setPrivateValue(EntitySkeleton.class, skeleton, ai, ReflectionUtils.determineSRG("aiArrowAttack"));
+	}
+
+	public static Set<IWorldGenerator> getWorldGenerators() {
+		return ReflectionHelper.getPrivateValue(GameRegistry.class, null, "worldGenerators");
+	}
+
+	public static Map<IWorldGenerator, Integer> getWorldGeneratorIndexList() {
+		return ReflectionHelper.getPrivateValue(GameRegistry.class, null, "worldGeneratorIndex");
 	}
 
 }

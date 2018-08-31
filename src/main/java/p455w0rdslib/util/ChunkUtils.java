@@ -24,7 +24,7 @@ public class ChunkUtils {
 	}
 
 	/**
-	 * @param modInstance - And instance of your main mod class
+	 * @param modInstance - An instance of your main mod class
 	 */
 	public static void register(Object modInstance) {
 		ForgeChunkManager.setForcedChunkLoadingCallback(modInstance, Callback.getInstance());

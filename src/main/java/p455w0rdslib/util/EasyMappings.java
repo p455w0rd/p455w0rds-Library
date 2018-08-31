@@ -5,12 +5,13 @@ import java.io.IOException;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -27,7 +28,7 @@ public class EasyMappings {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static EntityPlayer player() {
+	public static EntityPlayerSP player() {
 		return mc().player;
 	}
 
@@ -67,6 +68,10 @@ public class EasyMappings {
 
 	public static String[] getNames(MinecraftServer server) {
 		return server.getOnlinePlayerNames();
+	}
+
+	public static void message(Entity entity, ITextComponent message) {
+		entity.sendMessage(message);
 	}
 
 }

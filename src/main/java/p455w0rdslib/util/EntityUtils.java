@@ -23,7 +23,7 @@ public class EntityUtils {
 		return Minecraft.getMinecraft().getRenderViewEntity();
 	}
 
-	public static List<Entity> getEntitiesInRange(Class<? extends Entity> entityType, World world, double x, double y, double z, double radius) {
+	public static List<? extends Entity> getEntitiesInRange(Class<? extends Entity> entityType, World world, double x, double y, double z, double radius) {
 		return world.getEntitiesWithinAABB(entityType, new AxisAlignedBB(x - radius, y - radius, z - radius, x + radius, y + radius, z + radius));
 	}
 
@@ -72,6 +72,9 @@ public class EntityUtils {
 	}
 
 	public static Entity cloneEntity(Entity sourceEntity) {
+		if (sourceEntity == null) {
+			return null;
+		}
 		Entity clonedEntity = null;
 		NBTTagCompound entityNBT = sourceEntity.serializeNBT();
 		if (entityNBT != null && !entityNBT.hasNoTags() && entityNBT.getSize() > 0) {

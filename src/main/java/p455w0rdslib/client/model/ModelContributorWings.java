@@ -11,12 +11,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import p455w0rdslib.LibGlobals;
 import p455w0rdslib.util.MCPrivateUtils;
+import p455w0rdslib.util.RenderUtils;
 
 /**
- * @author p455w0rd
+ * @author brandon3055 - modified by TheRealp455w0rd
  *
  */
 public class ModelContributorWings extends ModelBase {
+
 	public ModelRenderer rightBaseStem;
 	public ModelRenderer leftBaseStem;
 	public ModelRenderer rightOuterStem;
@@ -30,14 +32,18 @@ public class ModelContributorWings extends ModelBase {
 	public ModelContributorWings() {
 		textureWidth = 32;
 		textureHeight = 32;
+		setupModel();
+	}
+
+	private void setupModel() {
 		leftWingOuter = new ModelRenderer(this, 0, 18);
 		leftWingOuter.mirror = true;
 		leftWingOuter.setRotationPoint(0.5F, 0.0F, 0.0F);
 		//        this.leftWingOuter.addBox(-0.5F, 0.5F, 0.0F, 15, 14, 0, 0.0F);
-		leftWingOuter.cubeList.add(new ModelBoxFace(leftWingOuter, MCPrivateUtils.getTextureOffsetX(leftWingOuter), MCPrivateUtils.getTextureOffsetY(leftWingOuter), -0.5F, 0.5F, 0.0F, 15, 14, 0, 5));
+		leftWingOuter.cubeList.add(new ModelBoxFace(leftWingOuter, MCPrivateUtils.getTextureOffsetX(leftWingOuter) - 15, MCPrivateUtils.getTextureOffsetY(leftWingOuter), -2.0F, 0.5F, 0.0F, 25, 14, 0, 5));
 		rightOuterStem = new ModelRenderer(this, 0, 2);
 		rightOuterStem.setRotationPoint(-12.5F, 0.0F, 0.0F);
-		rightOuterStem.addBox(-15.0F, -0.5F, -0.5F, 15, 1, 1, 0.0F);
+		rightOuterStem.addBox(-22.0F, -0.5F, -0.5F, 22, 1, 1, 0.0F);
 		setRotateAngle(rightOuterStem, 0.0F, -0.6108652381980153F, 0.0F);
 		leftWingInner = new ModelRenderer(this, 0, 4);
 		leftWingInner.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -51,14 +57,14 @@ public class ModelContributorWings extends ModelBase {
 		rightWingOuter = new ModelRenderer(this, 0, 18);
 		rightWingOuter.setRotationPoint(-0.5F, 0.0F, 0.0F);
 		//        this.rightWingOuter.addBox(-14.5F, 0.5F, 0.0F, 15, 14, 0, 0.0F);
-		rightWingOuter.cubeList.add(new ModelBoxFace(rightWingOuter, MCPrivateUtils.getTextureOffsetX(rightWingOuter), MCPrivateUtils.getTextureOffsetY(rightWingOuter), -14.5F, 0.5F, 0.0F, 15, 14, 0, 5));
+		rightWingOuter.cubeList.add(new ModelBoxFace(rightWingOuter, MCPrivateUtils.getTextureOffsetX(rightWingOuter) - 15, MCPrivateUtils.getTextureOffsetY(rightWingOuter), -23F, 0.5F, 0.0F, 25, 14, 0, 5));
 		leftBaseStem = new ModelRenderer(this, 0, 0);
 		leftBaseStem.setRotationPoint(0.5F, 1.0F, 2.0F);
 		leftBaseStem.addBox(-0.5F, -0.5F, -0.5F, 13, 1, 1, 0.0F);
 		setRotateAngle(leftBaseStem, 0.0F, -0.3490658503988659F, 0.0F);
 		leftOuterStem = new ModelRenderer(this, 0, 2);
 		leftOuterStem.setRotationPoint(12.5F, 0.0F, 0.0F);
-		leftOuterStem.addBox(0.0F, -0.5F, -0.5F, 15, 1, 1, 0.0F);
+		leftOuterStem.addBox(0.0F, -0.5F, -0.5F, 22, 1, 1, 0.0F);
 		setRotateAngle(leftOuterStem, 0.0F, 0.6108652381980153F, 0.0F);
 		rightBaseStem = new ModelRenderer(this, 0, 0);
 		rightBaseStem.setRotationPoint(-0.5F, 1.0F, 2.0F);
@@ -74,6 +80,10 @@ public class ModelContributorWings extends ModelBase {
 
 	@Override
 	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+		//setupModel();
+		if (RenderUtils.mc().isGamePaused()) {
+			return;
+		}
 		GlStateManager.disableRescaleNormal();
 		GlStateManager.disableCull();
 
@@ -87,7 +97,8 @@ public class ModelContributorWings extends ModelBase {
 			}
 		}
 
-		float animation = (float) Math.sin((LibGlobals.ELAPSED_TICKS + Minecraft.getMinecraft().getRenderPartialTicks()) / speed);
+		//float animation = (float) ((float) Math.sin(Minecraft.getMinecraft().world.getWorldTime() + Minecraft.getMinecraft().getRenderPartialTicks()) / speed);
+		float animation = (float) Math.sin((LibGlobals.ELAPSED_TICKS + Minecraft.getMinecraft().getRenderPartialTicks()) / speed) * 0.5F;
 
 		if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isElytraFlying()) {
 			float f4 = 1.0F;
