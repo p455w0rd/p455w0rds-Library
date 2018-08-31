@@ -176,7 +176,7 @@ public class ImageUtils {
 		RenderManager rendermanager = RenderUtils.getRenderManager();
 		rendermanager.setPlayerViewY(90.0F);
 		rendermanager.setRenderShadow(false);
-		rendermanager.doRenderEntity(entity, 0.0D, 0.0D, 0.0D, f3, RenderUtils.getPartialTicks(), false);
+		rendermanager.renderEntity(entity, 0.0D, 0.0D, 0.0D, f3, RenderUtils.getPartialTicks(), false);
 		rendermanager.setRenderShadow(true);
 		//entity.renderYawOffset = f2;
 		//entity.rotationYaw = f3;

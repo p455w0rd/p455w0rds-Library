@@ -81,7 +81,7 @@ public class ModelContributorWings extends ModelBase {
 	@Override
 	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 		//setupModel();
-		if (RenderUtils.mc().isGamePaused()) {
+		if (RenderUtils.mc().isGamePaused() || entity.isInvisible()) {
 			return;
 		}
 		GlStateManager.disableRescaleNormal();

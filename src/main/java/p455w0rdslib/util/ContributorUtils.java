@@ -1,9 +1,9 @@
 package p455w0rdslib.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rdslib.LibGlobals;
 import p455w0rdslib.api.IProcess;
+import p455w0rdslib.client.render.LayerContribDankNull;
 import p455w0rdslib.client.render.LayerContributorWings;
 import p455w0rdslib.client.render.LayerContributorWings.Type;
 import p455w0rdslib.handlers.ProcessHandler;
@@ -43,6 +44,7 @@ public class ContributorUtils {
 	public static Map<AbstractClientPlayer, LayerContributorWings.Type> REGISTRY = new LinkedHashMap<>();
 	public static List<AbstractClientPlayer> SPECIAL_PLAYERS = Lists.newArrayList();
 	public static LayerContributorWings layerWings;
+	public static LayerContribDankNull layerDankNull;
 	private static DLThread thread;
 
 	public static void queuePlayerCosmetics(AbstractClientPlayer player) {
@@ -128,14 +130,16 @@ public class ContributorUtils {
 			return;
 		}
 		*/
+		if (doesPlayerHaveDankNull(player)) {
+			addDankNull();
+		}
 		if (doesPlayerHaveWings(player)) {
 			Type type = getWingTypeForPlayer(player);
 			addWings(type);
 			registerContributor(player, type);
 			LibGlobals.IS_CONTRIBUTOR = true;
-			return;
 		}
-		else if (DateUtils.isXmas() || DateUtils.isXmasEve()) {
+		if ((DateUtils.isXmas() || DateUtils.isXmasEve()) && !doesPlayerHaveWings(player)) {
 			addWings(LayerContributorWings.Type.XMAS);
 			registerContributor(player, LayerContributorWings.Type.XMAS);
 			LibGlobals.IS_CONTRIBUTOR = true;
@@ -181,124 +185,31 @@ public class ContributorUtils {
 		}
 		return null;
 	}
-	/*
-		public static void addWings(LayerContributorWings.Type type) {
-			for (RenderPlayer renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
-				List<LayerRenderer<AbstractClientPlayer>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
-				for (int i = 0; i < r.size(); ++i) {
-					if (r.get(i) instanceof LayerElytra || r.get(i) instanceof LayerCape) {
-						renderPlayer.removeLayer(r.get(i));
-					}
-				}
-				renderPlayer.addLayer(layerWings = new LayerContributorWings());
+
+	private static void removeVanillaSpecialLayers(List<LayerRenderer<?>> r) {
+		for (int i = 0; i < r.size(); ++i) {
+			if (r.get(i) instanceof LayerElytra || r.get(i) instanceof LayerCape) {
+				r.remove(i);
 			}
 		}
-	*/
+	}
 
 	public static void addWings(LayerContributorWings.Type type) {
 		for (RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
 			List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
-			for (int i = 0; i < r.size(); ++i) {
-				if (r.get(i) instanceof LayerElytra || r.get(i) instanceof LayerCape) {
-					r.remove(i);
-				}
-			}
+			removeVanillaSpecialLayers(r);
 			renderPlayer.addLayer(layerWings = new LayerContributorWings());
 		}
 	}
 
-	static List<String> getPatronList() {
-		if (MCUtils.isDeobf()) {
-			try {
-				List<String> entries = new ArrayList<String>();
-				HttpURLConnection con;
-				con = (HttpURLConnection) new URL("http://p455w0rd.net/mc/patrons.txt").openConnection();
-				con.setConnectTimeout(1000);
-				InputStream in2 = con.getInputStream();
-				entries = IOUtils.readLines(in2);
-				if (!entries.isEmpty()) {
-					con.disconnect();
-					return entries;
-				}
-			}
-			catch (IOException e) {
-			}
+	public static void addDankNull() {
+		for (RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
+			List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
+			removeVanillaSpecialLayers(r);
+			renderPlayer.addLayer(layerDankNull = new LayerContribDankNull());
 		}
-		else {
-			try {
-				List<String> entries = new ArrayList<String>();
-				HttpURLConnection con;
-				con = (HttpURLConnection) new URL("http://p455w0rd.net/mc/patrons.txt").openConnection();
-				con.setConnectTimeout(1000);
-				InputStream in2 = con.getInputStream();
-				entries = IOUtils.readLines(in2);
-				if (!entries.isEmpty()) {
-					con.disconnect();
-					return entries;
-				}
-			}
-			catch (IOException e) {
-			}
-		}
-		return null;
 	}
 
-	/*
-		public static boolean doesPlayerHaveCape(AbstractClientPlayer player) {
-			for (int i = 0; i < PATRON_LIST.size(); ++i) {
-				String uuid = player.getUniqueID().toString();
-				if (!uuid.equals(PATRON_LIST.get(i))) {
-					continue;
-				}
-				return true;
-			}
-			return false;
-		}
-	
-		public static boolean doesPlayerHaveMMDCape(AbstractClientPlayer player) {
-			for (int i = 0; i < PATRON_LIST.size(); ++i) {
-				String uuid = player.getUniqueID().toString() + "_MMD";
-				if (!uuid.equals(PATRON_LIST.get(i))) {
-					continue;
-				}
-				return true;
-			}
-			return false;
-		}
-	
-	public static boolean doesPlayerHaveEmeraldWings(AbstractClientPlayer player) {
-		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			String uuid = player.getUniqueID().toString() + "_EWINGS";
-			if (!uuid.equals(PATRON_LIST.get(i))) {
-				continue;
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean doesPlayerHaveBloodWings(AbstractClientPlayer player) {
-		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			String uuid = player.getUniqueID().toString() + "_RWINGS";
-			if (!uuid.equals(PATRON_LIST.get(i))) {
-				continue;
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean doesPlayerHaveBlueWings(AbstractClientPlayer player) {
-		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			String uuid = player.getUniqueID().toString() + "_BWINGS";
-			if (!uuid.equals(PATRON_LIST.get(i))) {
-				continue;
-			}
-			return true;
-		}
-		return false;
-	}
-	*/
 	public static boolean doesPlayerHaveWings(AbstractClientPlayer player) {
 		if (PATRON_LIST != null) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
@@ -311,6 +222,10 @@ public class ContributorUtils {
 				}
 			}
 		}
+		return false;
+	}
+
+	public static boolean doesPlayerHaveDankNull(AbstractClientPlayer player) {
 		return false;
 	}
 
@@ -396,10 +311,10 @@ public class ContributorUtils {
 			try {
 				List<String> entries = new ArrayList<String>();
 				HttpURLConnection con;
-				con = (HttpURLConnection) new URL("http://p455w0rd.net/mc/patrons.txt").openConnection();
+				con = (HttpURLConnection) new URL("https://s3.us-east-2.amazonaws.com/p455w0rd/patrons.txt").openConnection();
 				con.setConnectTimeout(1000);
 				InputStream in2 = con.getInputStream();
-				entries = IOUtils.readLines(in2);
+				entries = IOUtils.readLines(in2, Charset.defaultCharset());
 				if (!entries.isEmpty()) {
 					PATRON_LIST = entries;
 				}

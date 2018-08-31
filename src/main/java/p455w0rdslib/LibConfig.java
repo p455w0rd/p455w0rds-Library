@@ -35,6 +35,8 @@ public class LibConfig {
 			}
 
 			ConfigOptions.ENABLE_CONTRIB_CAPE = CONFIG.getBoolean("EnableContributorCosmetics", DEF_CAT, true, "Enable the contributor cosmetics (Only useful if u are a contributor, but don't want the cosmetics to override other cosmetics)");
+			ConfigOptions.ENABLE_CONTRIB_PARTICLES_SELF = CONFIG.getBoolean("EnableContributorParticleEffectsSelf", DEF_CAT, true, "Enable (true0 or disable (false) particle effects that result from contriutor cosmetics for current player");
+			ConfigOptions.ENABLE_CONTRIB_PARTICLES_OTHERS = CONFIG.getBoolean("EnableContributorParticleEffectsOthers", DEF_CAT, true, "Enable (true0 or disable (false) particle effects that result from contriutor cosmetics for other players");
 
 			if (CONFIG.hasChanged()) {
 				CONFIG.save();
