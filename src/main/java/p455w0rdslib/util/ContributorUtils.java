@@ -1,29 +1,37 @@
 package p455w0rdslib.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerCape;
 import net.minecraft.client.renderer.entity.layers.LayerElytra;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rdslib.LibGlobals;
+import p455w0rdslib.api.IProcess;
 import p455w0rdslib.client.render.LayerContributorWings;
 import p455w0rdslib.client.render.LayerContributorWings.Type;
+import p455w0rdslib.handlers.ProcessHandler;
+import p455w0rdslib.handlers.ProcessHandlerClient;
 
 /**
  * @author p455w0rd
@@ -31,72 +39,71 @@ import p455w0rdslib.client.render.LayerContributorWings.Type;
  */
 @SideOnly(Side.CLIENT)
 public class ContributorUtils {
-	//private static final ResourceLocation CAPE_LOCATION = new ResourceLocation("p455w0rdsthings", "textures/capes/cape2016.png");
-	//private static final ResourceLocation MMD_CAPE_LOCATION = new ResourceLocation("p455w0rdsthings", "textures/capes/p455cape7.png");
+
 	private static List<String> PATRON_LIST = Lists.<String>newArrayList();
-	public static Map<AbstractClientPlayer, LayerContributorWings.Type> REGISTRY = new LinkedHashMap<>();
-	public static List<AbstractClientPlayer> SPECIAL_PLAYERS = Lists.newArrayList();
+	public static Map<UUID, LayerContributorWings.Type> REGISTRY = new LinkedHashMap<>();
+	public static List<UUID> SPECIAL_PLAYERS = Lists.newArrayList();
 	public static LayerContributorWings layerWings;
+	private static DLThread thread;
 
 	public static void queuePlayerCosmetics(AbstractClientPlayer player) {
-		LibGlobals.THREAD_POOL.submit(() -> {
-			try {
-				PATRON_LIST = ContributorUtils.getPatronList();
-				if (PATRON_LIST.size() <= 0) {
-					return;
-				}
-				Thread.sleep(100);
-			}
-			catch (InterruptedException e) {
-				return;
-			}
+		if (LibGlobals.CONTRIBUTOR_FILE_DOWNLOADED) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				ContributorUtils.addCosmetic(player);
 			});
-		});
+			return;
+		}
+		if (!isOnlineMode(player)) {
+			return;
+		}
+		thread = new DLThread();
+		thread.setDaemon(true);
+		thread.start();
+
+		IProcess process = new IProcess() {
+			@Override
+			public void updateProcess() {
+				if (thread.isFinished()) {
+					thread = null;
+					Minecraft.getMinecraft().addScheduledTask(() -> {
+						ContributorUtils.addCosmetic(player);
+					});
+				}
+				else if (thread.isFailed()) {
+					thread = null;
+				}
+			}
+
+			@Override
+			public boolean isDead() {
+				return thread == null;
+			}
+		};
+
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			ProcessHandlerClient.addProcess(process);
+		}
+		else {
+			ProcessHandler.addProcess(process);
+		}
+
+	}
+
+	private static boolean isOnlineMode(EntityPlayer player) {
+		if (player == null) {
+			return false;
+		}
+		return !UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8)).equals(player.getUniqueID());
 	}
 
 	private static void addCosmetic(AbstractClientPlayer player) {
-
-		/*
-		if (ContributorUtils.doesPlayerHaveCape(player)) {
-			PlayerTextureUtils.setCape(player, CAPE_LOCATION);
-			PlayerTextureUtils.setElytra(player, CAPE_LOCATION);
-			return;
-		}
-		else if (ContributorUtils.doesPlayerHaveMMDCape(player)) {
-			PlayerTextureUtils.setCape(player, MMD_CAPE_LOCATION);
-			PlayerTextureUtils.setElytra(player, MMD_CAPE_LOCATION);
-			return;
-		}
-		
-		if (doesPlayerHaveEmeraldWings(player)) {
-			addWings(LayerContributorWings.Type.EMERALD);
-			registerContributor(player, LayerContributorWings.Type.EMERALD);
-			LibGlobals.IS_CONTRIBUTOR = true;
-			return;
-		}
-		else if (doesPlayerHaveBloodWings(player)) {
-			addWings(LayerContributorWings.Type.BLOOD);
-			registerContributor(player, LayerContributorWings.Type.BLOOD);
-			LibGlobals.IS_CONTRIBUTOR = true;
-			return;
-		}
-		else if (doesPlayerHaveBlueWings(player)) {
-			addWings(LayerContributorWings.Type.BLUE);
-			registerContributor(player, LayerContributorWings.Type.BLUE);
-			LibGlobals.IS_CONTRIBUTOR = true;
-			return;
-		}
-		*/
 		if (doesPlayerHaveWings(player)) {
 			Type type = getWingTypeForPlayer(player);
 			addWings(type);
 			registerContributor(player, type);
 			LibGlobals.IS_CONTRIBUTOR = true;
-			return;
 		}
-		else if (DateUtils.isXmas() || DateUtils.isXmasEve()) {
+		if ((DateUtils.isXmas() || DateUtils.isXmasEve()) && !doesPlayerHaveWings(player)) {
 			addWings(LayerContributorWings.Type.XMAS);
 			registerContributor(player, LayerContributorWings.Type.XMAS);
 			LibGlobals.IS_CONTRIBUTOR = true;
@@ -106,126 +113,65 @@ public class ContributorUtils {
 
 	public static void registerContributor(AbstractClientPlayer player, LayerContributorWings.Type type) {
 		if (player != null && type != null) {
-			if (!REGISTRY.containsKey(player)) {
-				REGISTRY.put(player, type);
+			if (!REGISTRY.containsKey(player.getUniqueID())) {
+				REGISTRY.put(player.getUniqueID(), type);
 				registerSpecialContributor(player);
 			}
 		}
 	}
 
 	public static void registerSpecialContributor(AbstractClientPlayer player) {
-		if (player != null && isPlayerSpecial(player)) {
-			if (!SPECIAL_PLAYERS.contains(player)) {
-				SPECIAL_PLAYERS.add(player);
+		if (player != null && isPlayerSpecial(player.getUniqueID())) {
+			if (!SPECIAL_PLAYERS.contains(player.getUniqueID())) {
+				SPECIAL_PLAYERS.add(player.getUniqueID());
 			}
 		}
 	}
 
 	public static boolean isContributor(AbstractClientPlayer player) {
-		return player != null && REGISTRY.containsKey(player);
+		return player != null && REGISTRY.containsKey(player.getUniqueID());
 	}
 
 	public static LayerContributorWings.Type getWingType(AbstractClientPlayer player) {
 		if (player != null) {
-			if (REGISTRY.containsKey(player)) {
-				return REGISTRY.get(player);
+			if (REGISTRY.containsKey(player.getUniqueID())) {
+				return REGISTRY.get(player.getUniqueID());
 			}
 		}
 		return null;
 	}
 
-	public static void addWings(LayerContributorWings.Type type) {
-		for (RenderPlayer renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
-			List<LayerRenderer<AbstractClientPlayer>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
-			for (int i = 0; i < r.size(); ++i) {
-				if (r.get(i) instanceof LayerElytra || r.get(i) instanceof LayerCape) {
-					renderPlayer.removeLayer(r.get(i));
-				}
+	public static LayerContributorWings.Type getWingType(String uuid) {
+		for (UUID playerUUID : REGISTRY.keySet()) {
+			if (uuid.contains(playerUUID.toString())) {
+				return REGISTRY.get(playerUUID);
 			}
+		}
+		return null;
+	}
+
+	private static void removeVanillaSpecialLayers(List<LayerRenderer<?>> r) {
+		for (int i = 0; i < r.size(); ++i) {
+			if (r.get(i) instanceof LayerElytra || r.get(i) instanceof LayerCape) {
+				r.remove(i);
+			}
+		}
+	}
+
+	public static void addWings(LayerContributorWings.Type type) {
+		for (RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
+			List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
+			removeVanillaSpecialLayers(r);
 			renderPlayer.addLayer(layerWings = new LayerContributorWings());
 		}
 	}
 
-	static List<String> getPatronList() {
-		try {
-			List<String> entries = new ArrayList<String>();
-			HttpURLConnection con;
-			con = (HttpURLConnection) new URL("https://s3.us-east-2.amazonaws.com/p455w0rd/patrons.txt").openConnection();
-			con.setConnectTimeout(1000);
-			InputStream in2 = con.getInputStream();
-			entries = IOUtils.readLines(in2);
-			if (!entries.isEmpty()) {
-				con.disconnect();
-				return entries;
-			}
-		}
-		catch (IOException e) {
-		}
-		return null;
-	}
-
-	/*
-		public static boolean doesPlayerHaveCape(AbstractClientPlayer player) {
-			for (int i = 0; i < PATRON_LIST.size(); ++i) {
-				String uuid = player.getUniqueID().toString();
-				if (!uuid.equals(PATRON_LIST.get(i))) {
-					continue;
-				}
-				return true;
-			}
-			return false;
-		}
-	
-		public static boolean doesPlayerHaveMMDCape(AbstractClientPlayer player) {
-			for (int i = 0; i < PATRON_LIST.size(); ++i) {
-				String uuid = player.getUniqueID().toString() + "_MMD";
-				if (!uuid.equals(PATRON_LIST.get(i))) {
-					continue;
-				}
-				return true;
-			}
-			return false;
-		}
-	
-	public static boolean doesPlayerHaveEmeraldWings(AbstractClientPlayer player) {
-		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			String uuid = player.getUniqueID().toString() + "_EWINGS";
-			if (!uuid.equals(PATRON_LIST.get(i))) {
-				continue;
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean doesPlayerHaveBloodWings(AbstractClientPlayer player) {
-		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			String uuid = player.getUniqueID().toString() + "_RWINGS";
-			if (!uuid.equals(PATRON_LIST.get(i))) {
-				continue;
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean doesPlayerHaveBlueWings(AbstractClientPlayer player) {
-		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			String uuid = player.getUniqueID().toString() + "_BWINGS";
-			if (!uuid.equals(PATRON_LIST.get(i))) {
-				continue;
-			}
-			return true;
-		}
-		return false;
-	}
-	*/
 	public static boolean doesPlayerHaveWings(AbstractClientPlayer player) {
 		if (PATRON_LIST != null) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
 				for (Type type : LayerContributorWings.Type.values()) {
 					String uuid = player.getUniqueID().toString() + "" + type.getIdentifier();
-					if (!uuid.equals(PATRON_LIST.get(i)) && !isPlayerSpecial(uuid, PATRON_LIST.get(i))) {
+					if (!uuid.contains(PATRON_LIST.get(i)) && !isPlayerSpecial(uuid, PATRON_LIST.get(i))) {
 						continue;
 					}
 					return true;
@@ -235,14 +181,27 @@ public class ContributorUtils {
 		return false;
 	}
 
-	public static boolean isPlayerSpecial(AbstractClientPlayer player) {
-		if (SPECIAL_PLAYERS.contains(player)) {
+	public static boolean doesPlayerHaveDankNull(AbstractClientPlayer player) {
+		return false;
+	}
+
+	public static boolean isPlayerSpecial(UUID playerUUID) {
+		if (SPECIAL_PLAYERS.contains(playerUUID)) {
 			return true;
 		}
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			for (Type type : LayerContributorWings.Type.values()) {
-				String uuid = player.getUniqueID().toString() + "" + type.getIdentifier();
-				if (!PATRON_LIST.get(i).equals(uuid + "#")) {
+			if (!PATRON_LIST.get(i).split("_")[1].contains("#")) {
+				continue;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isPlayerSuperSpecial(UUID playerUUID) {
+		if (isPlayerSpecial(playerUUID)) {
+			for (int i = 0; i < PATRON_LIST.size(); ++i) {
+				if (!PATRON_LIST.get(i).split("_")[1].contains("!")) {
 					continue;
 				}
 				return true;
@@ -252,7 +211,31 @@ public class ContributorUtils {
 	}
 
 	public static boolean isPlayerSpecial(String uuid, String comparison) {
-		return comparison.equals(uuid + "#");
+		return comparison.contains(uuid) && comparison.contains("#");
+	}
+
+	public static boolean isPlayerSpecial(String uuid) {
+		if (!PATRON_LIST.isEmpty()) {
+			for (int i = 0; i < PATRON_LIST.size(); ++i) {
+				if (!PATRON_LIST.get(i).split("_")[1].contains("#")) {
+					continue;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isPlayerSuperSpecial(String uuid) {
+		if (!PATRON_LIST.isEmpty() && isPlayerSpecial(uuid)) {
+			for (int i = 0; i < PATRON_LIST.size(); ++i) {
+				if (!PATRON_LIST.get(i).split("_")[1].contains("!")) {
+					continue;
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static Type getWingTypeForPlayer(AbstractClientPlayer player) {
@@ -267,4 +250,60 @@ public class ContributorUtils {
 		}
 		return null;
 	}
+
+	public static class DLThread extends Thread {
+
+		private boolean finished = false;
+		private boolean failed = false;
+
+		public DLThread() {
+			super("TheRealp455w0rd Contributors DL Thread");
+		}
+
+		@Override
+		public void run() {
+			super.run();
+
+			try {
+				List<String> entries = new ArrayList<String>();
+				HttpURLConnection con;
+				con = (HttpURLConnection) new URL("https://s3.us-east-2.amazonaws.com/p455w0rd/patrons.txt").openConnection();
+				con.setConnectTimeout(1000);
+				InputStream in2 = con.getInputStream();
+				entries = IOUtils.readLines(in2, Charset.defaultCharset());
+				if (!entries.isEmpty()) {
+					List<String> tmpEntries = new ArrayList<String>();
+					for (String str : entries) {
+						if (str.contains("RAINBOW")) {
+							str = str.replace("RAINBOW", "EWINGS");
+						}
+						if (str.contains("!")) {
+							str = str.replace("!", "");
+						}
+						tmpEntries.add(str);
+					}
+					PATRON_LIST = tmpEntries;
+					LibGlobals.CONTRIBUTOR_FILE_DOWNLOADED = true;
+				}
+				in2.close();
+				con.disconnect();
+				finished = true;
+				failed = PATRON_LIST.isEmpty();
+			}
+			catch (Exception e) {
+				failed = true;
+				e.printStackTrace();
+			}
+
+		}
+
+		public boolean isFinished() {
+			return finished;
+		}
+
+		public boolean isFailed() {
+			return failed;
+		}
+	}
+
 }

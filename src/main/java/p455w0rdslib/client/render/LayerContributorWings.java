@@ -46,7 +46,7 @@ public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer
 		GlStateManager.scale(0.5, 0.5, 0.5);
 		modelWings.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, player);
 		modelWings.render(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-		if (ContributorUtils.isPlayerSpecial(player)) {
+		if (ContributorUtils.isPlayerSpecial(player.getUniqueID())) {
 			renderEnchantedGlint(RenderUtils.getRenderPlayer(player), player, modelWings, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, ContributorUtils.getWingType(player));
 		}
 		GlStateManager.popMatrix();

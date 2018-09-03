@@ -16,6 +16,7 @@ public class LibGlobals {
 	public static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(0, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
 	public static int ELAPSED_TICKS = 0;
 	public static boolean IS_CONTRIBUTOR = false;
+	public static boolean CONTRIBUTOR_FILE_DOWNLOADED = false;
 
 	public static class ConfigOptions {
 		public static boolean ENABLE_CONTRIB_CAPE = true;
