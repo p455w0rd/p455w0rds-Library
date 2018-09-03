@@ -25,6 +25,7 @@ public class LibGlobals {
 	public static float TIME = 0.0F;
 	public static float TIME2 = 0.0F;
 	public static boolean IS_CONTRIBUTOR = false;
+	public static boolean CONTRIBUTOR_FILE_DOWNLOADED = false;
 
 	public static class ModInfo {
 

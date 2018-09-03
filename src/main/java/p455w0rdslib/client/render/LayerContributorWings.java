@@ -53,7 +53,7 @@ public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer
 		GlStateManager.scale(0.5, 0.5, 0.5);
 		modelWings.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, clientPlayer);
 		modelWings.render(clientPlayer, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-		if (ContributorUtils.isPlayerSpecial(clientPlayer)) {
+		if (ContributorUtils.isPlayerSpecial(clientPlayer.getUniqueID())) {
 			renderEnchantedGlint(RenderUtils.getRenderPlayer(clientPlayer), clientPlayer, modelWings, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, ContributorUtils.getWingType(clientPlayer));
 		}
 		if (Minecraft.getMinecraft().gameSettings.particleSetting == 0 && clientPlayer instanceof EntityPlayer) {

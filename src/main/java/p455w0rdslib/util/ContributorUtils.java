@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
@@ -38,16 +40,24 @@ import p455w0rdslib.handlers.ProcessHandlerClient;
  */
 @SideOnly(Side.CLIENT)
 public class ContributorUtils {
-	//private static final ResourceLocation CAPE_LOCATION = new ResourceLocation("p455w0rdsthings", "textures/capes/cape2016.png");
-	//private static final ResourceLocation MMD_CAPE_LOCATION = new ResourceLocation("p455w0rdsthings", "textures/capes/p455cape7.png");
+
 	private static List<String> PATRON_LIST = Lists.<String>newArrayList();
-	public static Map<AbstractClientPlayer, LayerContributorWings.Type> REGISTRY = new LinkedHashMap<>();
-	public static List<AbstractClientPlayer> SPECIAL_PLAYERS = Lists.newArrayList();
+	public static Map<UUID, LayerContributorWings.Type> REGISTRY = new LinkedHashMap<>();
+	public static List<UUID> SPECIAL_PLAYERS = Lists.newArrayList();
 	public static LayerContributorWings layerWings;
 	public static LayerContribDankNull layerDankNull;
 	private static DLThread thread;
 
 	public static void queuePlayerCosmetics(AbstractClientPlayer player) {
+		if (LibGlobals.CONTRIBUTOR_FILE_DOWNLOADED) {
+			Minecraft.getMinecraft().addScheduledTask(() -> {
+				ContributorUtils.addCosmetic(player);
+			});
+			return;
+		}
+		if (!isOnlineMode(player)) {
+			return;
+		}
 		thread = new DLThread();
 		thread.setDaemon(true);
 		thread.start();
@@ -78,58 +88,17 @@ public class ContributorUtils {
 		else {
 			ProcessHandler.addProcess(process);
 		}
-		/*
-		LibGlobals.THREAD_POOL.submit(() -> {
-			try {
-				PATRON_LIST = ContributorUtils.getPatronList();
-				if (PATRON_LIST.size() <= 0) {
-					return;
-				}
-				Thread.sleep(100);
-			}
-			catch (InterruptedException e) {
-				return;
-			}
-			Minecraft.getMinecraft().addScheduledTask(() -> {
-				ContributorUtils.addCosmetic(player);
-			});
-		});
-		*/
+
+	}
+
+	private static boolean isOnlineMode(EntityPlayer player) {
+		if (player == null) {
+			return false;
+		}
+		return !UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8)).equals(player.getUniqueID());
 	}
 
 	private static void addCosmetic(AbstractClientPlayer player) {
-
-		/*
-		if (ContributorUtils.doesPlayerHaveCape(player)) {
-			PlayerTextureUtils.setCape(player, CAPE_LOCATION);
-			PlayerTextureUtils.setElytra(player, CAPE_LOCATION);
-			return;
-		}
-		else if (ContributorUtils.doesPlayerHaveMMDCape(player)) {
-			PlayerTextureUtils.setCape(player, MMD_CAPE_LOCATION);
-			PlayerTextureUtils.setElytra(player, MMD_CAPE_LOCATION);
-			return;
-		}
-		
-		if (doesPlayerHaveEmeraldWings(player)) {
-			addWings(LayerContributorWings.Type.EMERALD);
-			registerContributor(player, LayerContributorWings.Type.EMERALD);
-			LibGlobals.IS_CONTRIBUTOR = true;
-			return;
-		}
-		else if (doesPlayerHaveBloodWings(player)) {
-			addWings(LayerContributorWings.Type.BLOOD);
-			registerContributor(player, LayerContributorWings.Type.BLOOD);
-			LibGlobals.IS_CONTRIBUTOR = true;
-			return;
-		}
-		else if (doesPlayerHaveBlueWings(player)) {
-			addWings(LayerContributorWings.Type.BLUE);
-			registerContributor(player, LayerContributorWings.Type.BLUE);
-			LibGlobals.IS_CONTRIBUTOR = true;
-			return;
-		}
-		*/
 		if (doesPlayerHaveDankNull(player)) {
 			addDankNull();
 		}
@@ -149,38 +118,38 @@ public class ContributorUtils {
 
 	public static void registerContributor(AbstractClientPlayer player, LayerContributorWings.Type type) {
 		if (player != null && type != null) {
-			if (!REGISTRY.containsKey(player)) {
-				REGISTRY.put(player, type);
+			if (!REGISTRY.containsKey(player.getUniqueID())) {
+				REGISTRY.put(player.getUniqueID(), type);
 				registerSpecialContributor(player);
 			}
 		}
 	}
 
 	public static void registerSpecialContributor(AbstractClientPlayer player) {
-		if (player != null && isPlayerSpecial(player)) {
-			if (!SPECIAL_PLAYERS.contains(player)) {
-				SPECIAL_PLAYERS.add(player);
+		if (player != null && isPlayerSpecial(player.getUniqueID())) {
+			if (!SPECIAL_PLAYERS.contains(player.getUniqueID())) {
+				SPECIAL_PLAYERS.add(player.getUniqueID());
 			}
 		}
 	}
 
 	public static boolean isContributor(AbstractClientPlayer player) {
-		return player != null && REGISTRY.containsKey(player);
+		return player != null && REGISTRY.containsKey(player.getUniqueID());
 	}
 
 	public static LayerContributorWings.Type getWingType(AbstractClientPlayer player) {
 		if (player != null) {
-			if (REGISTRY.containsKey(player)) {
-				return REGISTRY.get(player);
+			if (REGISTRY.containsKey(player.getUniqueID())) {
+				return REGISTRY.get(player.getUniqueID());
 			}
 		}
 		return null;
 	}
 
 	public static LayerContributorWings.Type getWingType(String uuid) {
-		for (EntityPlayer player : REGISTRY.keySet()) {
-			if (uuid.contains(player.getUniqueID().toString())) {
-				return REGISTRY.get(player);
+		for (UUID playerUUID : REGISTRY.keySet()) {
+			if (uuid.contains(playerUUID.toString())) {
+				return REGISTRY.get(playerUUID);
 			}
 		}
 		return null;
@@ -197,7 +166,7 @@ public class ContributorUtils {
 	public static void addWings(LayerContributorWings.Type type) {
 		for (RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
 			List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
-			removeVanillaSpecialLayers(r);
+			//removeVanillaSpecialLayers(r);
 			renderPlayer.addLayer(layerWings = new LayerContributorWings());
 		}
 	}
@@ -229,8 +198,8 @@ public class ContributorUtils {
 		return false;
 	}
 
-	public static boolean isPlayerSpecial(AbstractClientPlayer player) {
-		if (SPECIAL_PLAYERS.contains(player)) {
+	public static boolean isPlayerSpecial(UUID playerUUID) {
+		if (SPECIAL_PLAYERS.contains(playerUUID)) {
 			return true;
 		}
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
@@ -242,8 +211,8 @@ public class ContributorUtils {
 		return false;
 	}
 
-	public static boolean isPlayerSuperSpecial(AbstractClientPlayer player) {
-		if (isPlayerSpecial(player)) {
+	public static boolean isPlayerSuperSpecial(UUID playerUUID) {
+		if (isPlayerSpecial(playerUUID)) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
 				if (!PATRON_LIST.get(i).split("_")[1].contains("!")) {
 					continue;
@@ -317,6 +286,7 @@ public class ContributorUtils {
 				entries = IOUtils.readLines(in2, Charset.defaultCharset());
 				if (!entries.isEmpty()) {
 					PATRON_LIST = entries;
+					LibGlobals.CONTRIBUTOR_FILE_DOWNLOADED = true;
 				}
 				in2.close();
 				con.disconnect();

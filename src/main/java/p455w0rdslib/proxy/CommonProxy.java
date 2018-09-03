@@ -42,7 +42,9 @@ public class CommonProxy {
 		LibConfig.init();
 		//ForgeChunkManager.setForcedChunkLoadingCallback(P455w0rdsLib.INSTANCE, Callback.getInstance());
 		CapabilityChunkLoader.init();
-		ProcessHandler.init();
+		if (FMLCommonHandler.instance().getSide().isServer()) {
+			ProcessHandler.init();
+		}
 	}
 
 	public void init(FMLInitializationEvent e) {
