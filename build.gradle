@@ -41,6 +41,12 @@ dependencies {
 	deobfCompile "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
 }
 
+jar {
+	manifest {
+		attributes 'FMLAT': 'pwlib_at.cfg'
+	}
+}
+
 processResources {
 	rename '(.+_at.cfg)', 'META-INF/$1'
 }
