@@ -11,51 +11,102 @@ buildscript {
 	}
 }
 
-apply plugin: "net.minecraftforge.gradle.forge"
+plugins {
+	id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
 
-version = "1.12-" + getVersion("VERSION")
-group = "p455w0rdslib"
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven'
+
+version = "1.12.2-" + getVersion()
+group = "p455w0rd"
 archivesBaseName = "p455w0rdslib"
 sourceCompatibility = targetCompatibility = "1.8"
 
 minecraft {
-	version = "1.12.2-14.23.1.2577"
+	version = "1.12.2-14.23.5.2768"
 	mappings = "snapshot_20171003"
 	runDir = "run"
 	useDepAts = true
+	replace '@FINGERPRINT@', project.findProperty('signSHA1')
+	replaceIn "p455w0rdslib/P455w0rdsLib.java"
+	clientJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod,p455w0rdslib.asm.FMLPlugin,com.elytradev.mirage.asm.FMLPlugin"
+    serverJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod,p455w0rdslib.asm.FMLPlugin"
+	serverJvmArgs += "-Dfml.queryResult=confirm"
 }
 
 repositories {
 	maven {
-		name = "epoxide"
-		url = "http://maven.epoxide.xyz"
+		name = "mmd"
+		url = "http://maven.mcmoddev.com"
 	}
 	maven {
         name = "CoFH Maven"
         url = "http://maven.covers1624.net"
     }
+	maven {
+		url = 'https://repo.elytradev.com'
+	}
 }
 
 dependencies {
 	deobfCompile "net.darkhax.tesla:Tesla-1.12:1.0.61"
-	deobfCompile "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
+	deobfCompile "cofh:RedstoneFlux:1.12-2.1.0.6:universal"
+	deobfCompile 'com.elytradev:mini:0.1-SNAPSHOT'
+	shadow 'com.elytradev:mini:0.1-SNAPSHOT'
+	deobfCompile 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
+	shadow 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
 }
 
 jar {
+	classifier = 'slim'
 	manifest {
-		attributes 'FMLAT': 'pwlib_at.cfg'
+		attributes {
+			'FMLAT': 'pwlib_at.cfg',
+			'FMLCorePlugin': 'p455w0rd.danknull.asm.FMLPlugin',
+			'FMLCorePluginContainsFMLMod': 'true'
+		}
 	}
+}
+
+shadowJar {
+	classifier = ''
+	relocate 'com.elytradev.mini', 'p455w0rdslib.repackage.com.elytradev.mini'
+	relocate 'com.elytradev.mirage', 'p455w0rdslib.repackage.com.elytradev.mirage'
+	configurations = [project.configurations.shadow]
+}
+
+reobf {
+	shadowJar { mappingType = 'SEARGE' }
+}
+
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf {
+        project.hasProperty('keyStore')
+    }
+    keyStore = project.findProperty('keyStore')
+    alias = project.findProperty('keyStoreAlias')
+    storePass = project.findProperty('keyStorePass')
+    keyPass = project.findProperty('keyStoreKeyPass')
+    inputFile = jar.archivePath
+    outputFile = jar.archivePath
+}
+
+tasks.build.dependsOn reobfShadowJar signJar
+
+artifacts {
+	archives shadowJar
 }
 
 processResources {
 	rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
-String getVersion(String type) {
+String getVersion() {
 	String major = "0";
 	String revision = "0";
 	String patch = "0";
-	String prefix = "public static final String $type = \"";
+	String prefix = "public static final String VERSION = \"";
 	File file = file("src/main/java/p455w0rdslib/LibGlobals.java")
 	file.eachLine { String s ->
 		s = s.trim();
@@ -69,4 +120,60 @@ String getVersion(String type) {
 		}
 	}
 	return "$major.$revision.$patch";
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            if (project.hasProperty("local_maven") || (project.hasProperty("maven_user") && project.hasProperty("maven_pass"))) {
+				if (project.hasProperty("maven_pass")) {
+					println "Uploading to remote maven."
+					repository(url: "http://maven_upload.covers1624.net/") {
+						authentication(userName: project.getProperty("maven_user"), password: project.getProperty("maven_pass"))
+					}
+				} else {
+					println "Uploading to local maven."
+					repository(url: "file://${local_maven}/.m2/repository")
+				}
+                pom {
+                    groupId = project.group
+                    // Force the maven upload to use the <mcversion>-<version> syntax preferred at files
+                    artifactId = project.archivesBaseName
+                    project {
+                        name project.archivesBaseName
+                        packaging 'jar'
+                        description 'p455w0rds Library'
+                        url 'https://github.com/p455w0rd/p455w0rds-Library'
+
+                        scm {
+                            url 'https://github.com/p455w0rd/p455w0rds-Library'
+                            connection 'scm:git:git://github.com/p455w0rd/p455w0rds-Library.git'
+                            developerConnection 'scm:git:git@github.com:p455w0rd/p455w0rds-Library.git'
+                        }
+
+                        issueManagement {
+                            system 'github'
+                            url 'https://github.com/p455w0rd/p455w0rds-Library/issues'
+                        }
+
+                        licenses {
+                            license {
+                                name 'MIT'
+                                url 'https://opensource.org/licenses/MIT'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'TheRealp455w0rd'
+                                name 'Mike Balser'
+                                roles { role 'developer' }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

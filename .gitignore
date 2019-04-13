@@ -22,3 +22,5 @@
 # Include Important Folders
 !src/
 !libs/
+
+maven.bat
