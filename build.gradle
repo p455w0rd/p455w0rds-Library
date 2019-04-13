@@ -60,13 +60,15 @@ dependencies {
 
 jar {
 	classifier = 'slim'
-	manifest {
-		attributes {
-			'FMLAT': 'pwlib_at.cfg',
-			'FMLCorePlugin': 'p455w0rd.danknull.asm.FMLPlugin',
-			'FMLCorePluginContainsFMLMod': 'true'
-		}
-	}
+	manifest.mainAttributes(
+            "Created-By": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
+            "Implementation-Title": "p455w0rdslib",
+            "Implementation-Version": getVersion(),
+            "Built-On": "1.12.2-" + getVersion(),
+            "FMLCorePlugin": "p455w0rd.danknull.asm.FMLPlugin",
+            "FMLCorePluginContainsFMLMod": "true",
+            "FMLAT": "pwlib_at.cfg"
+    )
 }
 
 shadowJar {
@@ -92,7 +94,8 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
     outputFile = jar.archivePath
 }
 
-tasks.build.dependsOn reobfShadowJar signJar
+tasks.build.dependsOn reobfShadowJar
+build.dependsOn signJar
 
 artifacts {
 	archives shadowJar
