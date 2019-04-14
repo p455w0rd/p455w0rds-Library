@@ -30,8 +30,8 @@ minecraft {
 	useDepAts = true
 	replace '@FINGERPRINT@', project.findProperty('signSHA1')
 	replaceIn "p455w0rdslib/P455w0rdsLib.java"
-	clientJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod,p455w0rdslib.asm.FMLPlugin,com.elytradev.mirage.asm.FMLPlugin"
-    serverJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod,p455w0rdslib.asm.FMLPlugin"
+	clientJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod,com.elytradev.mirage.asm.FMLPlugin"
+    serverJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod"
 	serverJvmArgs += "-Dfml.queryResult=confirm"
 }
 
