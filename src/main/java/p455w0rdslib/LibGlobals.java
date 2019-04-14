@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.ModMetadata;
 
 public class LibGlobals {
 	public static final String MODID = "p455w0rdslib";
-	public static final String VERSION = "2.0.38";
+	public static final String VERSION = "2.0.39";
 	public static final String NAME = "p455w0rd's Library";
 	public static final String SERVER_PROXY = "p455w0rdslib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rdslib.proxy.ClientProxy";
@@ -44,8 +44,10 @@ public class LibGlobals {
 	}
 
 	public static class ConfigOptions {
+
 		public static boolean ENABLE_CONTRIB_CAPE = true;
 		public static boolean ENABLE_CONTRIB_PARTICLES_SELF = true;
 		public static boolean ENABLE_CONTRIB_PARTICLES_OTHERS = true;
+
 	}
 }
