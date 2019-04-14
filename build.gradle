@@ -65,7 +65,7 @@ jar {
             "Implementation-Title": "p455w0rdslib",
             "Implementation-Version": getVersion(),
             "Built-On": "1.12.2-" + getVersion(),
-            "FMLCorePlugin": "p455w0rd.danknull.asm.FMLPlugin",
+            "FMLCorePlugin": "p455w0rdslib.asm.FMLPlugin",
             "FMLCorePluginContainsFMLMod": "true",
             "FMLAT": "pwlib_at.cfg"
     )
