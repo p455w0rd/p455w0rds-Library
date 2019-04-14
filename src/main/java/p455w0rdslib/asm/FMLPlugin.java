@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 public class FMLPlugin extends MiniCoremod {
 
 	public FMLPlugin() {
-		super(ItemStackTransformer.class, HorseSaddleFixerTransformer.class);
+		super(ItemStackTransformer.class);
 	}
 
 }
