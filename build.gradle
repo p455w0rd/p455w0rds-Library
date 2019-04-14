@@ -11,9 +11,9 @@ buildscript {
 	}
 }
 
-plugins {
-	id 'com.github.johnrengelman.shadow' version '1.2.3'
-}
+//plugins {
+//	id 'com.github.johnrengelman.shadow' version '1.2.3'
+//}
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
@@ -30,8 +30,8 @@ minecraft {
 	useDepAts = true
 	replace '@FINGERPRINT@', project.findProperty('signSHA1')
 	replaceIn "p455w0rdslib/P455w0rdsLib.java"
-	clientJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod,com.elytradev.mirage.asm.FMLPlugin"
-    serverJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod"
+//	clientJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod,com.elytradev.mirage.asm.FMLPlugin"
+//	serverJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod"
 	serverJvmArgs += "-Dfml.queryResult=confirm"
 }
 
@@ -52,35 +52,33 @@ repositories {
 dependencies {
 	deobfCompile "net.darkhax.tesla:Tesla-1.12:1.0.61"
 	deobfCompile "cofh:RedstoneFlux:1.12-2.1.0.6:universal"
-	deobfCompile 'com.elytradev:mini:0.1-SNAPSHOT'
-	shadow 'com.elytradev:mini:0.1-SNAPSHOT'
-	deobfCompile 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
-	shadow 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
+	//deobfCompile 'com.elytradev:mini:0.1-SNAPSHOT'
+	//shadow 'com.elytradev:mini:0.1-SNAPSHOT'
+	//deobfCompile 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
+	//shadow 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
 }
 
 jar {
-	classifier = 'slim'
+	//classifier = 'slim'
 	manifest.mainAttributes(
             "Created-By": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
             "Implementation-Title": "p455w0rdslib",
             "Implementation-Version": getVersion(),
             "Built-On": "1.12.2-" + getVersion(),
-            "FMLCorePlugin": "p455w0rdslib.asm.FMLPlugin",
-            "FMLCorePluginContainsFMLMod": "true",
             "FMLAT": "pwlib_at.cfg"
     )
 }
 
-shadowJar {
-	classifier = ''
-	relocate 'com.elytradev.mini', 'p455w0rdslib.repackage.com.elytradev.mini'
-	relocate 'com.elytradev.mirage', 'p455w0rdslib.repackage.com.elytradev.mirage'
-	configurations = [project.configurations.shadow]
-}
+//shadowJar {
+//	classifier = ''
+//	relocate 'com.elytradev.mini', 'p455w0rdslib.repackage.com.elytradev.mini'
+//	relocate 'com.elytradev.mirage', 'p455w0rdslib.repackage.com.elytradev.mirage'
+//	configurations = [project.configurations.shadow]
+//}
 
-reobf {
-	shadowJar { mappingType = 'SEARGE' }
-}
+//reobf {
+//	shadowJar { mappingType = 'SEARGE' }
+//}
 
 task signJar(type: SignJar, dependsOn: reobfJar) {
     onlyIf {
@@ -94,12 +92,12 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
     outputFile = jar.archivePath
 }
 
-tasks.build.dependsOn reobfShadowJar
+//tasks.build.dependsOn reobfShadowJar
 build.dependsOn signJar
 
-artifacts {
-	archives shadowJar
-}
+//artifacts {
+//	archives shadowJar
+//}
 
 processResources {
 	rename '(.+_at.cfg)', 'META-INF/$1'
