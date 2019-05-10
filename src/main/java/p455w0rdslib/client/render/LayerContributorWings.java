@@ -21,9 +21,7 @@ import p455w0rdslib.LibGlobals.ConfigOptions;
 import p455w0rdslib.client.model.ModelContributorWings;
 import p455w0rdslib.client.particle.ParticleWings;
 import p455w0rdslib.math.Pos3D;
-import p455w0rdslib.util.ContributorUtils;
-import p455w0rdslib.util.EasyMappings;
-import p455w0rdslib.util.RenderUtils;
+import p455w0rdslib.util.*;
 
 /**
  * @author p455w0rd
@@ -32,15 +30,15 @@ import p455w0rdslib.util.RenderUtils;
 @SideOnly(Side.CLIENT)
 public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer> {
 
-	private ModelContributorWings modelWings = new ModelContributorWings();
+	private final ModelContributorWings modelWings = new ModelContributorWings();
 
 	public LayerContributorWings() {
 
 	}
 
 	@Override
-	public void doRenderLayer(AbstractClientPlayer clientPlayer, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		if (!ContributorUtils.isContributor(clientPlayer) || (!ConfigOptions.ENABLE_CONTRIB_CAPE && clientPlayer.getUniqueID().equals(EasyMappings.player().getUniqueID()))) {
+	public void doRenderLayer(final AbstractClientPlayer clientPlayer, final float limbSwing, final float limbSwingAmount, final float partialTicks, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scale) {
+		if (!ContributorUtils.isContributor(clientPlayer) || !ConfigOptions.ENABLE_CONTRIB_CAPE && clientPlayer.getUniqueID().equals(EasyMappings.player().getUniqueID())) {
 			return;
 		}
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -57,27 +55,30 @@ public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer
 			renderEnchantedGlint(RenderUtils.getRenderPlayer(clientPlayer), clientPlayer, modelWings, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, ContributorUtils.getWingType(clientPlayer));
 		}
 		if (Minecraft.getMinecraft().gameSettings.particleSetting == 0 && clientPlayer instanceof EntityPlayer) {
-			EntityPlayer player = clientPlayer;
+			final EntityPlayer player = clientPlayer;
 			if (!(player.getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID()) && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)) {
 				if (ContributorUtils.isPlayerSuperSpecial(player.getUniqueID().toString())) {
-					boolean isPlayerSelf = player.getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID());
-					if ((isPlayerSelf && ConfigOptions.ENABLE_CONTRIB_PARTICLES_SELF) || (!isPlayerSelf && ConfigOptions.ENABLE_CONTRIB_PARTICLES_OTHERS)) {
+					final boolean isPlayerSelf = player.getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID());
+					if (isPlayerSelf && ConfigOptions.ENABLE_CONTRIB_PARTICLES_SELF || !isPlayerSelf && ConfigOptions.ENABLE_CONTRIB_PARTICLES_OTHERS) {
 						if (player.getEntityWorld() != null && player.getEntityWorld().rand.nextInt(101) <= 5) {
-							Pos3D userPos = new Pos3D(player).translate(0, 1.8, 0);
-							float rnga = player.getEntityWorld().rand.nextFloat();
-							float rngb = 0.0f - player.getEntityWorld().rand.nextFloat();
-							float rng = rnga + rngb;
+							final Pos3D userPos = new Pos3D(player).translate(0, 1.8, 0);
+							final float rnga = player.getEntityWorld().rand.nextFloat();
+							final float rngb = 0.0f - player.getEntityWorld().rand.nextFloat();
+							final float rng = rnga + rngb;
 							float yheight = -0.5f;
 							yheight -= Math.abs(rng) / 4.5f;
-							Pos3D vLeft = new Pos3D(rng, yheight + 0.12, -0.25).rotatePitch(0).rotateYaw(player.renderYawOffset);
+							final Pos3D vLeft = new Pos3D(rng, yheight + 0.12, -0.25).rotatePitch(0).rotateYaw(player.renderYawOffset);
 							Pos3D v = userPos.translate(vLeft).translate(new Pos3D(player.motionX, player.motionY, player.motionZ).scale(0.5));
-							ParticleManager pm = Minecraft.getMinecraft().effectRenderer;
-							Particle particle = new ParticleWings(player.getEntityWorld(), v.x, v.y, v.z);
+							final ParticleManager pm = Minecraft.getMinecraft().effectRenderer;
+							if (player.isSneaking()) {
+								v = new Pos3D(v.x, v.y - 0.5, v.z);
+							}
+							final Particle particle = new ParticleWings(player.getEntityWorld(), v.x, v.y, v.z);
 							if (ContributorUtils.getWingType(player.getUniqueID().toString()) == LayerContributorWings.Type.RAINBOW) {
 								particle.setRBGColorF(LibGlobals.RED / 255.0F, LibGlobals.GREEN / 255.0F, LibGlobals.BLUE / 255.0F);
 							}
 							else {
-								Color color = ContributorUtils.getWingType(player.getUniqueID().toString()).getParticleColor();
+								final Color color = ContributorUtils.getWingType(player.getUniqueID().toString()).getParticleColor();
 								particle.setRBGColorF(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F);
 							}
 							particle.setAlphaF(1.0f);
@@ -92,8 +93,8 @@ public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer
 		GlStateManager.popMatrix();
 	}
 
-	public static void renderEnchantedGlint(RenderLivingBase<?> p_188364_0_, EntityLivingBase p_188364_1_, ModelBase model, float p_188364_3_, float p_188364_4_, float p_188364_5_, float p_188364_6_, float p_188364_7_, float p_188364_8_, float p_188364_9_, LayerContributorWings.Type type) {
-		float f = p_188364_1_.ticksExisted + p_188364_5_;
+	public static void renderEnchantedGlint(final RenderLivingBase<?> p_188364_0_, final EntityLivingBase p_188364_1_, final ModelBase model, final float p_188364_3_, final float p_188364_4_, final float p_188364_5_, final float p_188364_6_, final float p_188364_7_, final float p_188364_8_, final float p_188364_9_, final LayerContributorWings.Type type) {
+		final float f = p_188364_1_.ticksExisted + p_188364_5_;
 		Color color = type.getColor();
 		if (color == null) {
 			color = new Color(LibGlobals.RED, LibGlobals.GREEN, LibGlobals.BLUE, 255);
@@ -102,18 +103,17 @@ public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer
 		GlStateManager.enableBlend();
 		GlStateManager.depthFunc(514);
 		GlStateManager.depthMask(false);
-		float f1 = 0.5F;
+		final float f1 = 0.5F;
 		GlStateManager.color(f1, f1, f1, 1.0F);
 
 		for (int i = 0; i < 2; ++i) {
 			GlStateManager.disableLighting();
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
-			float f2 = 0.76F;
 			GlStateManager.color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, color.getAlpha() / 255.0F);
 			GlStateManager.matrixMode(5890);
 			GlStateManager.loadIdentity();
-			float f3 = 0.33333334F;
+			final float f3 = 0.33333334F;
 			GlStateManager.scale(f3, f3, f3);
 			GlStateManager.rotate(30.0F - i * 60.0F, 0.0F, 0.0F, 1.0F);
 			GlStateManager.translate(0.0F, f * (0.001F + i * 0.003F) * 20.0F, 0.0F);
@@ -153,11 +153,11 @@ public class LayerContributorWings implements LayerRenderer<AbstractClientPlayer
 		Color color;
 		Color particleColor;
 
-		Type(String texture, Color colorIn, String ident) {
+		Type(final String texture, final Color colorIn, final String ident) {
 			this(texture, colorIn, colorIn, ident);
 		}
 
-		Type(String texture, Color colorIn, Color particleColorIn, String ident) {
+		Type(final String texture, final Color colorIn, final Color particleColorIn, final String ident) {
 			textureLoc = texture;
 			color = colorIn;
 			identifier = ident;

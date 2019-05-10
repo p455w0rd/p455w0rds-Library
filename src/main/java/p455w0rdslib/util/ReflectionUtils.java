@@ -16,10 +16,11 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
  * @author p455w0rd
  *
  */
+@SuppressWarnings("deprecation")
 public class ReflectionUtils {
 
 	public static Map<String, String> SRGList() {
-		Map<String, String> list = Maps.newHashMap();
+		final Map<String, String> list = Maps.newHashMap();
 		list.put("defaultResourcePacks", "field_110449_ao");
 		list.put("layerRenderers", "field_177097_h");
 		list.put("textureOffsetX", "field_78803_o");
@@ -51,51 +52,51 @@ public class ReflectionUtils {
 		return list;
 	}
 
-	public static Map<Class, String> zLevel() {
-		Map<Class, String> list = Maps.newHashMap();
+	public static Map<Class<?>, String> zLevel() {
+		final Map<Class<?>, String> list = Maps.newHashMap();
 		list.put(Gui.class, "field_73735_i");
 		list.put(RenderItem.class, "field_77023_b");
 		return list;
 	}
 
-	public static String getSRG(String deobf) {
+	public static String getSRG(final String deobf) {
 		return SRGList().containsKey(deobf) ? SRGList().get(deobf) : "";
 	}
 
-	public static String determineSRG(String string) {
+	public static String determineSRG(final String string) {
 		return MCUtils.isDeobf() ? string : getSRG(string);
 	}
 
-	public static String determineZLevelSRG(String string, Class<?> clazz) {
+	public static String determineZLevelSRG(final String string, final Class<?> clazz) {
 		return MCUtils.isDeobf() ? string : zLevel().containsKey(clazz) ? zLevel().get(clazz) : "";
 	}
 
-	public static <T> MethodHandle findMethod(Class<T> clazz, String methodName, String obfMethodName, Class<?>... methodTypes) {
-		Method method = ReflectionHelper.findMethod(clazz, methodName, obfMethodName, methodTypes);
+	public static <T> MethodHandle findMethod(final Class<T> clazz, final String methodName, final String obfMethodName, final Class<?>... methodTypes) {
+		final Method method = ReflectionHelper.findMethod(clazz, methodName, obfMethodName, methodTypes);
 		try {
 			return MethodHandles.lookup().unreflect(method);
 		}
-		catch (IllegalAccessException e) {
+		catch (final IllegalAccessException e) {
 			throw new ReflectionHelper.UnableToFindMethodException(e);
 		}
 	}
 
-	public static MethodHandle findFieldGetter(Class<?> clazz, String... fieldNames) {
-		Field field = ReflectionHelper.findField(clazz, fieldNames);
+	public static MethodHandle findFieldGetter(final Class<?> clazz, final String... fieldNames) {
+		final Field field = ReflectionHelper.findField(clazz, fieldNames);
 		try {
 			return MethodHandles.lookup().unreflectGetter(field);
 		}
-		catch (IllegalAccessException e) {
+		catch (final IllegalAccessException e) {
 			throw new ReflectionHelper.UnableToAccessFieldException(fieldNames, e);
 		}
 	}
 
-	public static MethodHandle findFieldSetter(Class<?> clazz, String... fieldNames) {
-		Field field = ReflectionHelper.findField(clazz, fieldNames);
+	public static MethodHandle findFieldSetter(final Class<?> clazz, final String... fieldNames) {
+		final Field field = ReflectionHelper.findField(clazz, fieldNames);
 		try {
 			return MethodHandles.lookup().unreflectSetter(field);
 		}
-		catch (IllegalAccessException e) {
+		catch (final IllegalAccessException e) {
 			throw new ReflectionHelper.UnableToAccessFieldException(fieldNames, e);
 		}
 	}

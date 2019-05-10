@@ -18,9 +18,7 @@
  */
 package p455w0rdslib.util;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ListMultimap;
@@ -29,9 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.model.ModelBox;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.model.TexturedQuad;
+import net.minecraft.client.model.*;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -47,18 +43,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IntHashMap;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.registries.IRegistryDelegate;
 
 /**
@@ -71,194 +65,194 @@ import net.minecraftforge.registries.IRegistryDelegate;
  */
 public class MCPrivateUtils {
 
-	public static void addResourcePack(IResourcePack pack) {
-		List<Object> packList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), ReflectionUtils.determineSRG("defaultResourcePacks"));
+	public static void addResourcePack(final IResourcePack pack) {
+		final List<Object> packList = ObfuscationReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), ReflectionUtils.determineSRG("defaultResourcePacks"));
 		packList.add(pack);
-		ReflectionHelper.setPrivateValue(Minecraft.class, Minecraft.getMinecraft(), packList, ReflectionUtils.determineSRG("defaultResourcePacks"));
+		ObfuscationReflectionHelper.setPrivateValue(Minecraft.class, Minecraft.getMinecraft(), packList, ReflectionUtils.determineSRG("defaultResourcePacks"));
 	}
 
-	public static List<LayerRenderer<? extends EntityLivingBase>> getLayerRenderers(RenderLivingBase<?> renderPlayer) {
-		return ReflectionHelper.getPrivateValue(RenderLivingBase.class, renderPlayer, ReflectionUtils.determineSRG("layerRenderers"));
+	public static List<LayerRenderer<? extends EntityLivingBase>> getLayerRenderers(final RenderLivingBase<?> renderPlayer) {
+		return ObfuscationReflectionHelper.getPrivateValue(RenderLivingBase.class, renderPlayer, ReflectionUtils.determineSRG("layerRenderers"));
 	}
 
-	public static void setLayerRenderers(List<LayerRenderer<EntityPlayer>> layers, RenderPlayer renderPlayer) {
-		ReflectionHelper.setPrivateValue(RenderLivingBase.class, renderPlayer, layers, ReflectionUtils.determineSRG("layerRenderers"));
+	public static void setLayerRenderers(final List<LayerRenderer<EntityPlayer>> layers, final RenderPlayer renderPlayer) {
+		ObfuscationReflectionHelper.setPrivateValue(RenderLivingBase.class, renderPlayer, layers, ReflectionUtils.determineSRG("layerRenderers"));
 	}
 
-	public static int getTextureOffsetX(ModelRenderer modelRenderer) {
-		return ReflectionHelper.getPrivateValue(ModelRenderer.class, modelRenderer, ReflectionUtils.determineSRG("textureOffsetX"));
+	public static int getTextureOffsetX(final ModelRenderer modelRenderer) {
+		return ObfuscationReflectionHelper.getPrivateValue(ModelRenderer.class, modelRenderer, ReflectionUtils.determineSRG("textureOffsetX"));
 	}
 
-	public static int getTextureOffsetY(ModelRenderer modelRenderer) {
-		return ReflectionHelper.getPrivateValue(ModelRenderer.class, modelRenderer, ReflectionUtils.determineSRG("textureOffsetY"));
+	public static int getTextureOffsetY(final ModelRenderer modelRenderer) {
+		return ObfuscationReflectionHelper.getPrivateValue(ModelRenderer.class, modelRenderer, ReflectionUtils.determineSRG("textureOffsetY"));
 	}
 
-	public static TexturedQuad[] getQuadList(ModelBox modelBox) {
-		return ReflectionHelper.getPrivateValue(ModelBox.class, modelBox, ReflectionUtils.determineSRG("quadList"));
+	public static TexturedQuad[] getQuadList(final ModelBox modelBox) {
+		return ObfuscationReflectionHelper.getPrivateValue(ModelBox.class, modelBox, ReflectionUtils.determineSRG("quadList"));
 	}
 
-	public static DataParameter<Boolean> getEndermanScreaming(EntityEnderman enderman) {
-		return ReflectionHelper.getPrivateValue(EntityEnderman.class, enderman, ReflectionUtils.determineSRG("SCREAMING"));
+	public static DataParameter<Boolean> getEndermanScreaming(final EntityEnderman enderman) {
+		return ObfuscationReflectionHelper.getPrivateValue(EntityEnderman.class, enderman, ReflectionUtils.determineSRG("SCREAMING"));
 	}
 
-	public static void setEndermanScreaming(EntityEnderman enderman, boolean isScreaming) {
-		EntityDataManager dm = ReflectionHelper.getPrivateValue(Entity.class, enderman, ReflectionUtils.determineSRG("dataManager"));
-		DataParameter<Boolean> screaming = getEndermanScreaming(enderman);
+	public static void setEndermanScreaming(final EntityEnderman enderman, final boolean isScreaming) {
+		final EntityDataManager dm = ObfuscationReflectionHelper.getPrivateValue(Entity.class, enderman, ReflectionUtils.determineSRG("dataManager"));
+		final DataParameter<Boolean> screaming = getEndermanScreaming(enderman);
 		dm.set(screaming, Boolean.valueOf(isScreaming));
 		dm.setDirty(screaming);
-		ReflectionHelper.setPrivateValue(Entity.class, enderman, dm, ReflectionUtils.determineSRG("dataManager"));
+		ObfuscationReflectionHelper.setPrivateValue(Entity.class, enderman, dm, ReflectionUtils.determineSRG("dataManager"));
 	}
 
-	public static float getRenderItemZLevel(RenderItem ri) {
-		return ReflectionHelper.getPrivateValue(RenderItem.class, ri, ReflectionUtils.determineZLevelSRG("zLevel", RenderItem.class));
+	public static float getRenderItemZLevel(final RenderItem ri) {
+		return ObfuscationReflectionHelper.getPrivateValue(RenderItem.class, ri, ReflectionUtils.determineZLevelSRG("zLevel", RenderItem.class));
 	}
 
-	public static void setRenderItemZLevel(RenderItem ri, float zLevel) {
-		ReflectionHelper.setPrivateValue(RenderItem.class, ri, zLevel, ReflectionUtils.determineZLevelSRG("zLevel", RenderItem.class));
+	public static void setRenderItemZLevel(final RenderItem ri, final float zLevel) {
+		ObfuscationReflectionHelper.setPrivateValue(RenderItem.class, ri, zLevel, ReflectionUtils.determineZLevelSRG("zLevel", RenderItem.class));
 	}
 
-	public static float getGuiZLevel(Gui gui) {
-		return ReflectionHelper.getPrivateValue(Gui.class, gui, ReflectionUtils.determineZLevelSRG("zLevel", Gui.class));
+	public static float getGuiZLevel(final Gui gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(Gui.class, gui, ReflectionUtils.determineZLevelSRG("zLevel", Gui.class));
 	}
 
-	public static void setGuiZLevel(Gui gui, float zLevel) {
-		ReflectionHelper.setPrivateValue(Gui.class, gui, zLevel, ReflectionUtils.determineZLevelSRG("zLevel", Gui.class));
+	public static void setGuiZLevel(final Gui gui, final float zLevel) {
+		ObfuscationReflectionHelper.setPrivateValue(Gui.class, gui, zLevel, ReflectionUtils.determineZLevelSRG("zLevel", Gui.class));
 	}
 
-	public static RenderItem getGuiScreenRenderItem(GuiScreen gui) {
-		return ReflectionHelper.getPrivateValue(GuiScreen.class, gui, ReflectionUtils.determineSRG("itemRender"));
+	public static RenderItem getGuiScreenRenderItem(final GuiScreen gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, gui, ReflectionUtils.determineSRG("itemRender"));
 	}
 
-	public static void setGuiScreenRendererZLevel(GuiScreen gui, float zLevel) {
-		ReflectionHelper.setPrivateValue(RenderItem.class, getGuiScreenRenderItem(gui), zLevel, ReflectionUtils.determineZLevelSRG("zLevel", RenderItem.class));
+	public static void setGuiScreenRendererZLevel(final GuiScreen gui, final float zLevel) {
+		ObfuscationReflectionHelper.setPrivateValue(RenderItem.class, getGuiScreenRenderItem(gui), zLevel, ReflectionUtils.determineZLevelSRG("zLevel", RenderItem.class));
 	}
 
-	public static boolean getGuiDragSplitting(GuiContainer gui) {
-		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("dragSplitting"));
+	public static boolean getGuiDragSplitting(final GuiContainer gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("dragSplitting"));
 	}
 
-	public static Set<Slot> getGuiDragSplittingSlots(GuiContainer gui) {
-		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("dragSplittingSlots"));
+	public static Set<Slot> getGuiDragSplittingSlots(final GuiContainer gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("dragSplittingSlots"));
 	}
 
-	public static int getGuiDragSplittingLimit(GuiContainer gui) {
-		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("dragSplittingLimit"));
+	public static int getGuiDragSplittingLimit(final GuiContainer gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("dragSplittingLimit"));
 	}
 
-	public static Slot getGuiClickedSlot(GuiContainer gui) {
-		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("clickedSlot"));
+	public static Slot getGuiClickedSlot(final GuiContainer gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("clickedSlot"));
 	}
 
-	public static ItemStack getGuiDraggedStack(GuiContainer gui) {
-		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("draggedStack"));
+	public static ItemStack getGuiDraggedStack(final GuiContainer gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("draggedStack"));
 	}
 
-	public static boolean getGuiIsRightMouseClick(GuiContainer gui) {
-		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("isRightMouseClick"));
+	public static boolean getGuiIsRightMouseClick(final GuiContainer gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("isRightMouseClick"));
 	}
 
-	public static int getGuiDragSplittingRemnant(GuiContainer gui) {
-		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("dragSplittingRemnant"));
+	public static int getGuiDragSplittingRemnant(final GuiContainer gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("dragSplittingRemnant"));
 	}
 
-	public static void setGuiDragSplittingRemnant(GuiContainer gui, int amount) {
-		ReflectionHelper.setPrivateValue(GuiContainer.class, gui, amount, ReflectionUtils.determineSRG("dragSplittingRemnant"));
+	public static void setGuiDragSplittingRemnant(final GuiContainer gui, final int amount) {
+		ObfuscationReflectionHelper.setPrivateValue(GuiContainer.class, gui, amount, ReflectionUtils.determineSRG("dragSplittingRemnant"));
 	}
 
-	public static CapabilityDispatcher getItemStackCapabilities(ItemStack stack) {
-		return ReflectionHelper.getPrivateValue(ItemStack.class, stack, "capabilities");
+	public static CapabilityDispatcher getItemStackCapabilities(final ItemStack stack) {
+		return ObfuscationReflectionHelper.getPrivateValue(ItemStack.class, stack, "capabilities");
 	}
 
-	public static void setItemStackCapabilities(ItemStack stack, CapabilityDispatcher dispatcher) {
-		ReflectionHelper.setPrivateValue(ItemStack.class, stack, dispatcher, "capabilities");
+	public static void setItemStackCapabilities(final ItemStack stack, final CapabilityDispatcher dispatcher) {
+		ObfuscationReflectionHelper.setPrivateValue(ItemStack.class, stack, dispatcher, "capabilities");
 	}
 
-	public static NBTTagCompound getItemStackCapNBT(ItemStack stack) {
-		return ReflectionHelper.getPrivateValue(ItemStack.class, stack, "capNBT");
+	public static NBTTagCompound getItemStackCapNBT(final ItemStack stack) {
+		return ObfuscationReflectionHelper.getPrivateValue(ItemStack.class, stack, "capNBT");
 	}
 
-	public static void setItemStackItem(ItemStack stack, Item item) {
-		ReflectionHelper.setPrivateValue(ItemStack.class, stack, item, ReflectionUtils.determineSRG("item"));
+	public static void setItemStackItem(final ItemStack stack, final Item item) {
+		ObfuscationReflectionHelper.setPrivateValue(ItemStack.class, stack, item, ReflectionUtils.determineSRG("item"));
 	}
 
-	public static void setItemStackDelegate(ItemStack stack, IRegistryDelegate<Item> delegate) {
-		ReflectionHelper.setPrivateValue(ItemStack.class, stack, delegate, "delegate");
+	public static void setItemStackDelegate(final ItemStack stack, final IRegistryDelegate<Item> delegate) {
+		ObfuscationReflectionHelper.setPrivateValue(ItemStack.class, stack, delegate, "delegate");
 	}
 
-	public static int getGuiContainerXSize(GuiContainer gui) {
-		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("xSize"));
+	public static int getGuiContainerXSize(final GuiContainer gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("xSize"));
 	}
 
-	public static int getGuiContainerYSize(GuiContainer gui) {
-		return ReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("ySize"));
+	public static int getGuiContainerYSize(final GuiContainer gui) {
+		return ObfuscationReflectionHelper.getPrivateValue(GuiContainer.class, gui, ReflectionUtils.determineSRG("ySize"));
 	}
 
-	public static float getRainfall(Biome biome) {
-		return ReflectionHelper.getPrivateValue(Biome.class, biome, ReflectionUtils.determineSRG("rainfall"));
+	public static float getRainfall(final Biome biome) {
+		return ObfuscationReflectionHelper.getPrivateValue(Biome.class, biome, ReflectionUtils.determineSRG("rainfall"));
 	}
 
-	public static void setRainfall(Biome biome, float rainfall) {
-		ReflectionHelper.setPrivateValue(Biome.class, biome, rainfall, ReflectionUtils.determineSRG("rainfall"));
+	public static void setRainfall(final Biome biome, final float rainfall) {
+		ObfuscationReflectionHelper.setPrivateValue(Biome.class, biome, rainfall, ReflectionUtils.determineSRG("rainfall"));
 	}
 
-	public static boolean isRainEnabled(Biome biome) {
-		return ReflectionHelper.getPrivateValue(Biome.class, biome, ReflectionUtils.determineSRG("enableRain"));
+	public static boolean isRainEnabled(final Biome biome) {
+		return ObfuscationReflectionHelper.getPrivateValue(Biome.class, biome, ReflectionUtils.determineSRG("enableRain"));
 	}
 
-	public static void setRainEnabled(Biome biome, boolean enableRain) {
-		ReflectionHelper.setPrivateValue(Biome.class, biome, enableRain, ReflectionUtils.determineSRG("enableRain"));
+	public static void setRainEnabled(final Biome biome, final boolean enableRain) {
+		ObfuscationReflectionHelper.setPrivateValue(Biome.class, biome, enableRain, ReflectionUtils.determineSRG("enableRain"));
 	}
 
 	public static BiMap<Class<? extends Entity>, EntityRegistration> getEntityClassRegistry() {
-		return ReflectionHelper.getPrivateValue(EntityRegistry.class, EntityRegistry.instance(), "entityClassRegistrations");
+		return ObfuscationReflectionHelper.getPrivateValue(EntityRegistry.class, EntityRegistry.instance(), "entityClassRegistrations");
 	}
 
 	public static Map<String, ModContainer> getEntityNameRegistry() {
-		return ReflectionHelper.getPrivateValue(EntityRegistry.class, EntityRegistry.instance(), "entityNames");
+		return ObfuscationReflectionHelper.getPrivateValue(EntityRegistry.class, EntityRegistry.instance(), "entityNames");
 	}
 
 	public static ListMultimap<ModContainer, EntityRegistration> getEntityRegistration() {
-		return ReflectionHelper.getPrivateValue(EntityRegistry.class, EntityRegistry.instance(), "entityRegistrations");
+		return ObfuscationReflectionHelper.getPrivateValue(EntityRegistry.class, EntityRegistry.instance(), "entityRegistrations");
 	}
 
-	public static void setLastDamageSource(EntityLivingBase entity, DamageSource source) {
-		ReflectionHelper.setPrivateValue(EntityLivingBase.class, entity, source, ReflectionUtils.determineSRG("lastDamageSource"));
+	public static void setLastDamageSource(final EntityLivingBase entity, final DamageSource source) {
+		ObfuscationReflectionHelper.setPrivateValue(EntityLivingBase.class, entity, source, ReflectionUtils.determineSRG("lastDamageSource"));
 	}
 
-	public static void setLastDamageStamp(EntityLivingBase entity, long time) {
-		ReflectionHelper.setPrivateValue(EntityLivingBase.class, entity, time, ReflectionUtils.determineSRG("lastDamageStamp"));
+	public static void setLastDamageStamp(final EntityLivingBase entity, final long time) {
+		ObfuscationReflectionHelper.setPrivateValue(EntityLivingBase.class, entity, time, ReflectionUtils.determineSRG("lastDamageStamp"));
 	}
 
-	public static List<Entity> getUnloadedEntityList(World world) {
-		return ReflectionHelper.getPrivateValue(World.class, world, ReflectionUtils.determineSRG("unloadedEntityList"));
+	public static List<Entity> getUnloadedEntityList(final World world) {
+		return ObfuscationReflectionHelper.getPrivateValue(World.class, world, ReflectionUtils.determineSRG("unloadedEntityList"));
 	}
 
-	public static BlockPos getEntityLastPortalPos(Entity entity) {
-		return ReflectionHelper.getPrivateValue(Entity.class, entity, ReflectionUtils.determineSRG("lastPortalPos"));
+	public static BlockPos getEntityLastPortalPos(final Entity entity) {
+		return ObfuscationReflectionHelper.getPrivateValue(Entity.class, entity, ReflectionUtils.determineSRG("lastPortalPos"));
 	}
 
-	public static void setEntityLastPortalPos(Entity entity, BlockPos pos) {
-		ReflectionHelper.setPrivateValue(Entity.class, entity, pos, ReflectionUtils.determineSRG("lastPortalPos"));
+	public static void setEntityLastPortalPos(final Entity entity, final BlockPos pos) {
+		ObfuscationReflectionHelper.setPrivateValue(Entity.class, entity, pos, ReflectionUtils.determineSRG("lastPortalPos"));
 	}
 
-	public static Vec3d getEntityLastPortalVec(Entity entity) {
-		return ReflectionHelper.getPrivateValue(Entity.class, entity, ReflectionUtils.determineSRG("lastPortalVec"));
+	public static Vec3d getEntityLastPortalVec(final Entity entity) {
+		return ObfuscationReflectionHelper.getPrivateValue(Entity.class, entity, ReflectionUtils.determineSRG("lastPortalVec"));
 	}
 
-	public static void setEntityLastPortalVec(Entity entity, Vec3d vector) {
-		ReflectionHelper.setPrivateValue(Entity.class, entity, vector, ReflectionUtils.determineSRG("lastPortalVec"));
+	public static void setEntityLastPortalVec(final Entity entity, final Vec3d vector) {
+		ObfuscationReflectionHelper.setPrivateValue(Entity.class, entity, vector, ReflectionUtils.determineSRG("lastPortalVec"));
 	}
 
-	public static EnumFacing getEntityTeleportDirection(Entity entity) {
-		return ReflectionHelper.getPrivateValue(Entity.class, entity, ReflectionUtils.determineSRG("teleportDirection"));
+	public static EnumFacing getEntityTeleportDirection(final Entity entity) {
+		return ObfuscationReflectionHelper.getPrivateValue(Entity.class, entity, ReflectionUtils.determineSRG("teleportDirection"));
 	}
 
-	public static void setEntityTeleportDirection(Entity entity, EnumFacing direction) {
-		ReflectionHelper.setPrivateValue(Entity.class, entity, direction, ReflectionUtils.determineSRG("teleportDirection"));
+	public static void setEntityTeleportDirection(final Entity entity, final EnumFacing direction) {
+		ObfuscationReflectionHelper.setPrivateValue(Entity.class, entity, direction, ReflectionUtils.determineSRG("teleportDirection"));
 	}
 
-	public static IntHashMap<Entity> getEntitiesForWorld(World world) {
-		return ReflectionHelper.getPrivateValue(World.class, world, ReflectionUtils.determineSRG("entitiesById"));
+	public static IntHashMap<Entity> getEntitiesForWorld(final World world) {
+		return ObfuscationReflectionHelper.getPrivateValue(World.class, world, ReflectionUtils.determineSRG("entitiesById"));
 	}
 
 }

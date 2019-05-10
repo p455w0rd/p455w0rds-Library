@@ -10,9 +10,7 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelHumanoidHead;
-import net.minecraft.client.model.ModelSkeletonHead;
+import net.minecraft.client.model.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
@@ -38,18 +36,18 @@ public class LayerContribDankNull implements LayerRenderer<AbstractClientPlayer>
 	private static final ModelContribDankNull model = new ModelContribDankNull();
 
 	@Override
-	public void doRenderLayer(AbstractClientPlayer player, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		ModelSkeletonHead humanoidHead = new ModelHumanoidHead();
+	public void doRenderLayer(final AbstractClientPlayer player, final float limbSwing, final float limbSwingAmount, final float partialTicks, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scale) {
+		final ModelSkeletonHead humanoidHead = new ModelHumanoidHead();
 		ResourceLocation resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
-		Minecraft mc = Minecraft.getMinecraft();
-		GameProfile profile = mc.player.getGameProfile();
+		final Minecraft mc = Minecraft.getMinecraft();
+		final GameProfile profile = mc.player.getGameProfile();
 		if (profile != null) {
-			Map<Type, MinecraftProfileTexture> map = mc.getSkinManager().loadSkinFromCache(profile);
+			final Map<Type, MinecraftProfileTexture> map = mc.getSkinManager().loadSkinFromCache(profile);
 			if (map.containsKey(Type.SKIN)) {
 				resourcelocation = mc.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);
 			}
 			else {
-				UUID uuid = EntityPlayer.getUUID(profile);
+				final UUID uuid = EntityPlayer.getUUID(profile);
 				resourcelocation = DefaultPlayerSkin.getDefaultSkin(uuid);
 			}
 		}
@@ -100,8 +98,8 @@ public class LayerContribDankNull implements LayerRenderer<AbstractClientPlayer>
 		return false;
 	}
 
-	public static void renderEnchantedGlint(RenderLivingBase<?> p_188364_0_, EntityLivingBase p_188364_1_, ModelBase model, float p_188364_3_, float p_188364_4_, float p_188364_5_, float p_188364_6_, float p_188364_7_, float p_188364_8_, float p_188364_9_, Color color) {
-		float f = p_188364_1_.ticksExisted + p_188364_5_;
+	public static void renderEnchantedGlint(final RenderLivingBase<?> p_188364_0_, final EntityLivingBase p_188364_1_, final ModelBase model, final float p_188364_3_, final float p_188364_4_, final float p_188364_5_, final float p_188364_6_, final float p_188364_7_, final float p_188364_8_, final float p_188364_9_, Color color) {
+		final float f = p_188364_1_.ticksExisted + p_188364_5_;
 		if (color == null) {
 			color = new Color(LibGlobals.RED, LibGlobals.GREEN, LibGlobals.BLUE, 255);
 		}
@@ -110,18 +108,17 @@ public class LayerContribDankNull implements LayerRenderer<AbstractClientPlayer>
 		//GlStateManager.enableDepth();
 		GlStateManager.depthFunc(514);
 		GlStateManager.depthMask(false);
-		float f1 = 0.5F;
+		final float f1 = 0.5F;
 		GlStateManager.color(f1, f1, f1, 1.0F);
 
 		for (int i = 0; i < 2; ++i) {
 			GlStateManager.disableLighting();
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
-			float f2 = 0.76F;
 			GlStateManager.color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, color.getAlpha() / 255.0F);
 			GlStateManager.matrixMode(5890);
 			GlStateManager.loadIdentity();
-			float f3 = 0.33333334F;
+			final float f3 = 0.33333334F;
 			GlStateManager.scale(f3, f3, f3);
 			GlStateManager.rotate(30.0F - i * 60.0F, 0.0F, 0.0F, 1.0F);
 			GlStateManager.translate(0.0F, f * (0.001F + i * 0.003F) * 20.0F, 0.0F);

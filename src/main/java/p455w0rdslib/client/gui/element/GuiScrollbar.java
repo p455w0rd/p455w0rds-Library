@@ -2,9 +2,7 @@ package p455w0rdslib.client.gui.element;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import p455w0rdslib.api.gui.IGuiElement;
-import p455w0rdslib.api.gui.IGuiScrollbar;
-import p455w0rdslib.api.gui.IModularGui;
+import p455w0rdslib.api.gui.*;
 
 /**
  * @author p455w0rd
@@ -17,11 +15,11 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	protected boolean dragging;
 	IGuiElement parentElement;
 
-	public GuiScrollbar(IModularGui gui, GuiPos posIn, int width, int height, int max) {
+	public GuiScrollbar(final IModularGui gui, final GuiPos posIn, final int width, final int height, final int max) {
 		this(gui, posIn, width, height, max, 0);
 	}
 
-	public GuiScrollbar(IModularGui gui, GuiPos posIn, int width, int height, int max, int min) {
+	public GuiScrollbar(final IModularGui gui, final GuiPos posIn, final int width, final int height, final int max, final int min) {
 		super(gui, posIn, width, height);
 		minPos = min;
 		maxPos = max;
@@ -30,14 +28,14 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public void update(int mouseX, int mouseY) {
+	public void update(final int mouseX, final int mouseY) {
 		if (isDragging()) {
 			doDrag(mouseX - getX(), mouseY - (getY() + getSliderHeight()));
 		}
 	}
 
 	@Override
-	public boolean onMousePressed(int mouseX, int mouseY, int mouseButton) {
+	public boolean onMousePressed(final int mouseX, final int mouseY, final int mouseButton) {
 		if (isMouseOver(mouseX, mouseY)) {
 			setDragging(mouseButton == 0);
 			update(mouseX, mouseY);
@@ -47,12 +45,12 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public boolean isMouseOver(int mouseX, int mouseY) {
+	public boolean isMouseOver(final int mouseX, final int mouseY) {
 		return mouseX > getX() && mouseY > getY() && mouseX <= getX() + getWidth() && mouseY <= getY() + getHeight();
 	}
 
 	@Override
-	public void onMouseReleased(int mouseX, int mouseY, int button) {
+	public void onMouseReleased(final int mouseX, final int mouseY, final int button) {
 		if (isDragging()) {
 			onStopDragging();
 		}
@@ -63,7 +61,7 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	public abstract void doDrag(int x, int y);
 
 	@Override
-	public void drawBackground(int mouseX, int mouseY, float partialTicks) {
+	public void drawBackground(final int mouseX, final int mouseY, final float partialTicks) {
 		if (getParentElement() != null && getParentElement().isVisible()) {
 			Gui.drawRect(getX() - 1, getY() - 1, getX() + getWidth() + 1, getY() + getHeight() + 1, borderColor);
 			Gui.drawRect(getX(), getY(), getX() + getWidth(), getY() + getHeight(), faceColor);
@@ -72,13 +70,8 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public void drawForeground(int mouseX, int mouseY) {
+	public void drawForeground(final int mouseX, final int mouseY) {
 		if (getParentElement() != null && getParentElement().isVisible()) {
-			int sliderMidX = getSliderWidth() / 2;
-			int sliderMidY = getSliderHeight() / 2;
-			int sliderEndX = getSliderWidth() - sliderMidX;
-			int sliderEndY = getSliderHeight() - sliderMidY;
-
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			Gui.drawRect(getX() + getSliderXPos(), getY() + getSliderYPos() - 1, getX() + getSliderXPos() + getSliderWidth() + 1, getY() + getSliderYPos() + getSliderHeight() + 1, borderColor);
 			Gui.drawRect(getX() + getSliderXPos() + 1, getY() + getSliderYPos(), getX() + getSliderXPos() + getSliderWidth(), getY() + getSliderYPos() + getSliderHeight(), 0xFFCCCCCC);
@@ -86,7 +79,7 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public boolean onMouseWheel(int mouseX, int mouseY, int direction) {
+	public boolean onMouseWheel(final int mouseX, final int mouseY, final int direction) {
 
 		if (getParentElement() != null) {
 			getParentElement().onMouseWheel(mouseX, mouseY, direction);
@@ -118,7 +111,7 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public IGuiScrollbar setParentElement(IGuiElement element) {
+	public IGuiScrollbar setParentElement(final IGuiElement element) {
 		parentElement = element;
 		return this;
 	}
@@ -129,20 +122,11 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public IGuiScrollbar setScrollPos(int pos) {
+	public IGuiScrollbar setScrollPos(final int pos) {
 		scrollPos = Math.max(getMinPos(), Math.min(getMaxPos(), pos));
-		if (pos != getScrollPos()) {
-			//scrollPos = pos;
-			//onValueChanged(scrollPos);
-		}
 		return this;
 	}
 
-	/*
-	public void onValueChanged(int value) {
-		return;
-	}
-	*/
 	@Override
 	public void onStopDragging() {
 		return;
@@ -154,7 +138,7 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public IGuiScrollbar setMinPos(int pos) {
+	public IGuiScrollbar setMinPos(final int pos) {
 		minPos = pos;
 		return this;
 	}
@@ -165,13 +149,13 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public IGuiScrollbar setMaxPos(int pos) {
+	public IGuiScrollbar setMaxPos(final int pos) {
 		maxPos = pos;
 		return this;
 	}
 
 	@Override
-	public IGuiScrollbar setBounds(int min, int max) {
+	public IGuiScrollbar setBounds(final int min, final int max) {
 		setMinPos(min);
 		setMaxPos(max);
 		setScrollPos(getScrollPos());
@@ -184,7 +168,7 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public IGuiScrollbar setSliderWidth(int width) {
+	public IGuiScrollbar setSliderWidth(final int width) {
 		sliderWidth = width;
 		return this;
 	}
@@ -195,7 +179,7 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public IGuiScrollbar setSliderHeight(int height) {
+	public IGuiScrollbar setSliderHeight(final int height) {
 		sliderHeight = height;
 		return this;
 	}
@@ -206,7 +190,7 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public IGuiScrollbar setBorderColor(int color) {
+	public IGuiScrollbar setBorderColor(final int color) {
 		borderColor = color;
 		return this;
 	}
@@ -217,13 +201,13 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public IGuiScrollbar setFaceColor(int color) {
+	public IGuiScrollbar setFaceColor(final int color) {
 		faceColor = color;
 		return this;
 	}
 
 	@Override
-	public IGuiScrollbar setColors(int border, int face) {
+	public IGuiScrollbar setColors(final int border, final int face) {
 		return setBorderColor(border).setFaceColor(face);
 	}
 
@@ -233,7 +217,7 @@ public abstract class GuiScrollbar extends GuiElement implements IGuiScrollbar {
 	}
 
 	@Override
-	public void setDragging(boolean isDragging) {
+	public void setDragging(final boolean isDragging) {
 		dragging = isDragging;
 	}
 

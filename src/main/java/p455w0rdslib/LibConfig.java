@@ -21,7 +21,7 @@ public class LibConfig {
 	private static String DEF_CAT = "Options";
 
 	@SubscribeEvent
-	public void onConfigChange(ConfigChangedEvent.OnConfigChangedEvent e) {
+	public void onConfigChange(final ConfigChangedEvent.OnConfigChangedEvent e) {
 		if (e.getModID().equals(LibGlobals.MODID)) {
 			init();
 		}
@@ -33,11 +33,11 @@ public class LibConfig {
 				CONFIG = new Configuration(new File(LibGlobals.CONFIG_FILE));
 				MinecraftForge.EVENT_BUS.register(new LibConfig());
 			}
-
 			ConfigOptions.ENABLE_CONTRIB_CAPE = CONFIG.getBoolean("EnableContributorCosmetics", DEF_CAT, true, "Enable the contributor cosmetics (Only useful if u are a contributor, but don't want the cosmetics to override other cosmetics)");
 			ConfigOptions.ENABLE_CONTRIB_PARTICLES_SELF = CONFIG.getBoolean("EnableContributorParticleEffectsSelf", DEF_CAT, true, "Enable (true0 or disable (false) particle effects that result from contriutor cosmetics for current player");
 			ConfigOptions.ENABLE_CONTRIB_PARTICLES_OTHERS = CONFIG.getBoolean("EnableContributorParticleEffectsOthers", DEF_CAT, true, "Enable (true0 or disable (false) particle effects that result from contriutor cosmetics for other players");
-
+			ConfigOptions.ENABLE_SHADERS = CONFIG.getBoolean("EnableShaders", DEF_CAT, true, "Enables shader support in dependant mods");
+			ConfigOptions.SHADER_NUM_FRAMES_TO_SKIP = CONFIG.getInt("NumFramesToSkipWhenRenderingShaders", DEF_CAT, 10, 0, 160, "Skips sending light updates to the card some frames. This can speed up fps greatly when bandwidth is a problem. 0 always sends data.");
 			if (CONFIG.hasChanged()) {
 				CONFIG.save();
 			}

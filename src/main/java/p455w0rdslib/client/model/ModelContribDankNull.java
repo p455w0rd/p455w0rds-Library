@@ -130,19 +130,20 @@ public class ModelContribDankNull extends ModelBase {
 	}
 
 	@Override
-	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+	public void render(final Entity entity, final float limbSwing, final float limbSwingAmount, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scale) {
 		basebottom.render(scale);
 		//buildModel();
 		//renderPart(basebottom, netHeadYaw, headPitch, scale);
 	}
 
+	/*
 	private void renderPart(ModelRenderer part, float x, float y, float scale) {
 		part.rotateAngleY = x / (180F / (float) Math.PI);
 		part.rotateAngleX = y / (180F / (float) Math.PI);
 		part.render(scale);
 	}
-
-	public void setRotation(ModelRenderer modelRenderer, float x, float y, float z) {
+	*/
+	public void setRotation(final ModelRenderer modelRenderer, final float x, final float y, final float z) {
 		modelRenderer.rotateAngleX = x;
 		modelRenderer.rotateAngleY = y;
 		modelRenderer.rotateAngleZ = z;

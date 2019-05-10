@@ -5,10 +5,7 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,7 +21,7 @@ public class ImageUtils {
 
 	public static final File IMAGE_DIR = new File(MCUtils.mc().mcDataDir, "SavedImages");
 
-	public static void saveEntity(Entity entity, int rotX, int rotY, boolean useMouseRot) {
+	public static void saveEntity(final Entity entity, final int rotX, final int rotY, final boolean useMouseRot) {
 		if (entity == null) {
 			return;
 		}
@@ -32,18 +29,18 @@ public class ImageUtils {
 			//EntityLivingBase entityClone = (EntityLivingBase) EntityUtils.cloneEntity(entity);
 
 			RenderUtils.pushFBO();
-			AxisAlignedBB aabb = entity.getEntityBoundingBox();
-			double minX = aabb.minX - entity.posX;
-			double maxX = aabb.maxX - entity.posX;
-			double minY = aabb.minY - entity.posY;
-			double maxY = aabb.maxY - entity.posY;
-			double minZ = aabb.minZ - entity.posZ;
-			double maxZ = aabb.maxZ - entity.posZ;
+			final AxisAlignedBB aabb = entity.getEntityBoundingBox();
+			final double minX = aabb.minX - entity.posX;
+			final double maxX = aabb.maxX - entity.posX;
+			final double minY = aabb.minY - entity.posY;
+			final double maxY = aabb.maxY - entity.posY;
+			final double minZ = aabb.minZ - entity.posZ;
+			final double maxZ = aabb.maxZ - entity.posZ;
 
-			double minBound = Math.min(minX, Math.min(minY, minZ));
-			double maxBound = Math.max(maxX, Math.max(maxY, maxZ));
+			final double minBound = Math.min(minX, Math.min(minY, minZ));
+			final double maxBound = Math.max(maxX, Math.max(maxY, maxZ));
 
-			double boundLimit = Math.max(Math.abs(minBound), Math.abs(maxBound));
+			final double boundLimit = Math.max(Math.abs(minBound), Math.abs(maxBound));
 
 			GlStateManager.matrixMode(GL11.GL_PROJECTION);
 			GlStateManager.pushMatrix();
@@ -66,7 +63,7 @@ public class ImageUtils {
 	}
 
 	public static void saveCurrentItem() {
-		ItemStack stack = PlayerUtils.getPlayer().getHeldItemMainhand();
+		final ItemStack stack = PlayerUtils.getPlayer().getHeldItemMainhand();
 		if (stack != null && stack.getItem() != null) {
 			RenderUtils.pushFBO();
 			GlStateManager.matrixMode(GL11.GL_PROJECTION);
@@ -74,7 +71,7 @@ public class ImageUtils {
 			GlStateManager.loadIdentity();
 			GlStateManager.ortho(0, 16, 16, 0, -100000.0, 100000.0);
 			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-			FloatBuffer matrix = GLAllocation.createDirectFloatBuffer(16);
+			final FloatBuffer matrix = GLAllocation.createDirectFloatBuffer(16);
 			matrix.clear();
 			//@formatter:off
 			matrix.put(new float[] {
@@ -100,24 +97,24 @@ public class ImageUtils {
 		}
 		else {
 			if (MCUtils.mc().pointedEntity != null && MCUtils.mc().pointedEntity instanceof EntityLivingBase) {
-				EntityLivingBase entity = (EntityLivingBase) MCUtils.mc().pointedEntity;
-				EntityLivingBase entityClone = (EntityLivingBase) EntityUtils.cloneEntity(entity);
+				final EntityLivingBase entity = (EntityLivingBase) MCUtils.mc().pointedEntity;
+				final EntityLivingBase entityClone = (EntityLivingBase) EntityUtils.cloneEntity(entity);
 				if (entityClone == null) {
 					return;
 				}
 				RenderUtils.pushFBO();
-				AxisAlignedBB aabb = entityClone.getEntityBoundingBox();
-				double minX = aabb.minX - entityClone.posX;
-				double maxX = aabb.maxX - entityClone.posX;
-				double minY = aabb.minY - entityClone.posY;
-				double maxY = aabb.maxY - entityClone.posY;
-				double minZ = aabb.minZ - entityClone.posZ;
-				double maxZ = aabb.maxZ - entityClone.posZ;
+				final AxisAlignedBB aabb = entityClone.getEntityBoundingBox();
+				final double minX = aabb.minX - entityClone.posX;
+				final double maxX = aabb.maxX - entityClone.posX;
+				final double minY = aabb.minY - entityClone.posY;
+				final double maxY = aabb.maxY - entityClone.posY;
+				final double minZ = aabb.minZ - entityClone.posZ;
+				final double maxZ = aabb.maxZ - entityClone.posZ;
 
-				double minBound = Math.min(minX, Math.min(minY, minZ));
-				double maxBound = Math.max(maxX, Math.max(maxY, maxZ));
+				final double minBound = Math.min(minX, Math.min(minY, minZ));
+				final double maxBound = Math.max(maxX, Math.max(maxY, maxZ));
 
-				double boundLimit = Math.max(Math.abs(minBound), Math.abs(maxBound));
+				final double boundLimit = Math.max(Math.abs(minBound), Math.abs(maxBound));
 
 				GlStateManager.matrixMode(GL11.GL_PROJECTION);
 				GlStateManager.pushMatrix();
@@ -138,19 +135,19 @@ public class ImageUtils {
 		}
 	}
 
-	private static void renderEntity(EntityLivingBase entity) {
+	private static void renderEntity(final EntityLivingBase entity) {
 		GlStateManager.enableColorMaterial();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0, 0, 50.0F);
 		GlStateManager.scale(-1.0f, 1.0f, 1.0f);
 		GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-
+		/*
 		float f2 = entity.renderYawOffset;
 		float f3 = entity.rotationYaw;
 		float f4 = entity.rotationPitch;
 		float f5 = entity.prevRotationYawHead;
 		float f6 = entity.rotationYawHead;
-		/*
+
 		float f2 = 0.0f;
 		float f3 = 0.0f;
 		float f4 = 0.0f;
@@ -173,10 +170,10 @@ public class ImageUtils {
 		//entity.rotationYawHead = 0.0f;//entity.rotationYaw;
 		//entity.prevRotationYawHead = 0.0f;//entity.rotationYaw;
 		//GlStateManager.translate(0.0F, 0.0F, 0.0F);
-		RenderManager rendermanager = RenderUtils.getRenderManager();
+		final RenderManager rendermanager = RenderUtils.getRenderManager();
 		rendermanager.setPlayerViewY(90.0F);
 		rendermanager.setRenderShadow(false);
-		rendermanager.renderEntity(entity, 0.0D, 0.0D, 0.0D, f3, RenderUtils.getPartialTicks(), false);
+		rendermanager.renderEntity(entity, 0.0D, 0.0D, 0.0D, entity.rotationYaw, RenderUtils.getPartialTicks(), false);
 		rendermanager.setRenderShadow(true);
 		//entity.renderYawOffset = f2;
 		//entity.rotationYaw = f3;

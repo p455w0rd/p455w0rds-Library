@@ -4,11 +4,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 
@@ -18,9 +14,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.renderer.entity.layers.LayerCape;
-import net.minecraft.client.renderer.entity.layers.LayerElytra;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -48,7 +42,7 @@ public class ContributorUtils {
 	public static LayerContribDankNull layerDankNull;
 	private static DLThread thread;
 
-	public static void queuePlayerCosmetics(AbstractClientPlayer player) {
+	public static void queuePlayerCosmetics(final AbstractClientPlayer player) {
 		if (LibGlobals.CONTRIBUTOR_FILE_DOWNLOADED) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				ContributorUtils.addCosmetic(player);
@@ -62,7 +56,7 @@ public class ContributorUtils {
 		thread.setDaemon(true);
 		thread.start();
 
-		IProcess process = new IProcess() {
+		final IProcess process = new IProcess() {
 			@Override
 			public void updateProcess() {
 				if (thread.isFinished()) {
@@ -91,19 +85,19 @@ public class ContributorUtils {
 
 	}
 
-	private static boolean isOnlineMode(EntityPlayer player) {
+	private static boolean isOnlineMode(final EntityPlayer player) {
 		if (player == null) {
 			return false;
 		}
 		return !UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8)).equals(player.getUniqueID());
 	}
 
-	private static void addCosmetic(AbstractClientPlayer player) {
+	private static void addCosmetic(final AbstractClientPlayer player) {
 		if (doesPlayerHaveDankNull(player)) {
 			addDankNull();
 		}
 		if (doesPlayerHaveWings(player)) {
-			Type type = getWingTypeForPlayer(player);
+			final Type type = getWingTypeForPlayer(player);
 			addWings(type);
 			registerContributor(player, type);
 			LibGlobals.IS_CONTRIBUTOR = true;
@@ -116,7 +110,7 @@ public class ContributorUtils {
 		}
 	}
 
-	public static void registerContributor(AbstractClientPlayer player, LayerContributorWings.Type type) {
+	public static void registerContributor(final AbstractClientPlayer player, final LayerContributorWings.Type type) {
 		if (player != null && type != null) {
 			if (!REGISTRY.containsKey(player.getUniqueID())) {
 				REGISTRY.put(player.getUniqueID(), type);
@@ -125,7 +119,7 @@ public class ContributorUtils {
 		}
 	}
 
-	public static void registerSpecialContributor(AbstractClientPlayer player) {
+	public static void registerSpecialContributor(final AbstractClientPlayer player) {
 		if (player != null && isPlayerSpecial(player.getUniqueID())) {
 			if (!SPECIAL_PLAYERS.contains(player.getUniqueID())) {
 				SPECIAL_PLAYERS.add(player.getUniqueID());
@@ -133,11 +127,11 @@ public class ContributorUtils {
 		}
 	}
 
-	public static boolean isContributor(AbstractClientPlayer player) {
+	public static boolean isContributor(final AbstractClientPlayer player) {
 		return player != null && REGISTRY.containsKey(player.getUniqueID());
 	}
 
-	public static LayerContributorWings.Type getWingType(AbstractClientPlayer player) {
+	public static LayerContributorWings.Type getWingType(final AbstractClientPlayer player) {
 		if (player != null) {
 			if (REGISTRY.containsKey(player.getUniqueID())) {
 				return REGISTRY.get(player.getUniqueID());
@@ -146,8 +140,8 @@ public class ContributorUtils {
 		return null;
 	}
 
-	public static LayerContributorWings.Type getWingType(String uuid) {
-		for (UUID playerUUID : REGISTRY.keySet()) {
+	public static LayerContributorWings.Type getWingType(final String uuid) {
+		for (final UUID playerUUID : REGISTRY.keySet()) {
 			if (uuid.contains(playerUUID.toString())) {
 				return REGISTRY.get(playerUUID);
 			}
@@ -155,7 +149,7 @@ public class ContributorUtils {
 		return null;
 	}
 
-	private static void removeVanillaSpecialLayers(List<LayerRenderer<?>> r) {
+	private static void removeVanillaSpecialLayers(final List<LayerRenderer<?>> r) {
 		for (int i = 0; i < r.size(); ++i) {
 			if (r.get(i) instanceof LayerElytra || r.get(i) instanceof LayerCape) {
 				r.remove(i);
@@ -163,27 +157,27 @@ public class ContributorUtils {
 		}
 	}
 
-	public static void addWings(LayerContributorWings.Type type) {
-		for (RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
-			List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
+	public static void addWings(final LayerContributorWings.Type type) {
+		for (final RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
+			//final List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
 			//removeVanillaSpecialLayers(r);
 			renderPlayer.addLayer(layerWings = new LayerContributorWings());
 		}
 	}
 
 	public static void addDankNull() {
-		for (RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
-			List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
+		for (final RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
+			final List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
 			removeVanillaSpecialLayers(r);
 			renderPlayer.addLayer(layerDankNull = new LayerContribDankNull());
 		}
 	}
 
-	public static boolean doesPlayerHaveWings(AbstractClientPlayer player) {
+	public static boolean doesPlayerHaveWings(final AbstractClientPlayer player) {
 		if (PATRON_LIST != null) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
-				for (Type type : LayerContributorWings.Type.values()) {
-					String uuid = player.getUniqueID().toString() + "" + type.getIdentifier();
+				for (final Type type : LayerContributorWings.Type.values()) {
+					final String uuid = player.getUniqueID().toString() + "" + type.getIdentifier();
 					if (!uuid.contains(PATRON_LIST.get(i)) && !isPlayerSpecial(uuid, PATRON_LIST.get(i))) {
 						continue;
 					}
@@ -194,11 +188,11 @@ public class ContributorUtils {
 		return false;
 	}
 
-	public static boolean doesPlayerHaveDankNull(AbstractClientPlayer player) {
+	public static boolean doesPlayerHaveDankNull(final AbstractClientPlayer player) {
 		return false;
 	}
 
-	public static boolean isPlayerSpecial(UUID playerUUID) {
+	public static boolean isPlayerSpecial(final UUID playerUUID) {
 		if (SPECIAL_PLAYERS.contains(playerUUID)) {
 			return true;
 		}
@@ -211,7 +205,7 @@ public class ContributorUtils {
 		return false;
 	}
 
-	public static boolean isPlayerSuperSpecial(UUID playerUUID) {
+	public static boolean isPlayerSuperSpecial(final UUID playerUUID) {
 		if (isPlayerSpecial(playerUUID)) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
 				if (!PATRON_LIST.get(i).split("_")[1].contains("!")) {
@@ -223,11 +217,11 @@ public class ContributorUtils {
 		return false;
 	}
 
-	public static boolean isPlayerSpecial(String uuid, String comparison) {
+	public static boolean isPlayerSpecial(final String uuid, final String comparison) {
 		return comparison.contains(uuid) && comparison.contains("#");
 	}
 
-	public static boolean isPlayerSpecial(String uuid) {
+	public static boolean isPlayerSpecial(final String uuid) {
 		if (!PATRON_LIST.isEmpty()) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
 				if (!PATRON_LIST.get(i).split("_")[1].contains("#")) {
@@ -239,10 +233,10 @@ public class ContributorUtils {
 		return false;
 	}
 
-	public static boolean isPlayerSuperSpecial(String uuid) {
+	public static boolean isPlayerSuperSpecial(final String uuid) {
 		if (!PATRON_LIST.isEmpty() && isPlayerSpecial(uuid)) {
 			for (int i = 0; i < PATRON_LIST.size(); ++i) {
-				if (!PATRON_LIST.get(i).split("_")[1].contains("!")) {
+				if (!PATRON_LIST.get(i).contains("!")) {
 					continue;
 				}
 				return true;
@@ -251,10 +245,10 @@ public class ContributorUtils {
 		return false;
 	}
 
-	public static Type getWingTypeForPlayer(AbstractClientPlayer player) {
+	public static Type getWingTypeForPlayer(final AbstractClientPlayer player) {
 		for (int i = 0; i < PATRON_LIST.size(); ++i) {
-			for (Type type : LayerContributorWings.Type.values()) {
-				String uuid = player.getUniqueID().toString() + "" + type.getIdentifier();
+			for (final Type type : LayerContributorWings.Type.values()) {
+				final String uuid = player.getUniqueID().toString() + "" + type.getIdentifier();
 				if (!uuid.equals(PATRON_LIST.get(i)) && !isPlayerSpecial(uuid, PATRON_LIST.get(i))) {
 					continue;
 				}
@@ -278,11 +272,11 @@ public class ContributorUtils {
 			super.run();
 
 			try {
-				List<String> entries = new ArrayList<String>();
+				List<String> entries = new ArrayList<>();
 				HttpURLConnection con;
 				con = (HttpURLConnection) new URL("https://s3.us-east-2.amazonaws.com/p455w0rd/patrons.txt").openConnection();
 				con.setConnectTimeout(1000);
-				InputStream in2 = con.getInputStream();
+				final InputStream in2 = con.getInputStream();
 				entries = IOUtils.readLines(in2, Charset.defaultCharset());
 				if (!entries.isEmpty()) {
 					PATRON_LIST = entries;
@@ -293,7 +287,7 @@ public class ContributorUtils {
 				finished = true;
 				failed = PATRON_LIST.isEmpty();
 			}
-			catch (Exception e) {
+			catch (final Exception e) {
 				failed = true;
 				e.printStackTrace();
 			}

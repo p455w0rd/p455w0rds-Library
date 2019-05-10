@@ -20,7 +20,6 @@ package p455w0rdslib.proxy;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -28,7 +27,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import p455w0rdslib.LibConfig;
 import p455w0rdslib.LibEntities;
-import p455w0rdslib.LibEvents;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
 import p455w0rdslib.handlers.ProcessHandler;
 
@@ -38,7 +36,7 @@ import p455w0rdslib.handlers.ProcessHandler;
  */
 public class CommonProxy {
 
-	public void preInit(FMLPreInitializationEvent e) {
+	public void preInit(final FMLPreInitializationEvent e) {
 		LibConfig.init();
 		//ForgeChunkManager.setForcedChunkLoadingCallback(P455w0rdsLib.INSTANCE, Callback.getInstance());
 		CapabilityChunkLoader.init();
@@ -47,9 +45,9 @@ public class CommonProxy {
 		}
 	}
 
-	public void init(FMLInitializationEvent e) {
+	public void init(final FMLInitializationEvent e) {
 		LibEntities.init();
-		MinecraftForge.EVENT_BUS.register(new LibEvents());
+		//MinecraftForge.EVENT_BUS.register(new LibEvents());
 	}
 
 	public boolean isSMP() {
@@ -64,7 +62,7 @@ public class CommonProxy {
 		return null;
 	}
 
-	public EntityPlayer getPlayer(MessageContext context) {
+	public EntityPlayer getPlayer(final MessageContext context) {
 		return null;
 	}
 

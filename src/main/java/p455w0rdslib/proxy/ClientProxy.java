@@ -24,6 +24,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import p455w0rdslib.LibShaders;
 import p455w0rdslib.handlers.ProcessHandlerClient;
 
 /**
@@ -33,13 +34,14 @@ import p455w0rdslib.handlers.ProcessHandlerClient;
 public class ClientProxy extends CommonProxy {
 
 	@Override
-	public void preInit(FMLPreInitializationEvent e) {
+	public void preInit(final FMLPreInitializationEvent e) {
 		super.preInit(e);
 		ProcessHandlerClient.init();
+		LibShaders.registerReloadListener();
 	}
 
 	@Override
-	public void init(FMLInitializationEvent e) {
+	public void init(final FMLInitializationEvent e) {
 		super.init(e);
 	}
 
@@ -59,7 +61,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public EntityPlayer getPlayer(MessageContext context) {
+	public EntityPlayer getPlayer(final MessageContext context) {
 		return context.side.isClient() ? getPlayer() : null;
 	}
 

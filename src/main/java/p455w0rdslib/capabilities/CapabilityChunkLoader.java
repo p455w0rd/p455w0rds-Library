@@ -3,17 +3,11 @@ package p455w0rdslib.capabilities;
 import java.util.ArrayList;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import p455w0rdslib.util.ChunkUtils.TicketHandler;
@@ -31,18 +25,18 @@ public class CapabilityChunkLoader {
 	public static final Capability<ICLEntityHandler> CAPABILITY_CHUNKLOADER_ENTITY = null;
 
 	public static void init() {
-		CapabilityManager.INSTANCE.register(ICLTEHandler.class, new StorageTE(), DefaultCLTEHandler.class);
-		CapabilityManager.INSTANCE.register(ICLEntityHandler.class, new StorageEntity(), DefaultCLEntityHandler.class);
+		CapabilityManager.INSTANCE.register(ICLTEHandler.class, new EmptyStorage(), DefaultCLTEHandler::new);
+		CapabilityManager.INSTANCE.register(ICLEntityHandler.class, new StorageEntity(), DefaultCLEntityHandler::new);
 	}
 
-	public static ICLTEHandler get(TileEntity tile) {
+	public static ICLTEHandler get(final TileEntity tile) {
 		if (tile.hasCapability(CAPABILITY_CHUNKLOADER_TE, null)) {
 			return tile.getCapability(CAPABILITY_CHUNKLOADER_TE, null);
 		}
 		return null;
 	}
 
-	public static ICLEntityHandler get(Entity entity) {
+	public static ICLEntityHandler get(final Entity entity) {
 		if (entity.hasCapability(CAPABILITY_CHUNKLOADER_ENTITY, null)) {
 			return entity.getCapability(CAPABILITY_CHUNKLOADER_ENTITY, null);
 		}
@@ -112,14 +106,14 @@ public class CapabilityChunkLoader {
 		TileEntity tile;
 
 		@Override
-		public void setTileEntity(TileEntity te) {
+		public void setTileEntity(final TileEntity te) {
 			tile = te;
 		}
 
 		@Override
-		public void attachChunkLoader(Object modInstance) {
+		public void attachChunkLoader(final Object modInstance) {
 			if (tile != null) {
-				TicketHandler handler = TicketHandler.getInstance();
+				final TicketHandler handler = TicketHandler.getInstance();
 				FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
 					handler.load(tile.getWorld(), tile.getPos(), handler.getTicket(modInstance, tile.getWorld()));
 				});
@@ -127,9 +121,9 @@ public class CapabilityChunkLoader {
 		}
 
 		@Override
-		public void detachChunkLoader(Object modInstance) {
+		public void detachChunkLoader(final Object modInstance) {
 			if (tile != null) {
-				TicketHandler handler = TicketHandler.getInstance();
+				final TicketHandler handler = TicketHandler.getInstance();
 				FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
 					handler.unload(tile.getWorld(), tile.getPos(), handler.getTicket(modInstance, tile.getWorld()));
 				});
@@ -139,7 +133,7 @@ public class CapabilityChunkLoader {
 
 	public static class DefaultCLEntityHandler implements ICLEntityHandler {
 
-		private ArrayList<BlockPos> chunkLoaderList = new ArrayList<BlockPos>();
+		private ArrayList<BlockPos> chunkLoaderList = new ArrayList<>();
 
 		@Override
 		public ArrayList<BlockPos> getList() {
@@ -147,17 +141,17 @@ public class CapabilityChunkLoader {
 		}
 
 		@Override
-		public void add(BlockPos pos) {
+		public void add(final BlockPos pos) {
 			chunkLoaderList.add(pos);
 		}
 
 		@Override
-		public void remove(BlockPos pos) {
+		public void remove(final BlockPos pos) {
 			chunkLoaderList.remove(pos);
 		}
 
 		@Override
-		public void set(ArrayList<BlockPos> list) {
+		public void set(final ArrayList<BlockPos> list) {
 			chunkLoaderList = list;
 		}
 
@@ -168,17 +162,15 @@ public class CapabilityChunkLoader {
 
 	}
 
-	public static class StorageTE implements Capability.IStorage<ICLTEHandler> {
+	public static class EmptyStorage implements Capability.IStorage<ICLTEHandler> {
 
 		@Override
-		public NBTBase writeNBT(Capability<ICLTEHandler> capability, ICLTEHandler instance, EnumFacing side) {
-
+		public NBTBase writeNBT(final Capability<ICLTEHandler> capability, final ICLTEHandler instance, final EnumFacing side) {
 			return null;
-
 		}
 
 		@Override
-		public void readNBT(Capability<ICLTEHandler> capability, ICLTEHandler instance, EnumFacing side, NBTBase nbt) {
+		public void readNBT(final Capability<ICLTEHandler> capability, final ICLTEHandler instance, final EnumFacing side, final NBTBase nbt) {
 
 		}
 	}
@@ -186,13 +178,13 @@ public class CapabilityChunkLoader {
 	public static class StorageEntity implements Capability.IStorage<ICLEntityHandler> {
 
 		@Override
-		public NBTBase writeNBT(Capability<ICLEntityHandler> capability, ICLEntityHandler instance, EnumFacing side) {
+		public NBTBase writeNBT(final Capability<ICLEntityHandler> capability, final ICLEntityHandler instance, final EnumFacing side) {
 
 			final NBTTagCompound properties = new NBTTagCompound();
-			NBTTagList ownedchunkloaders = new NBTTagList();
+			final NBTTagList ownedchunkloaders = new NBTTagList();
 			properties.setTag("ownedchunkloaders", ownedchunkloaders);
 			for (int i = 0; i < instance.getList().size(); i++) {
-				NBTTagCompound entry = new NBTTagCompound();
+				final NBTTagCompound entry = new NBTTagCompound();
 				entry.setLong("pos" + i, instance.getList().get(i).toLong());
 
 				ownedchunkloaders.appendTag(entry);
@@ -202,12 +194,12 @@ public class CapabilityChunkLoader {
 		}
 
 		@Override
-		public void readNBT(Capability<ICLEntityHandler> capability, ICLEntityHandler instance, EnumFacing side, NBTBase nbt) {
+		public void readNBT(final Capability<ICLEntityHandler> capability, final ICLEntityHandler instance, final EnumFacing side, final NBTBase nbt) {
 
 			final NBTTagCompound properties = (NBTTagCompound) nbt;
 			if (properties.hasKey("ownedchunkloaders", Constants.NBT.TAG_LIST)) {
-				NBTTagList ownedchunkloaders = properties.getTagList("ownedchunkloaders", Constants.NBT.TAG_COMPOUND);
-				int count = ownedchunkloaders.tagCount();
+				final NBTTagList ownedchunkloaders = properties.getTagList("ownedchunkloaders", Constants.NBT.TAG_COMPOUND);
+				final int count = ownedchunkloaders.tagCount();
 				for (int i = 0; i < count; i++) {
 					instance.add(BlockPos.fromLong(ownedchunkloaders.getCompoundTagAt(i).getLong("pos")));
 				}
@@ -222,21 +214,21 @@ public class CapabilityChunkLoader {
 
 		TileEntity tile;
 
-		public ProviderTE(TileEntity te) {
+		public ProviderTE(final TileEntity te) {
 			tile = te;
 			instance = new DefaultCLTEHandler();
 			instance.setTileEntity(te);
 		}
 
 		@Override
-		public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
 
 			return capability == CAPABILITY_CHUNKLOADER_TE;
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
 			return hasCapability(capability, facing) ? (T) instance : null;
 		}
 
@@ -247,13 +239,13 @@ public class CapabilityChunkLoader {
 		ICLEntityHandler instance = CAPABILITY_CHUNKLOADER_ENTITY.getDefaultInstance();
 
 		@Override
-		public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
 
 			return capability == CAPABILITY_CHUNKLOADER_ENTITY;
 		}
 
 		@Override
-		public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
 
 			return hasCapability(capability, facing) ? CAPABILITY_CHUNKLOADER_ENTITY.<T>cast(instance) : null;
 		}
@@ -265,7 +257,7 @@ public class CapabilityChunkLoader {
 		}
 
 		@Override
-		public void deserializeNBT(NBTTagCompound nbt) {
+		public void deserializeNBT(final NBTTagCompound nbt) {
 
 			CAPABILITY_CHUNKLOADER_ENTITY.getStorage().readNBT(CAPABILITY_CHUNKLOADER_ENTITY, instance, null, nbt);
 		}

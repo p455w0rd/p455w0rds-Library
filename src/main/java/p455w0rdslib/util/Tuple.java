@@ -9,13 +9,13 @@ public class Tuple<K, V> {
 	public final K key;
 	public final V value;
 
-	public Tuple(K key, V value) {
+	public Tuple(final K key, final V value) {
 		this.key = key;
 		this.value = value;
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (this == o) {
 			return true;
 		}
@@ -23,7 +23,7 @@ public class Tuple<K, V> {
 			return false;
 		}
 
-		Tuple tuple = (Tuple) o;
+		final Tuple<?, ?> tuple = (Tuple<?, ?>) o;
 		return (key == null ? tuple.key == null : key.equals(tuple.key)) && (value == null ? tuple.value == null : value.equals(tuple.value));
 	}
 

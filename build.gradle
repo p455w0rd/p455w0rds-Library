@@ -24,12 +24,13 @@ archivesBaseName = "p455w0rdslib"
 sourceCompatibility = targetCompatibility = "1.8"
 
 minecraft {
-	version = "1.12.2-14.23.5.2768"
+	version = "1.12.2-14.23.5.2836"
 	mappings = "snapshot_20171003"
 	runDir = "run"
 	useDepAts = true
 	replace '@FINGERPRINT@', project.findProperty('signSHA1')
 	replaceIn "p455w0rdslib/P455w0rdsLib.java"
+//	clientJvMArgs += "-Dfml.coreMods.load=p455w0rdslib.asm.FMLPlugin"
 //	clientJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod,com.elytradev.mirage.asm.FMLPlugin"
 //	serverJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod"
 	serverJvmArgs += "-Dfml.queryResult=confirm"
@@ -47,15 +48,18 @@ repositories {
 	maven {
 		url = 'https://repo.elytradev.com'
 	}
+	maven {
+		name = "Curse"
+		url = "https://minecraft.curseforge.com/api/maven/"
+	}
 }
 
 dependencies {
 	deobfCompile "net.darkhax.tesla:Tesla-1.12:1.0.61"
 	deobfCompile "cofh:RedstoneFlux:1.12-2.1.0.6:universal"
-	//deobfCompile 'com.elytradev:mini:0.1-SNAPSHOT'
-	//shadow 'com.elytradev:mini:0.1-SNAPSHOT'
-	//deobfCompile 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
-	//shadow 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
+	deobfCompile "thaumcraft:Thaumcraft:1.12.2:6.1.BETA26"
+	deobfCompile "baubles:Baubles:1.12:1.5.2"
+	deobfCompile "projecte:ProjectE:1.12.2:PE1.4.0"
 }
 
 jar {
@@ -65,6 +69,8 @@ jar {
             "Implementation-Title": "p455w0rdslib",
             "Implementation-Version": getVersion(),
             "Built-On": "1.12.2-" + getVersion(),
+			"FMLCorePlugin": "p455w0rdslib.asm.FMLPlugin",
+            "FMLCorePluginContainsFMLMod": "true",
             "FMLAT": "pwlib_at.cfg"
     )
 }

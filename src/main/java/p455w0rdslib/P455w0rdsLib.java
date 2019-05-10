@@ -1,21 +1,16 @@
 package p455w0rdslib;
 
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.Mod.Metadata;
-import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.Mod.*;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import p455w0rdslib.LibGlobals.ModInfo;
 import p455w0rdslib.proxy.CommonProxy;
 
 /**
  * @author p455w0rd
  *
  */
-@Mod(modid = LibGlobals.MODID, name = LibGlobals.NAME, useMetadata = false, version = LibGlobals.VERSION, dependencies = LibGlobals.DEPENDENCIES, acceptedMinecraftVersions = "1.12")
+@Mod(modid = LibGlobals.MODID, name = LibGlobals.NAME, version = LibGlobals.VERSION, dependencies = LibGlobals.DEPENDENCIES, acceptedMinecraftVersions = "1.12", certificateFingerprint = "@FINGERPRINT@")
 public class P455w0rdsLib {
 
 	@SidedProxy(clientSide = LibGlobals.CLIENT_PROXY, serverSide = LibGlobals.SERVER_PROXY)
@@ -28,14 +23,13 @@ public class P455w0rdsLib {
 	public static ModMetadata meta;
 
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent e) {
-		ModInfo.setData();
+	public void preInit(final FMLPreInitializationEvent e) {
 		INSTANCE = this;
 		PROXY.preInit(e);
 	}
 
 	@EventHandler
-	public void init(FMLInitializationEvent e) {
+	public void init(final FMLInitializationEvent e) {
 		PROXY.init(e);
 	}
 

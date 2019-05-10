@@ -1,21 +1,27 @@
 package p455w0rdslib;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rdslib.LibGlobals.ConfigOptions;
 import p455w0rdslib.api.IChunkLoadable;
+import p455w0rdslib.api.client.ItemRenderingRegistry;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
 import p455w0rdslib.capabilities.CapabilityChunkLoader.ProviderTE;
 import p455w0rdslib.util.ContributorUtils;
@@ -24,19 +30,22 @@ import p455w0rdslib.util.ContributorUtils;
  * @author p455w0rd
  *
  */
+@SuppressWarnings("deprecation")
+@EventBusSubscriber(modid = LibGlobals.MODID)
 public class LibEvents {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void tickStart(TickEvent.ClientTickEvent event) {
+	public static void tickStart(final TickEvent.ClientTickEvent event) {
 		if (event.phase != TickEvent.Phase.START || event.type != TickEvent.Type.CLIENT || event.side != Side.CLIENT) {
 			return;
 		}
 		if (FMLClientHandler.instance().getWorldClient() != null) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_NUMPAD8)) {
+				LibShaders.reload();
+			}
 			LibGlobals.ELAPSED_TICKS++;
-			//if (LibGlobals.TIME % 50 == 0) {
 			LibGlobals.TIME2++;
-			//}
 			if (LibGlobals.TIME2 > 360) {
 				LibGlobals.TIME2 = 0;
 			}
@@ -77,33 +86,38 @@ public class LibEvents {
 				}
 			}
 		}
+		else {
+			if (LibGlobals.ELAPSED_TICKS != 0) {
+				LibGlobals.ELAPSED_TICKS = 0;
+			}
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void entityJoinWorld(EntityJoinWorldEvent event) {
+	public static void entityJoinWorld(final EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof AbstractClientPlayer) {
-			AbstractClientPlayer player = (AbstractClientPlayer) event.getEntity();
+			final AbstractClientPlayer player = (AbstractClientPlayer) event.getEntity();
 			if (player.getName().equals(P455w0rdsLib.PROXY.getPlayer().getName()) && !ConfigOptions.ENABLE_CONTRIB_CAPE) {
 				return;
 			}
 			try {
 				ContributorUtils.queuePlayerCosmetics(player);
 			}
-			catch (Exception localException) {
+			catch (final Exception localException) {
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public void onPlace(PlaceEvent e) {
-		World world = e.getWorld();
-		BlockPos pos = e.getPos();
+	public static void onPlace(final PlaceEvent e) {
+		final World world = e.getWorld();
+		final BlockPos pos = e.getPos();
 		if (world != null && pos != null && world.getTileEntity(pos) != null) {
-			TileEntity tile = world.getTileEntity(pos);
+			final TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof IChunkLoadable) {
 				if (tile.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
-					IChunkLoadable chunkLoader = (IChunkLoadable) tile;
+					final IChunkLoadable chunkLoader = (IChunkLoadable) tile;
 					tile.getCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null).attachChunkLoader(chunkLoader.getModInstance());
 				}
 			}
@@ -111,14 +125,14 @@ public class LibEvents {
 	}
 
 	@SubscribeEvent
-	public void blockBreak(BreakEvent e) {
-		World world = e.getWorld();
-		BlockPos pos = e.getPos();
+	public static void blockBreak(final BreakEvent e) {
+		final World world = e.getWorld();
+		final BlockPos pos = e.getPos();
 		if (world != null && pos != null && world.getTileEntity(pos) != null) {
-			TileEntity tile = world.getTileEntity(pos);
+			final TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof IChunkLoadable) {
 				if (tile.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
-					IChunkLoadable chunkLoader = (IChunkLoadable) tile;
+					final IChunkLoadable chunkLoader = (IChunkLoadable) tile;
 					tile.getCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null).detachChunkLoader(chunkLoader.getModInstance());
 				}
 			}
@@ -126,14 +140,26 @@ public class LibEvents {
 	}
 
 	@SubscribeEvent
-	public void attachCapabilities(AttachCapabilitiesEvent<TileEntity> event) {
+	public static void attachCapabilities(final AttachCapabilitiesEvent<TileEntity> event) {
 		if (event.getObject() instanceof IChunkLoadable) {
-			TileEntity tile = event.getObject();
-			IChunkLoadable chunkLoader = (IChunkLoadable) tile;
+			final TileEntity tile = event.getObject();
+			final IChunkLoadable chunkLoader = (IChunkLoadable) tile;
 			if (chunkLoader.shouldChunkLoad()) {
 				event.addCapability(new ResourceLocation(chunkLoader.getModID(), "chunkloader"), new ProviderTE(tile));
 			}
 		}
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public static void onModelBake(final ModelBakeEvent event) {
+		ItemRenderingRegistry.initModels(event);
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public static void onModelRegister(final ModelRegistryEvent event) {
+		ItemRenderingRegistry.registerTEISRs(event);
 	}
 
 }

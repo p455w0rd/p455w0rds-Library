@@ -34,7 +34,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	int titleColor = 0xFFFFFF, tooltipColor1 = 0xFF17FF6D, tooltipColor2 = 0x9917FF6D, titleOffsetX = 5,
 			titleOffsetY = 6;
 
-	public GuiModular(Container inventorySlotsIn) {
+	public GuiModular(final Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 	}
 
@@ -44,10 +44,10 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTick) {
+	public void drawScreen(final int mouseX, final int mouseY, final float partialTick) {
 		super.drawScreen(mouseX, mouseY, partialTick);
 		updateElements(mouseX, mouseY);
-		for (IGuiElement element : getElements()) {
+		for (final IGuiElement element : getElements()) {
 			if (element.hasTooltip()) {
 				if (isMouseOverElement(element, mouseX, mouseY)) {
 					GuiUtils.drawToolTipWithBorderColor(this, element.getTooltip(), mouseX, mouseY, tooltipColor1, tooltipColor2);
@@ -57,9 +57,9 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	public void updateElements(int mouseX, int mouseY) {
+	public void updateElements(final int mouseX, final int mouseY) {
 		for (int i = elements.size(); i-- > 0;) {
-			IGuiElement c = elements.get(i);
+			final IGuiElement c = elements.get(i);
 			if (c.isVisible() && c.isEnabled()) {
 				c.update(mouseX, mouseY);
 			}
@@ -67,7 +67,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.disableLighting();
 		GlStateManager.disableBlend();
@@ -78,31 +78,31 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		for (IGuiElement element : getElements()) {
-			element.onMousePressed(mouseX - ((width - xSize) / 2), mouseY - ((height - ySize) / 2), mouseButton);
+	protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) {
+		for (final IGuiElement element : getElements()) {
+			element.onMousePressed(mouseX - (width - xSize) / 2, mouseY - (height - ySize) / 2, mouseButton);
 		}
 		try {
 			super.mouseClicked(mouseX, mouseY, mouseButton);
 		}
-		catch (IOException e) {
+		catch (final IOException e) {
 		}
 	}
 
 	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int button) {
-		for (IGuiElement element : getElements()) {
-			element.onMouseReleased(mouseX - ((width - xSize) / 2), mouseY - ((height - ySize) / 2), button);
+	protected void mouseReleased(final int mouseX, final int mouseY, final int button) {
+		for (final IGuiElement element : getElements()) {
+			element.onMouseReleased(mouseX - (width - xSize) / 2, mouseY - (height - ySize) / 2, button);
 		}
 		super.mouseReleased(mouseX, mouseY, button);
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+	protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY) {
 		GlStateManager.color(1, 1, 1, 1);
 		GuiUtils.bindTexture(backgroundTexture);
-		int x = (width - xSize) / 2;
-		int y = (height - ySize) / 2;
+		final int x = (width - xSize) / 2;
+		final int y = (height - ySize) / 2;
 		GlStateManager.translate(0.0F, 0.0F, 0.0F);
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
@@ -133,42 +133,42 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	public IModularGui setTitleScale(float scale) {
+	public IModularGui setTitleScale(final float scale) {
 		titleScale = scale;
 		return this;
 	}
 
 	@Override
-	public IModularGui setTitleOffsetX(int offset) {
+	public IModularGui setTitleOffsetX(final int offset) {
 		titleOffsetX = offset;
 		return this;
 	}
 
 	@Override
-	public IModularGui setTitleOffsetY(int offset) {
+	public IModularGui setTitleOffsetY(final int offset) {
 		titleOffsetY = offset;
 		return this;
 	}
 
 	@Override
-	public IModularGui setTitlePos(int x, int y) {
+	public IModularGui setTitlePos(final int x, final int y) {
 		return setTitleOffsetX(x).setTitleOffsetY(y);
 	}
 
 	@Override
-	public IModularGui setWidth(int w) {
+	public IModularGui setWidth(final int w) {
 		xSize = w;
 		return this;
 	}
 
 	@Override
-	public IModularGui setHeight(int h) {
+	public IModularGui setHeight(final int h) {
 		ySize = h;
 		return this;
 	}
 
 	@Override
-	public IModularGui setSize(int w, int h) {
+	public IModularGui setSize(final int w, final int h) {
 		return setWidth(w).setHeight(h);
 	}
 
@@ -178,7 +178,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	public IModularGui setTitle(String titleText) {
+	public IModularGui setTitle(final String titleText) {
 		title = titleText;
 		return this;
 	}
@@ -189,7 +189,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	public IModularGui setTitleColor(int color) {
+	public IModularGui setTitleColor(final int color) {
 		titleColor = color;
 		return this;
 	}
@@ -200,32 +200,32 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	public IModularGui setBackgroundTexture(ResourceLocation location) {
+	public IModularGui setBackgroundTexture(final ResourceLocation location) {
 		backgroundTexture = location;
 		return this;
 	}
 
-	public boolean isMouseOverSlot(Slot slotIn, int mouseX, int mouseY) {
+	public boolean isMouseOverSlot(final Slot slotIn, final int mouseX, final int mouseY) {
 		return isMouseOver(EasyMappings.slotPosX(slotIn), EasyMappings.slotPosY(slotIn), 16, 16, mouseX, mouseY);
 	}
 
 	@Override
-	public boolean isMouseOverElement(IGuiElement element, int mouseX, int mouseY) {
+	public boolean isMouseOverElement(final IGuiElement element, final int mouseX, final int mouseY) {
 		return isMouseOver(element.getX(), element.getY(), element.getWidth(), element.getHeight(), mouseX, mouseY);
 	}
 
 	@Override
-	public boolean isMouseOver(int rectX, int rectY, int rectWidth, int rectHeight, int pointX, int pointY) {
+	public boolean isMouseOver(final int rectX, final int rectY, final int rectWidth, final int rectHeight, final int pointX, final int pointY) {
 		return super.isPointInRegion(rectX, rectY, rectWidth, rectHeight, pointX, pointY);
 	}
 
 	@Override
-	protected void renderToolTip(ItemStack stack, int x, int y) {
-		List<String> list = stack.getTooltip(EasyMappings.player(), mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+	protected void renderToolTip(final ItemStack stack, final int x, final int y) {
+		final List<String> list = stack.getTooltip(EasyMappings.player(), mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
 
 		for (int i = 0; i < list.size(); ++i) {
 			if (i == 0) {
-				list.set(i, stack.getRarity().rarityColor + list.get(i));
+				list.set(i, stack.getItem().getForgeRarity(stack).getColor() + list.get(i));
 			}
 			else {
 				list.set(i, TextFormatting.GRAY + list.get(i));
@@ -238,10 +238,10 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	public void drawElements(float partialTick, int mouseX, int mouseY, boolean foreground) {
+	public void drawElements(final float partialTick, final int mouseX, final int mouseY, final boolean foreground) {
 		if (foreground) {
 			for (int i = 0; i < elements.size(); i++) {
-				IGuiElement element = elements.get(i);
+				final IGuiElement element = elements.get(i);
 				if (element.isVisible()) {
 					element.drawForeground(mouseX, mouseY);
 				}
@@ -249,7 +249,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 		}
 		else {
 			for (int i = 0; i < elements.size(); i++) {
-				IGuiElement element = elements.get(i);
+				final IGuiElement element = elements.get(i);
 				if (element.isVisible()) {
 					element.drawBackground(mouseX, mouseY, partialTick);
 				}
@@ -258,7 +258,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	public IModularGui addElement(IGuiElement element) {
+	public IModularGui addElement(final IGuiElement element) {
 		elements.add(element);
 		return this;
 	}
@@ -269,7 +269,7 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	}
 
 	@Override
-	public IModularGui setTooltipColor(int color, boolean top) {
+	public IModularGui setTooltipColor(final int color, final boolean top) {
 		if (top) {
 			tooltipColor1 = color;
 		}
@@ -282,30 +282,29 @@ public class GuiModular extends GuiContainer implements IModularGui {
 	@Override
 	public int[] getTooltipColors() {
 		return new int[] {
-				tooltipColor1,
-				tooltipColor2
+				tooltipColor1, tooltipColor2
 		};
 	}
 
 	@Override
-	public boolean onMouseWheel(int mouseX, int mouseY, int wheelMovement) {
+	public boolean onMouseWheel(final int mouseX, final int mouseY, final int wheelMovement) {
 		return false;
 	}
 
 	@Override
 	public void handleMouseInput() throws IOException {
 
-		int x = Mouse.getEventX() * width / mc.displayWidth;
-		int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+		final int x = Mouse.getEventX() * width / mc.displayWidth;
+		final int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
 
-		int mouseX = x - guiLeft;
-		int mouseY = y - guiTop;
+		final int mouseX = x - guiLeft;
+		final int mouseY = y - guiTop;
 
-		int wheelMovement = Mouse.getEventDWheel();
+		final int wheelMovement = Mouse.getEventDWheel();
 
 		if (wheelMovement != 0) {
 			for (int i = elements.size(); i-- > 0;) {
-				IGuiElement c = elements.get(i);
+				final IGuiElement c = elements.get(i);
 				if (!c.isVisible() || !c.isEnabled() || !c.isMouseOver(mouseX, mouseY)) {
 					continue;
 				}
