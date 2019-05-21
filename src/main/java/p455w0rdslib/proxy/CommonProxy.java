@@ -39,7 +39,7 @@ public class CommonProxy {
 	public void preInit(final FMLPreInitializationEvent e) {
 		LibConfig.init();
 		//ForgeChunkManager.setForcedChunkLoadingCallback(P455w0rdsLib.INSTANCE, Callback.getInstance());
-		CapabilityChunkLoader.init();
+		CapabilityChunkLoader.register();
 		if (FMLCommonHandler.instance().getSide().isServer()) {
 			ProcessHandler.init();
 		}
@@ -47,7 +47,6 @@ public class CommonProxy {
 
 	public void init(final FMLInitializationEvent e) {
 		LibEntities.init();
-		//MinecraftForge.EVENT_BUS.register(new LibEvents());
 	}
 
 	public boolean isSMP() {

@@ -167,8 +167,8 @@ public class ContributorUtils {
 
 	public static void addDankNull() {
 		for (final RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
-			final List<LayerRenderer<?>> r = MCPrivateUtils.getLayerRenderers(renderPlayer);
-			removeVanillaSpecialLayers(r);
+			final List<?> r = renderPlayer.layerRenderers;
+			removeVanillaSpecialLayers((List<LayerRenderer<?>>) r);
 			renderPlayer.addLayer(layerDankNull = new LayerContribDankNull());
 		}
 	}

@@ -30,10 +30,11 @@ minecraft {
 	useDepAts = true
 	replace '@FINGERPRINT@', project.findProperty('signSHA1')
 	replaceIn "p455w0rdslib/P455w0rdsLib.java"
-//	clientJvMArgs += "-Dfml.coreMods.load=p455w0rdslib.asm.FMLPlugin"
-//	clientJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod,com.elytradev.mirage.asm.FMLPlugin"
-//	serverJvmArgs += "-Dfml.coreMods.load=com.elytradev.mini.MiniCoremod"
+	serverJvmArgs += "-Dfml.doNotBackup=true"
 	serverJvmArgs += "-Dfml.queryResult=confirm"
+    clientJvmArgs += "-Dfml.doNotBackup=true"
+	//asm is only necessary client-side
+	clientJvmArgs += "-Dfml.coreMods.load=p455w0rdslib.asm.FMLPlugin"
 }
 
 repositories {
@@ -63,7 +64,6 @@ dependencies {
 }
 
 jar {
-	//classifier = 'slim'
 	manifest.mainAttributes(
             "Created-By": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
             "Implementation-Title": "p455w0rdslib",
@@ -74,17 +74,6 @@ jar {
             "FMLAT": "pwlib_at.cfg"
     )
 }
-
-//shadowJar {
-//	classifier = ''
-//	relocate 'com.elytradev.mini', 'p455w0rdslib.repackage.com.elytradev.mini'
-//	relocate 'com.elytradev.mirage', 'p455w0rdslib.repackage.com.elytradev.mirage'
-//	configurations = [project.configurations.shadow]
-//}
-
-//reobf {
-//	shadowJar { mappingType = 'SEARGE' }
-//}
 
 task signJar(type: SignJar, dependsOn: reobfJar) {
     onlyIf {
@@ -98,12 +87,7 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
     outputFile = jar.archivePath
 }
 
-//tasks.build.dependsOn reobfShadowJar
 build.dependsOn signJar
-
-//artifacts {
-//	archives shadowJar
-//}
 
 processResources {
 	rename '(.+_at.cfg)', 'META-INF/$1'

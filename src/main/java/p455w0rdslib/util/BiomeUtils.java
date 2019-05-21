@@ -13,17 +13,18 @@ import net.minecraft.world.biome.Biome;
  */
 public class BiomeUtils {
 
-	public static void enableRain(Biome biome) {
-		MCPrivateUtils.setRainEnabled(biome, true);
+	public static void enableRain(final Biome biome) {
+		//MCPrivateUtils.setRainEnabled(biome, true);
+		biome.enableRain = true;
 	}
 
-	public static void disableRain(Biome biome) {
-		MCPrivateUtils.setRainEnabled(biome, false);
+	public static void disableRain(final Biome biome) {
+		biome.enableRain = false;
 	}
 
 	public static List<Biome> getBiomeList() {
-		List<Biome> biomes = Lists.newArrayList();
-		Iterator<Biome> biomeList = Biome.REGISTRY.iterator();
+		final List<Biome> biomes = Lists.newArrayList();
+		final Iterator<Biome> biomeList = Biome.REGISTRY.iterator();
 		while (biomeList.hasNext()) {
 			biomes.add(biomeList.next());
 		}

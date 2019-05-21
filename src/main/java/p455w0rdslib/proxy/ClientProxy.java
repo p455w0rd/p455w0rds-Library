@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import p455w0rdslib.LibShaders;
+import p455w0rdslib.capabilities.CapabilityLightEmitter;
 import p455w0rdslib.handlers.ProcessHandlerClient;
 
 /**
@@ -38,6 +39,7 @@ public class ClientProxy extends CommonProxy {
 		super.preInit(e);
 		ProcessHandlerClient.init();
 		LibShaders.registerReloadListener();
+		CapabilityLightEmitter.register();
 	}
 
 	@Override

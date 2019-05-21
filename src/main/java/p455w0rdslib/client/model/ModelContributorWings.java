@@ -10,7 +10,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import p455w0rdslib.LibGlobals;
-import p455w0rdslib.util.MCPrivateUtils;
 import p455w0rdslib.util.RenderUtils;
 
 /**
@@ -40,7 +39,7 @@ public class ModelContributorWings extends ModelBase {
 		leftWingOuter.mirror = true;
 		leftWingOuter.setRotationPoint(0.5F, 0.0F, 0.0F);
 		//        this.leftWingOuter.addBox(-0.5F, 0.5F, 0.0F, 15, 14, 0, 0.0F);
-		leftWingOuter.cubeList.add(new ModelBoxFace(leftWingOuter, MCPrivateUtils.getTextureOffsetX(leftWingOuter) - 15, MCPrivateUtils.getTextureOffsetY(leftWingOuter), -2.0F, 0.5F, 0.0F, 25, 14, 0, 5));
+		leftWingOuter.cubeList.add(new ModelBoxFace(leftWingOuter, leftWingOuter.textureOffsetX - 15, leftWingOuter.textureOffsetY, -2.0F, 0.5F, 0.0F, 25, 14, 0, 5));
 		rightOuterStem = new ModelRenderer(this, 0, 2);
 		rightOuterStem.setRotationPoint(-12.5F, 0.0F, 0.0F);
 		rightOuterStem.addBox(-22.0F, -0.5F, -0.5F, 22, 1, 1, 0.0F);
@@ -48,16 +47,16 @@ public class ModelContributorWings extends ModelBase {
 		leftWingInner = new ModelRenderer(this, 0, 4);
 		leftWingInner.setRotationPoint(0.0F, 0.0F, 0.0F);
 		//        this.leftWingInner.addBox(-0.5F, 0.5F, 0.0F, 13, 14, 0, 0.0F);
-		leftWingInner.cubeList.add(new ModelBoxFace(leftWingInner, MCPrivateUtils.getTextureOffsetX(leftWingInner), MCPrivateUtils.getTextureOffsetY(leftWingInner), -0.5F, 0.5F, 0.0F, 13, 14, 0, 4));
+		leftWingInner.cubeList.add(new ModelBoxFace(leftWingInner, leftWingInner.textureOffsetX, leftWingInner.textureOffsetY, -0.5F, 0.5F, 0.0F, 13, 14, 0, 4));
 		rightWingInner = new ModelRenderer(this, 0, 4);
 		rightWingInner.mirror = true;
 		rightWingInner.setRotationPoint(0.0F, 0.0F, 0.0F);
 		//        this.rightWingInner.addBox(-12.5F, 0.5F, 0.0F, 13, 14, 0, 0.0F);
-		rightWingInner.cubeList.add(new ModelBoxFace(rightWingInner, MCPrivateUtils.getTextureOffsetX(rightWingInner), MCPrivateUtils.getTextureOffsetY(rightWingInner), -12.5F, 0.5F, 0.0F, 13, 14, 0, 4));
+		rightWingInner.cubeList.add(new ModelBoxFace(rightWingInner, rightWingInner.textureOffsetX, rightWingInner.textureOffsetY, -12.5F, 0.5F, 0.0F, 13, 14, 0, 4));
 		rightWingOuter = new ModelRenderer(this, 0, 18);
 		rightWingOuter.setRotationPoint(-0.5F, 0.0F, 0.0F);
 		//        this.rightWingOuter.addBox(-14.5F, 0.5F, 0.0F, 15, 14, 0, 0.0F);
-		rightWingOuter.cubeList.add(new ModelBoxFace(rightWingOuter, MCPrivateUtils.getTextureOffsetX(rightWingOuter) - 15, MCPrivateUtils.getTextureOffsetY(rightWingOuter), -23F, 0.5F, 0.0F, 25, 14, 0, 5));
+		rightWingOuter.cubeList.add(new ModelBoxFace(rightWingOuter, rightWingOuter.textureOffsetX - 15, rightWingOuter.textureOffsetY, -23F, 0.5F, 0.0F, 25, 14, 0, 5));
 		leftBaseStem = new ModelRenderer(this, 0, 0);
 		leftBaseStem.setRotationPoint(0.5F, 1.0F, 2.0F);
 		leftBaseStem.addBox(-0.5F, -0.5F, -0.5F, 13, 1, 1, 0.0F);
@@ -79,7 +78,7 @@ public class ModelContributorWings extends ModelBase {
 	}
 
 	@Override
-	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+	public void render(final Entity entity, final float limbSwing, final float limbSwingAmount, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scale) {
 		//setupModel();
 		if (RenderUtils.mc().isGamePaused() || entity.isInvisible()) {
 			return;
@@ -87,11 +86,11 @@ public class ModelContributorWings extends ModelBase {
 		GlStateManager.disableRescaleNormal();
 		GlStateManager.disableCull();
 
-		float baseRot = 0.45906584F;
-		float outerRot = 0.61086524F;
+		final float baseRot = 0.45906584F;
+		final float outerRot = 0.61086524F;
 		double speed = 20;
 		if (entity instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) entity;
+			final EntityPlayer player = (EntityPlayer) entity;
 			if (player.isSprinting() || player.isElytraFlying() || player.capabilities.isFlying || player.capabilities.getWalkSpeed() > 0.1F) {
 				speed = 2D;
 			}
@@ -103,13 +102,13 @@ public class ModelContributorWings extends ModelBase {
 			float f4 = 1.0F;
 
 			if (entity.motionY < 0.0D) {
-				Vec3d vec3d = (new Vec3d(entity.motionX, entity.motionY, entity.motionZ)).normalize();
+				final Vec3d vec3d = new Vec3d(entity.motionX, entity.motionY, entity.motionZ).normalize();
 				f4 = 1.0F - (float) Math.pow(-vec3d.y, 1.5D);
 			}
 
 			float f1 = 0;
 			f1 = f4 * ((float) Math.PI / 2F) + (1.0F - f4) * f1;
-			animation = -3 + (f1 * 2);
+			animation = -3 + f1 * 2;
 		}
 
 		if (entity.isSneaking()) {
@@ -130,10 +129,10 @@ public class ModelContributorWings extends ModelBase {
 			rightBaseStem.offsetY = 0F;
 		}
 
-		leftBaseStem.rotateAngleY = -baseRot + (animation * 0.1F);
-		leftOuterStem.rotateAngleY = outerRot + (animation * 0.5F);
-		rightBaseStem.rotateAngleY = baseRot - (animation * 0.1F);
-		rightOuterStem.rotateAngleY = -outerRot - (animation * 0.5F);
+		leftBaseStem.rotateAngleY = -baseRot + animation * 0.1F;
+		leftOuterStem.rotateAngleY = outerRot + animation * 0.5F;
+		rightBaseStem.rotateAngleY = baseRot - animation * 0.1F;
+		rightOuterStem.rotateAngleY = -outerRot - animation * 0.5F;
 		/*
 		leftBaseStem.rotateAngleY = -baseRot + (animation * 0.15F);
 		leftOuterStem.rotateAngleY = outerRot + (animation * 0.3F);
@@ -147,7 +146,7 @@ public class ModelContributorWings extends ModelBase {
 	/**
 	 * This is a helper function from Tabula to set the rotation of model parts
 	 */
-	public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {
+	public void setRotateAngle(final ModelRenderer modelRenderer, final float x, final float y, final float z) {
 		modelRenderer.rotateAngleX = x;
 		modelRenderer.rotateAngleY = y;
 		modelRenderer.rotateAngleZ = z;

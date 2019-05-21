@@ -7,6 +7,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+/**This is temporary until I finish implementing capabilities..<b>DO NOT USE<b>*/
+@Deprecated
 public interface IColoredLightEmitter {
 
 	@SideOnly(Side.CLIENT)

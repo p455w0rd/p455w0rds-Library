@@ -48,16 +48,14 @@ public class Light {
 	public float a;
 	public float l;
 
-	//cone vector and falloff
-	public float mag = 1.0f; //Used to prevent precision loss when repeatedly reorienting.
+	public float mag = 1.0f;
 	public float sx;
 	public float sy;
 	public float sz;
 
 	public float sf;
 
-	@Deprecated
-	public Light(final float x, final float y, final float z, final float r, final float g, final float b, final float a, final float radius) {
+	protected Light(final float x, final float y, final float z, final float r, final float g, final float b, final float a, final float radius) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

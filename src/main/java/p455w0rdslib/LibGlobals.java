@@ -11,7 +11,7 @@ import p455w0rdslib.asm.FMLPlugin;
 public class LibGlobals {
 
 	public static final String MODID = "p455w0rdslib";
-	public static final String VERSION = "2.2.100";
+	public static final String VERSION = "2.2.101";
 	public static final String NAME = "p455w0rd's Library";
 	public static final String SERVER_PROXY = "p455w0rdslib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rdslib.proxy.ClientProxy";
@@ -27,6 +27,7 @@ public class LibGlobals {
 	public static float TIME2 = 0.0F;
 	public static boolean IS_CONTRIBUTOR = false;
 	public static boolean CONTRIBUTOR_FILE_DOWNLOADED = false;
+	public static final String REQUIRE_DEP = "required-after:" + MODID + "@[" + VERSION + ",);";
 
 	private static boolean shaderCheck = false;
 	private static boolean shadersEnabled = false;

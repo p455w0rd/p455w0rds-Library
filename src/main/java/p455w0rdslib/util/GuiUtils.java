@@ -115,10 +115,10 @@ public class GuiUtils {
 
 		final BufferBuilder buffer = Tessellator.getInstance().getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		buffer.pos(x + 0, y + height, MCPrivateUtils.getGuiZLevel(gui)).tex(minU, minV + (maxV - minV) * height / 16F).endVertex();
-		buffer.pos(x + width, y + height, MCPrivateUtils.getGuiZLevel(gui)).tex(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).endVertex();
-		buffer.pos(x + width, y + 0, MCPrivateUtils.getGuiZLevel(gui)).tex(minU + (maxU - minU) * width / 16F, minV).endVertex();
-		buffer.pos(x + 0, y + 0, MCPrivateUtils.getGuiZLevel(gui)).tex(minU, minV).endVertex();
+		buffer.pos(x + 0, y + height, gui.zLevel).tex(minU, minV + (maxV - minV) * height / 16F).endVertex();
+		buffer.pos(x + width, y + height, gui.zLevel).tex(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).endVertex();
+		buffer.pos(x + width, y + 0, gui.zLevel).tex(minU + (maxU - minU) * width / 16F, minV).endVertex();
+		buffer.pos(x + 0, y + 0, gui.zLevel).tex(minU, minV).endVertex();
 		Tessellator.getInstance().draw();
 	}
 
@@ -140,7 +140,7 @@ public class GuiUtils {
 	}
 
 	public static void drawContinuousTexturedBox(final Gui gui, final int x, final int y, final int u, final int v, final int width, final int height, final int textureWidth, final int textureHeight, final int topBorder, final int bottomBorder, final int leftBorder, final int rightBorder) {
-		final float zLevel = MCPrivateUtils.getGuiZLevel(gui);
+		final float zLevel = gui.zLevel;
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
@@ -235,8 +235,8 @@ public class GuiUtils {
 				i2 = gui.height - k - 8;
 			}
 
-			MCPrivateUtils.setGuiZLevel(gui, 300.0F);
-			MCPrivateUtils.setGuiScreenRendererZLevel(gui, 300.0F);
+			gui.zLevel = 300.0f;
+			gui.itemRender.zLevel = 300.0f;
 			drawGradientRect(gui, l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, backgroundColor, backgroundColor);
 			drawGradientRect(gui, l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, backgroundColor, backgroundColor);
 			drawGradientRect(gui, l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, backgroundColor, backgroundColor);
@@ -258,8 +258,8 @@ public class GuiUtils {
 				i2 += 10;
 			}
 
-			MCPrivateUtils.setGuiZLevel(gui, 0.0F);
-			MCPrivateUtils.setGuiScreenRendererZLevel(gui, 0.0F);
+			gui.zLevel = 0.0f;
+			gui.itemRender.zLevel = 0.0f;
 			GlStateManager.enableLighting();
 			GlStateManager.enableDepth();
 			RenderHelper.enableStandardItemLighting();
@@ -313,10 +313,10 @@ public class GuiUtils {
 		final Tessellator tessellator = Tessellator.getInstance();
 		final BufferBuilder vertexbuffer = tessellator.getBuffer();
 		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-		vertexbuffer.pos(right, top, MCPrivateUtils.getGuiZLevel(gui)).color(f1, f2, f3, f).endVertex();
-		vertexbuffer.pos(left, top, MCPrivateUtils.getGuiZLevel(gui)).color(f1, f2, f3, f).endVertex();
-		vertexbuffer.pos(left, bottom, MCPrivateUtils.getGuiZLevel(gui)).color(f5, f6, f7, f4).endVertex();
-		vertexbuffer.pos(right, bottom, MCPrivateUtils.getGuiZLevel(gui)).color(f5, f6, f7, f4).endVertex();
+		vertexbuffer.pos(right, top, gui.zLevel).color(f1, f2, f3, f).endVertex();
+		vertexbuffer.pos(left, top, gui.zLevel).color(f1, f2, f3, f).endVertex();
+		vertexbuffer.pos(left, bottom, gui.zLevel).color(f5, f6, f7, f4).endVertex();
+		vertexbuffer.pos(right, bottom, gui.zLevel).color(f5, f6, f7, f4).endVertex();
 		tessellator.draw();
 		GlStateManager.shadeModel(7424);
 		GlStateManager.disableBlend();
@@ -329,21 +329,21 @@ public class GuiUtils {
 		final int j = EasyMappings.slotPosY(slotIn);
 		ItemStack itemstack = slotIn.getStack();
 		boolean flag = false;
-		boolean flag1 = slotIn == MCPrivateUtils.getGuiClickedSlot(gui) && MCPrivateUtils.getGuiDraggedStack(gui) != null && !MCPrivateUtils.getGuiIsRightMouseClick(gui);
+		boolean flag1 = slotIn == gui.clickedSlot && gui.draggedStack != null && !gui.isRightMouseClick;
 		final ItemStack itemstack1 = EasyMappings.player().inventory.getItemStack();
 		String s = null;
-		if (slotIn == MCPrivateUtils.getGuiClickedSlot(gui) && MCPrivateUtils.getGuiDraggedStack(gui) != null && MCPrivateUtils.getGuiIsRightMouseClick(gui) && itemstack != null) {
+		if (slotIn == gui.clickedSlot && gui.draggedStack != null && gui.isRightMouseClick && itemstack != null) {
 			itemstack = itemstack.copy();
 			itemstack.setCount(itemstack.getCount() / 2);
 		}
-		else if (MCPrivateUtils.getGuiDragSplitting(gui) && MCPrivateUtils.getGuiDragSplittingSlots(gui).contains(slotIn) && itemstack1 != null) {
-			if (MCPrivateUtils.getGuiDragSplittingSlots(gui).size() == 1) {
+		else if (gui.dragSplitting && gui.dragSplittingSlots.contains(slotIn) && itemstack1 != null) {
+			if (gui.dragSplittingSlots.size() == 1) {
 				return;
 			}
 			if (Container.canAddItemToSlot(slotIn, itemstack1, true) && gui.inventorySlots.canDragIntoSlot(slotIn)) {
 				itemstack = itemstack1.copy();
 				flag = true;
-				Container.computeStackSize(MCPrivateUtils.getGuiDragSplittingSlots(gui), MCPrivateUtils.getGuiDragSplittingLimit(gui), itemstack, slotIn.getStack() == null ? 0 : slotIn.getStack().getCount());
+				Container.computeStackSize(gui.dragSplittingSlots, gui.dragSplittingLimit, itemstack, slotIn.getStack() == null ? 0 : slotIn.getStack().getCount());
 				if (itemstack.getCount() > itemstack.getMaxStackSize()) {
 					s = TextFormatting.YELLOW + "" + itemstack.getMaxStackSize();
 					itemstack.setCount(itemstack.getMaxStackSize());
@@ -354,12 +354,12 @@ public class GuiUtils {
 				}
 			}
 			else {
-				MCPrivateUtils.getGuiDragSplittingSlots(gui).remove(slotIn);
+				gui.dragSplittingSlots.remove(slotIn);
 				updateDragSplitting(gui);
 			}
 		}
-		MCPrivateUtils.setGuiZLevel(gui, 100.0F);
-		MCPrivateUtils.setGuiScreenRendererZLevel(gui, 100.0F);
+		gui.zLevel = 100.0f;
+		gui.itemRender.zLevel = 100.0f;
 		if (itemstack == null && slotIn.isEnabled()) {
 			final TextureAtlasSprite textureatlassprite = slotIn.getBackgroundSprite();
 			if (textureatlassprite != null) {
@@ -378,33 +378,33 @@ public class GuiUtils {
 
 			Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(itemstack, i, j);
 
-			MCPrivateUtils.getGuiScreenRenderItem(gui).renderItemOverlayIntoGUI(RenderUtils.getFontRenderer(), itemstack, i, j, s);
+			gui.itemRender.renderItemOverlayIntoGUI(RenderUtils.getFontRenderer(), itemstack, i, j, s);
 		}
-		MCPrivateUtils.setGuiScreenRendererZLevel(gui, 0.0F);
-		MCPrivateUtils.setGuiZLevel(gui, 0.0F);
+		gui.zLevel = 0.0f;
+		gui.itemRender.zLevel = 0.0f;
 	}
 
 	public static void drawTexturedModalRect(final Gui gui, final int xCoord, final int yCoord, final TextureAtlasSprite textureSprite, final int widthIn, final int heightIn) {
 		final Tessellator tessellator = Tessellator.getInstance();
 		final BufferBuilder vertexbuffer = tessellator.getBuffer();
 		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-		vertexbuffer.pos(xCoord + 0, yCoord + heightIn, MCPrivateUtils.getGuiZLevel(gui)).tex(textureSprite.getMinU(), textureSprite.getMaxV()).endVertex();
-		vertexbuffer.pos(xCoord + widthIn, yCoord + heightIn, MCPrivateUtils.getGuiZLevel(gui)).tex(textureSprite.getMaxU(), textureSprite.getMaxV()).endVertex();
-		vertexbuffer.pos(xCoord + widthIn, yCoord + 0, MCPrivateUtils.getGuiZLevel(gui)).tex(textureSprite.getMaxU(), textureSprite.getMinV()).endVertex();
-		vertexbuffer.pos(xCoord + 0, yCoord + 0, MCPrivateUtils.getGuiZLevel(gui)).tex(textureSprite.getMinU(), textureSprite.getMinV()).endVertex();
+		vertexbuffer.pos(xCoord + 0, yCoord + heightIn, gui.zLevel).tex(textureSprite.getMinU(), textureSprite.getMaxV()).endVertex();
+		vertexbuffer.pos(xCoord + widthIn, yCoord + heightIn, gui.zLevel).tex(textureSprite.getMaxU(), textureSprite.getMaxV()).endVertex();
+		vertexbuffer.pos(xCoord + widthIn, yCoord + 0, gui.zLevel).tex(textureSprite.getMaxU(), textureSprite.getMinV()).endVertex();
+		vertexbuffer.pos(xCoord + 0, yCoord + 0, gui.zLevel).tex(textureSprite.getMinU(), textureSprite.getMinV()).endVertex();
 		tessellator.draw();
 	}
 
 	public static void updateDragSplitting(final GuiContainer gui) {
 		final ItemStack itemstack = EasyMappings.player().inventory.getItemStack();
 
-		if (itemstack != null && MCPrivateUtils.getGuiDragSplitting(gui)) {
-			MCPrivateUtils.setGuiDragSplittingRemnant(gui, itemstack.getCount());
+		if (itemstack != null && gui.dragSplitting) {
+			gui.dragSplittingRemnant = itemstack.getCount();
 
-			for (final Slot slot : MCPrivateUtils.getGuiDragSplittingSlots(gui)) {
+			for (final Slot slot : gui.dragSplittingSlots) {
 				final ItemStack itemstack1 = itemstack.copy();
 				final int i = slot.getStack() == null ? 0 : slot.getStack().getCount();
-				Container.computeStackSize(MCPrivateUtils.getGuiDragSplittingSlots(gui), MCPrivateUtils.getGuiDragSplittingLimit(gui), itemstack1, i);
+				Container.computeStackSize(gui.dragSplittingSlots, gui.dragSplittingLimit, itemstack1, i);
 
 				if (itemstack1.getCount() > itemstack1.getMaxStackSize()) {
 					itemstack1.setCount(itemstack1.getMaxStackSize());
@@ -414,15 +414,15 @@ public class GuiUtils {
 					itemstack1.setCount(slot.getItemStackLimit(itemstack1));
 				}
 
-				MCPrivateUtils.setGuiDragSplittingRemnant(gui, MCPrivateUtils.getGuiDragSplittingRemnant(gui) - (itemstack1.getCount() - i));
+				gui.dragSplittingRemnant = gui.dragSplittingRemnant - (itemstack1.getCount() - i);
 			}
 		}
 	}
 
 	public static void drawItemStack(final GuiContainer gui, final ItemStack stack, final int x, final int y, final String altText) {
 		GlStateManager.translate(0.0F, 0.0F, 32.0F);
-		MCPrivateUtils.setGuiZLevel(gui, 200.0F);
-		MCPrivateUtils.setGuiScreenRendererZLevel(gui, 200.0F);
+		gui.zLevel = 200.0f;
+		gui.itemRender.zLevel = 200.0f;
 		FontRenderer font = null;
 		if (stack != null) {
 			font = stack.getItem().getFontRenderer(stack);
@@ -430,10 +430,10 @@ public class GuiUtils {
 		if (font == null) {
 			font = RenderUtils.getFontRenderer();
 		}
-		MCPrivateUtils.getGuiScreenRenderItem(gui).renderItemAndEffectIntoGUI(stack, x, y);
-		MCPrivateUtils.getGuiScreenRenderItem(gui).renderItemOverlayIntoGUI(font, stack, x, y - (MCPrivateUtils.getGuiDraggedStack(gui) == null ? 0 : 8), altText);
-		MCPrivateUtils.setGuiScreenRendererZLevel(gui, 0.0F);
-		MCPrivateUtils.setGuiZLevel(gui, 0.0F);
+		gui.itemRender.renderItemAndEffectIntoGUI(stack, x, y);
+		gui.itemRender.renderItemOverlayIntoGUI(font, stack, x, y - (gui.draggedStack == null ? 0 : 8), altText);
+		gui.zLevel = 0.0f;
+		gui.itemRender.zLevel = 0.0f;
 		GlStateManager.translate(0.0F, 0.0F, -32.0F);
 	}
 

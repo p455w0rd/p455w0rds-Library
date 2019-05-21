@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import p455w0rdslib.util.CapabilityUtils.EmptyStorage;
 import p455w0rdslib.util.ChunkUtils.TicketHandler;
 
 /**
@@ -19,13 +20,13 @@ import p455w0rdslib.util.ChunkUtils.TicketHandler;
 public class CapabilityChunkLoader {
 
 	@CapabilityInject(ICLTEHandler.class)
-	public static final Capability<ICLTEHandler> CAPABILITY_CHUNKLOADER_TE = null;
+	public static Capability<ICLTEHandler> CAPABILITY_CHUNKLOADER_TE = null;
 
 	@CapabilityInject(ICLEntityHandler.class)
-	public static final Capability<ICLEntityHandler> CAPABILITY_CHUNKLOADER_ENTITY = null;
+	public static Capability<ICLEntityHandler> CAPABILITY_CHUNKLOADER_ENTITY = null;
 
-	public static void init() {
-		CapabilityManager.INSTANCE.register(ICLTEHandler.class, new EmptyStorage(), DefaultCLTEHandler::new);
+	public static void register() {
+		CapabilityManager.INSTANCE.register(ICLTEHandler.class, new EmptyStorage<ICLTEHandler>(), DefaultCLTEHandler::new);
 		CapabilityManager.INSTANCE.register(ICLEntityHandler.class, new StorageEntity(), DefaultCLEntityHandler::new);
 	}
 
@@ -162,18 +163,8 @@ public class CapabilityChunkLoader {
 
 	}
 
-	public static class EmptyStorage implements Capability.IStorage<ICLTEHandler> {
-
-		@Override
-		public NBTBase writeNBT(final Capability<ICLTEHandler> capability, final ICLTEHandler instance, final EnumFacing side) {
-			return null;
-		}
-
-		@Override
-		public void readNBT(final Capability<ICLTEHandler> capability, final ICLTEHandler instance, final EnumFacing side, final NBTBase nbt) {
-
-		}
-	}
+	/*public static class EmptyStorage extends CapabilityUtils.EmptyStorage<ICLTEHandler> {
+	}*/
 
 	public static class StorageEntity implements Capability.IStorage<ICLEntityHandler> {
 
@@ -226,10 +217,9 @@ public class CapabilityChunkLoader {
 			return capability == CAPABILITY_CHUNKLOADER_TE;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
-			return hasCapability(capability, facing) ? (T) instance : null;
+			return hasCapability(capability, facing) ? CAPABILITY_CHUNKLOADER_TE.cast(instance) : null;
 		}
 
 	}
@@ -247,7 +237,7 @@ public class CapabilityChunkLoader {
 		@Override
 		public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
 
-			return hasCapability(capability, facing) ? CAPABILITY_CHUNKLOADER_ENTITY.<T>cast(instance) : null;
+			return hasCapability(capability, facing) ? CAPABILITY_CHUNKLOADER_ENTITY.cast(instance) : null;
 		}
 
 		@Override

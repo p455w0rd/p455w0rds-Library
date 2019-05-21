@@ -3,7 +3,6 @@ package p455w0rdslib.client.gui.element;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import p455w0rdslib.api.gui.IModularGui;
-import p455w0rdslib.util.MCPrivateUtils;
 import p455w0rdslib.util.RenderUtils;
 
 /**
@@ -15,23 +14,23 @@ public class GuiButton extends GuiElement {
 	int borderColor = 0xFF000000, backgroundColor = 0xFFCCCCCC, textColor = 0xFFFFFFFF;
 	String text = "";
 
-	public GuiButton(IModularGui gui, GuiPos posIn, int height, String label) {
-		this(gui, posIn, MCPrivateUtils.getGuiContainerXSize((GuiContainer) gui) - (posIn.getX() * 2), height, label);
+	public GuiButton(final IModularGui gui, final GuiPos posIn, final int height, final String label) {
+		this(gui, posIn, ((GuiContainer) gui).getXSize() - posIn.getX() * 2, height, label);
 	}
 
-	public GuiButton(IModularGui gui, GuiPos posIn, int width, int height, String label) {
+	public GuiButton(final IModularGui gui, final GuiPos posIn, final int width, final int height, final String label) {
 		super(gui, posIn, width, height);
 		text = label;
 	}
 
 	@Override
-	public void drawBackground(int mouseX, int mouseY, float gameTicks) {
+	public void drawBackground(final int mouseX, final int mouseY, final float gameTicks) {
 		Gui.drawRect(getX(), getY(), getX() + getWidth() + 1, getY() + getHeight() + 1, borderColor);
 		Gui.drawRect(getX() + 1, getY() + 1, getX() + getWidth(), getY() + getHeight(), backgroundColor);
 	}
 
 	@Override
-	public void drawForeground(int mouseX, int mouseY) {
+	public void drawForeground(final int mouseX, final int mouseY) {
 		drawCenteredString(text);
 	}
 
@@ -39,7 +38,7 @@ public class GuiButton extends GuiElement {
 		return backgroundColor;
 	}
 
-	public GuiButton setBGColor(int color) {
+	public GuiButton setBGColor(final int color) {
 		backgroundColor = color;
 		return this;
 	}
@@ -48,7 +47,7 @@ public class GuiButton extends GuiElement {
 		return borderColor;
 	}
 
-	public GuiButton setBorderColor(int color) {
+	public GuiButton setBorderColor(final int color) {
 		borderColor = color;
 		return this;
 	}
@@ -57,13 +56,13 @@ public class GuiButton extends GuiElement {
 		return textColor;
 	}
 
-	public GuiButton setTextColor(int color) {
+	public GuiButton setTextColor(final int color) {
 		textColor = color;
 		return this;
 	}
 
-	public void drawCenteredString(String text) {
-		int x1 = (getWidth() / 2) - (RenderUtils.getFontRenderer().getStringWidth(text) / 2);
+	public void drawCenteredString(final String text) {
+		final int x1 = getWidth() / 2 - RenderUtils.getFontRenderer().getStringWidth(text) / 2;
 		RenderUtils.getFontRenderer().drawStringWithShadow(text, getX() + x1, getY() + 3, textColor);
 	}
 
@@ -71,7 +70,7 @@ public class GuiButton extends GuiElement {
 		return text;
 	}
 
-	public GuiButton setLabel(String label) {
+	public GuiButton setLabel(final String label) {
 		text = label;
 		return this;
 	}
