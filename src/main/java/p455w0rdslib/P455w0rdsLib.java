@@ -2,15 +2,14 @@ package p455w0rdslib;
 
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Mod.*;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import p455w0rdslib.proxy.CommonProxy;
 
 /**
  * @author p455w0rd
  *
  */
-@Mod(modid = LibGlobals.MODID, name = LibGlobals.NAME, version = LibGlobals.VERSION, dependencies = LibGlobals.DEPENDENCIES, acceptedMinecraftVersions = "1.12", certificateFingerprint = "@FINGERPRINT@")
+@Mod(modid = LibGlobals.MODID, name = LibGlobals.NAME, version = LibGlobals.VERSION, dependencies = LibGlobals.DEPENDENCIES, acceptedMinecraftVersions = "1.12", guiFactory = LibGlobals.GUI_FACTORY, certificateFingerprint = "@FINGERPRINT@")
 public class P455w0rdsLib {
 
 	@SidedProxy(clientSide = LibGlobals.CLIENT_PROXY, serverSide = LibGlobals.SERVER_PROXY)
@@ -31,6 +30,11 @@ public class P455w0rdsLib {
 	@EventHandler
 	public void init(final FMLInitializationEvent e) {
 		PROXY.init(e);
+	}
+
+	@EventHandler
+	public void postInit(final FMLPostInitializationEvent e) {
+		PROXY.postInit(e);
 	}
 
 }

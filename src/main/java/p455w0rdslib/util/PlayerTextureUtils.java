@@ -18,12 +18,12 @@
  */
 package p455w0rdslib.util;
 
-import java.lang.invoke.MethodHandle;
 import java.util.Map;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.ResourceLocation;
@@ -34,60 +34,47 @@ import net.minecraft.util.ResourceLocation;
  */
 public class PlayerTextureUtils {
 
-	private static final MethodHandle GET_PLAYER_INFO = ReflectionUtils.findMethod(AbstractClientPlayer.class, "getPlayerInfo", "func_175155_b", new Class[0]);
-	private static final MethodHandle GET_PLAYER_TEXTURES = ReflectionUtils.findFieldGetter(NetworkPlayerInfo.class, "playerTextures", "field_187107_a");
-
-	private static NetworkPlayerInfo getPlayerInfo(AbstractClientPlayer player) {
-		try {
-			return (NetworkPlayerInfo) GET_PLAYER_INFO.invoke(player);
-		}
-		catch (Throwable e) {
-		}
-		return null;
+	private static NetworkPlayerInfo getPlayerInfo(final AbstractClientPlayer player) {
+		return Minecraft.getMinecraft().getConnection().getPlayerInfo(player.getUniqueID());
 	}
 
-	private static Map<Type, ResourceLocation> getPlayerTextures(AbstractClientPlayer player) {
-		try {
-			return (Map<Type, ResourceLocation>) GET_PLAYER_TEXTURES.invoke(getPlayerInfo(player));
-		}
-		catch (Throwable e) {
-		}
-		return null;
+	private static Map<Type, ResourceLocation> getPlayerTextures(final AbstractClientPlayer player) {
+		return getPlayerInfo(player).playerTextures;
 	}
 
-	public static ResourceLocation getCape(AbstractClientPlayer player) {
+	public static ResourceLocation getCape(final AbstractClientPlayer player) {
 		return getPlayerTextures(player).get(MinecraftProfileTexture.Type.CAPE);
 	}
 
-	public static ResourceLocation getElytra(AbstractClientPlayer player) {
+	public static ResourceLocation getElytra(final AbstractClientPlayer player) {
 		return getPlayerTextures(player).get(MinecraftProfileTexture.Type.ELYTRA);
 	}
 
-	public static ResourceLocation getSkin(AbstractClientPlayer player) {
+	public static ResourceLocation getSkin(final AbstractClientPlayer player) {
 		return getPlayerTextures(player).get(MinecraftProfileTexture.Type.SKIN);
 	}
 
-	public static void setCape(AbstractClientPlayer player, ResourceLocation texture) {
+	public static void setCape(final AbstractClientPlayer player, final ResourceLocation texture) {
 		getPlayerTextures(player).put(MinecraftProfileTexture.Type.CAPE, texture);
 	}
 
-	public static void setElytra(AbstractClientPlayer player, ResourceLocation texture) {
+	public static void setElytra(final AbstractClientPlayer player, final ResourceLocation texture) {
 		getPlayerTextures(player).put(MinecraftProfileTexture.Type.ELYTRA, texture);
 	}
 
-	public static void setSkin(AbstractClientPlayer player, ResourceLocation texture) {
+	public static void setSkin(final AbstractClientPlayer player, final ResourceLocation texture) {
 		getPlayerTextures(player).put(MinecraftProfileTexture.Type.SKIN, texture);
 	}
 
-	public static boolean hasCape(AbstractClientPlayer player) {
+	public static boolean hasCape(final AbstractClientPlayer player) {
 		return getCape(player) != null;
 	}
 
-	public static boolean hasElytra(AbstractClientPlayer player) {
+	public static boolean hasElytra(final AbstractClientPlayer player) {
 		return getElytra(player) != null;
 	}
 
-	public static boolean hasSkin(AbstractClientPlayer player) {
+	public static boolean hasSkin(final AbstractClientPlayer player) {
 		return getSkin(player) != null;
 	}
 

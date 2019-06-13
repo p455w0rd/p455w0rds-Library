@@ -437,4 +437,25 @@ public class GuiUtils {
 		GlStateManager.translate(0.0F, 0.0F, -32.0F);
 	}
 
+	public static Slot getSlotAtPos(final int x, final int y) {
+		if (Minecraft.getMinecraft().currentScreen instanceof GuiContainer) {
+			final GuiContainer gui = (GuiContainer) Minecraft.getMinecraft().currentScreen;
+			for (int i = 0; i < gui.inventorySlots.inventorySlots.size(); ++i) {
+				final Slot slot = gui.inventorySlots.inventorySlots.get(i);
+				final int rectX = slot.xPos;
+				final int rectY = slot.yPos;
+				int pointX = x;
+				int pointY = y;
+				final int i2 = gui.getGuiLeft();
+				final int j2 = gui.getGuiTop();
+				pointX = pointX - i2;
+				pointY = pointY - j2;
+				if (pointX >= rectX - 1 && pointX < rectX + 16 + 1 && pointY >= rectY - 1 && pointY < rectY + 16 + 1 && slot.isEnabled()) {
+					return slot;
+				}
+			}
+		}
+		return null;
+	}
+
 }

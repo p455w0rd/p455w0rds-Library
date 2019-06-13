@@ -23,14 +23,22 @@ public class ChunkUtils {
 	private ChunkUtils() {
 	}
 
+	public static long serializeChunkPos(final ChunkPos chunk) {
+		return chunk.x & -1 | (chunk.z & -1) << 32;
+	}
+
+	public static ChunkPos deserializeChunkPos(final long value) {
+		return new ChunkPos((int) (value & -1), (int) (value >> 32));
+	}
+
 	/**
 	 * @param modInstance - And instance of your main mod class
 	 */
-	public static void register(Object modInstance) {
+	public static void register(final Object modInstance) {
 		ForgeChunkManager.setForcedChunkLoadingCallback(modInstance, Callback.getInstance());
 	}
 
-	public static ChunkPos getChunkPos(World world, BlockPos pos) {
+	public static ChunkPos getChunkPos(final World world, final BlockPos pos) {
 		return world.getChunkFromBlockCoords(pos).getPos();
 	}
 
@@ -50,15 +58,15 @@ public class ChunkUtils {
 		}
 
 		@Override
-		public void ticketsLoaded(List<Ticket> tickets, World world) {
-			for (Ticket ticket : tickets) {
-				int x = ticket.getModData().getInteger("xCoord");
-				int y = ticket.getModData().getInteger("yCoord");
-				int z = ticket.getModData().getInteger("zCoord");
-				BlockPos pos = new BlockPos(x, y, z);
-				TileEntity te = world.getTileEntity(pos);
+		public void ticketsLoaded(final List<Ticket> tickets, final World world) {
+			for (final Ticket ticket : tickets) {
+				final int x = ticket.getModData().getInteger("xCoord");
+				final int y = ticket.getModData().getInteger("yCoord");
+				final int z = ticket.getModData().getInteger("zCoord");
+				final BlockPos pos = new BlockPos(x, y, z);
+				final TileEntity te = world.getTileEntity(pos);
 				if (te != null && te.hasCapability(CapabilityChunkLoader.CAPABILITY_CHUNKLOADER_TE, null)) {
-					TicketHandler handler = new TicketHandler();
+					final TicketHandler handler = new TicketHandler();
 					FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
 						handler.load(world, pos, ticket);
 					});
@@ -79,11 +87,11 @@ public class ChunkUtils {
 			return INSTANCE;
 		}
 
-		public Ticket getTicket(Object modInstnace, World world) {
+		public Ticket getTicket(final Object modInstnace, final World world) {
 			return ForgeChunkManager.requestTicket(modInstnace, world, ForgeChunkManager.Type.NORMAL);
 		}
 
-		public void load(World world, BlockPos pos, Ticket ticket) {
+		public void load(final World world, final BlockPos pos, final Ticket ticket) {
 			if (world != null && !world.isRemote && pos != null) {
 				if (!ForgeChunkManager.getPersistentChunksFor(world).containsKey(ChunkUtils.getChunkPos(world, pos))) {
 					ticket.getModData().setInteger("xCoord", pos.getX());
@@ -94,7 +102,7 @@ public class ChunkUtils {
 			}
 		}
 
-		public void unload(World world, BlockPos pos, Ticket ticket) {
+		public void unload(final World world, final BlockPos pos, final Ticket ticket) {
 			if (world != null && !world.isRemote && pos != null) {
 				if (ForgeChunkManager.getPersistentChunksFor(world).containsKey(ChunkUtils.getChunkPos(world, pos))) {
 					ForgeChunkManager.unforceChunk(ticket, ChunkUtils.getChunkPos(world, pos));

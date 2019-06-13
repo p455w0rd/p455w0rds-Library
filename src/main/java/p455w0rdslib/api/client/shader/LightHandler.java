@@ -26,33 +26,48 @@ package p455w0rdslib.api.client.shader;
 
 import java.util.*;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import p455w0rdslib.LibGlobals.ConfigOptions;
 import p455w0rdslib.LibShaders;
+import p455w0rdslib.capabilities.CapabilityLightEmitter;
+import p455w0rdslib.util.PlayerUtils;
+import p455w0rdslib.util.RenderUtils;
 
+@SuppressWarnings("deprecation")
 public class LightHandler {
 
 	public static final ArrayList<Light> lights = Lists.newArrayList();
 	private static long frameId = 0;
-	public static LightComparator distance = new LightComparator();
 	private static Vec3d camPos;
 	private static Cam camera;
+	public static Comparator<Light> distance = new Comparator<Light>() {
+
+		@Override
+		public int compare(final Light light0, final Light light1) {
+			return Double.compare(getDistToLight(light0), getDistToLight(light1));
+		}
+
+		private double getDistToLight(final Light light) {
+			return PlayerUtils.getDistanceToPos(light.x, light.y, light.z);
+		}
+
+	};
 
 	public static void addLight(final Light l) {
-		if (camPos.squareDistanceTo(l.x, l.y, l.z) > l.mag + 128) {
+		if (camPos.squareDistanceTo(l.x, l.y, l.z) > l.mag + ConfigOptions.SHADERS_MAX_DIST) {
 			return;
 		}
 		if (camera != null && !camera.isBoundingBoxInFrustum(new AxisAlignedBB(l.x - l.mag, l.y - l.mag, l.z - l.mag, l.x + l.mag, l.y + l.mag, l.z + l.mag))) {
@@ -63,6 +78,15 @@ public class LightHandler {
 		}
 	}
 
+	public static Light getLightForEntity(final Entity entity) {
+		for (final Light light : lights) {
+			if (light.entity != null && light.entity.getPosition().equals(entity.getPosition())) {
+				return light;
+			}
+		}
+		return null;
+	}
+
 	public static void uploadLights() {
 		LibShaders.getActiveShader().getUniform("lightCount").setInt(lights.size());
 		frameId++;
@@ -70,13 +94,16 @@ public class LightHandler {
 			return;
 		}
 		frameId = 0;
-		for (int i = 0; i < lights.size(); i++) {
-			if (i < lights.size()) {
+		final int max = Math.min(lights.size(), ConfigOptions.MAX_LIGHTS);
+		for (int i = 0; i < max; i++) {
+			if (i < max) {
 				final Light l = lights.get(i);
 				LibShaders.getActiveShader().getUniform("lights[" + i + "].position").setFloat(l.x, l.y, l.z);
-				LibShaders.getActiveShader().getUniform("lights[" + i + "].color").setFloat(l.r, l.g, l.b, l.a);
-				LibShaders.getActiveShader().getUniform("lights[" + i + "].rad").setFloat(l.sx, l.sy, l.sz);
-				LibShaders.getActiveShader().getUniform("lights[" + i + "].intensity").setFloat(l.l);
+				LibShaders.getActiveShader().getUniform("lights[" + i + "].color").setFloat(l.r, l.g, l.b, l.a / 2);
+				if (LibShaders.getActiveShader() == LibShaders.coloredLightShader) {
+					LibShaders.getActiveShader().getUniform("lights[" + i + "].rad").setFloat(l.sx, l.sy, l.sz);
+					LibShaders.getActiveShader().getUniform("lights[" + i + "].intensity").setFloat(l.l);
+				}
 			}
 		}
 	}
@@ -102,82 +129,98 @@ public class LightHandler {
 		final List<Light> toAdd = new ArrayList<>();
 
 		for (final Entity e : world.getLoadedEntityList()) {
-			if (e instanceof EntityPlayer) {
-				final EntityPlayer p = (EntityPlayer) e;
-				for (final ItemStack stack : p.getHeldEquipment()) {
-					if (stack.getItem() instanceof IColoredLightEmitter) {
-						final List<Light> tmpList = new ArrayList<>();
-						((IColoredLightEmitter) stack.getItem()).emitLight(tmpList, p);
-						toAdd.addAll(tmpList);
-					}
-					else if (stack.getItem() instanceof ItemBlock) {
-						final Block block = ((ItemBlock) stack.getItem()).getBlock();
-						if (block.hasTileEntity(block.getDefaultState())) {
-							final TileEntity tile = block.createTileEntity(Minecraft.getMinecraft().world, block.getDefaultState());
-							if (tile instanceof IColoredLightEmitter) {
-								tile.setWorld(Minecraft.getMinecraft().world);
-								tile.setPos(p.getPosition());
-								final List<Light> tmpList = new ArrayList<>();
-								((IColoredLightEmitter) tile).emitLight(tmpList, p);
-								toAdd.addAll(tmpList);
-							}
-						}
-					}
+			if (e instanceof EntityItem) {
+				if (CapabilityLightEmitter.hasCap(((EntityItem) e).getItem())) {
+					toAdd.addAll(CapabilityLightEmitter.getLights(((EntityItem) e).getItem(), e));
 				}
 			}
-			if (e instanceof EntityItem) {
-				final EntityItem ei = (EntityItem) e;
-				if (ei.getItem().getItem() instanceof IColoredLightEmitter) {
-					final List<Light> tmpList = new ArrayList<>();
-					((IColoredLightEmitter) ei.getItem().getItem()).emitLight(tmpList, ei);
-					toAdd.addAll(tmpList);
+			if (CapabilityLightEmitter.hasCap(e)) {
+				toAdd.addAll(CapabilityLightEmitter.getLights(e));
+				for (final ItemStack stack : e.getHeldEquipment()) {
+					if (CapabilityLightEmitter.hasCap(stack)) {
+						toAdd.addAll(CapabilityLightEmitter.getLights(stack, e));
+					}
+				}
+				for (final ItemStack stack : e.getArmorInventoryList()) {
+					if (CapabilityLightEmitter.hasCap(stack)) {
+						toAdd.addAll(CapabilityLightEmitter.getLights(stack, e));
+					}
 				}
 			}
 		}
 		for (final TileEntity t : world.loadedTileEntityList) {
-			if (t instanceof IColoredLightEmitter) {
-				final List<Light> tmpList = new ArrayList<>();
-				((IColoredLightEmitter) t).emitLight(tmpList, t);
-				toAdd.addAll(tmpList);
+			if (CapabilityLightEmitter.hasCap(t)) {
+				toAdd.addAll(CapabilityLightEmitter.getLights(t));
 			}
 		}
-		toAdd.sort(distance);
-		clear();
-		lights.addAll(ImmutableList.copyOf(toAdd));
-	}
+		final List<BlockPos> blocksToRemove = new ArrayList<>();
+		final ArrayList<BlockPos> blockCache = new ArrayList<>(getBlockListForWorld(world));
 
-	/*private static List<Light> getLights(final TileEntity tile) {
-		final List<Light> tmpList = new ArrayList<>();
-		if (tile != null) {
-			if (tile.hasCapability(CapabilityLightEmitter.LIGHT_EMITTER_CAPABILITY, null)) {
-				tile.getCapability(CapabilityLightEmitter.LIGHT_EMITTER_CAPABILITY, null).emitLight(tmpList);
+		for (final BlockPos pos : blockCache) {
+			if (pos == null) {
+				continue;
+			}
+			final IBlockState state = world.getBlockState(pos);
+			final Block block = state.getBlock();
+			if (state == null || world.isAirBlock(pos)) {
+				blocksToRemove.add(pos.toImmutable());
 			}
 			else {
-				for (final EnumFacing side : EnumFacing.VALUES) {
-					if (tile.hasCapability(CapabilityLightEmitter.LIGHT_EMITTER_CAPABILITY, side)) {
-						tile.getCapability(CapabilityLightEmitter.LIGHT_EMITTER_CAPABILITY, side).emitLight(tmpList);
+				if (block instanceof IBlockLightEmitter) {
+					toAdd.addAll(((IBlockLightEmitter) block).emitLight(new ArrayList<>(), state, pos));
+				}
+				else {
+					final Pair<Integer, Pair<Float, Float>> color = CapabilityLightEmitter.getColorForBlock(block);
+					if (color.getLeft() != 0x0 && state != null) {
+						final Vec3i c = RenderUtils.hexToRGB(color.getLeft());
+						toAdd.add(Light.builder().pos(pos.up()).color(c.getX(), c.getY(), c.getZ(), color.getRight().getRight()).radius(color.getRight().getLeft()).intensity(5.0f).build());
 					}
 				}
 			}
 		}
-		return tmpList;
-	}*/
-
-	public static void clear() {
+		removeCachedPositions(world, blocksToRemove);
+		toAdd.sort(distance);
 		lights.clear();
+		lights.addAll(ImmutableList.copyOf(toAdd));
 	}
 
-	private static class LightComparator implements Comparator<Light> {
+	private static final Map<String, ArrayList<BlockPos>> CACHED_BLOCKLIST = new HashMap<>();
 
-		@Override
-		public int compare(final Light light0, final Light light1) {
-			final EntityPlayer p = Minecraft.getMinecraft().player;
-			return Double.compare(getDistanceSq(light0.x, light0.y, light0.z, p.posX, p.posY, p.posZ), getDistanceSq(light1.x, light1.y, light1.z, p.posX, p.posY, p.posZ));
+	private static ArrayList<BlockPos> getBlockListForWorld(final World world) {
+		final String dim = world.provider.getDimensionType().getName();
+		if (isCached(dim)) {
+			return CACHED_BLOCKLIST.get(dim);
 		}
-
-		private static double getDistanceSq(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2) {
-			return Math.pow(x1 - x2, 2.0) + Math.pow(y1 - y2, 2.0) + Math.pow(z1 - z2, 2.0);
-		}
-
+		final ArrayList<BlockPos> empty = new ArrayList<>();
+		CACHED_BLOCKLIST.put(dim, empty);
+		return empty;
 	}
+
+	private static boolean isCached(final String dimName) {
+		final Map<String, ArrayList<BlockPos>> currentCache = new HashMap<>(CACHED_BLOCKLIST);
+		for (final String cachedDim : currentCache.keySet()) {
+			if (dimName.equals(cachedDim)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void addCachedPos(final World world, final BlockPos pos) {
+		getBlockListForWorld(world).add(pos);
+	}
+
+	public static void removeCachedPositions(final World world, final List<BlockPos> positions) {
+		final List<BlockPos> newList = new ArrayList<>();
+		final ArrayList<BlockPos> worldBlocks = getBlockListForWorld(world);
+		for (final BlockPos p : positions) {
+			if (worldBlocks.contains(p)) {
+				continue;
+			}
+			newList.add(p);
+		}
+		worldBlocks.clear();
+		worldBlocks.addAll(newList);
+	}
+
 }

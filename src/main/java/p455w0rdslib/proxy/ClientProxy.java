@@ -21,7 +21,6 @@ package p455w0rdslib.proxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import p455w0rdslib.LibShaders;
@@ -43,16 +42,6 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void init(final FMLInitializationEvent e) {
-		super.init(e);
-	}
-
-	@Override
-	public boolean isSMP() {
-		return super.isSMP();
-	}
-
-	@Override
 	public World getWorld() {
 		return FMLClientHandler.instance().getWorldClient();
 	}
@@ -65,11 +54,6 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public EntityPlayer getPlayer(final MessageContext context) {
 		return context.side.isClient() ? getPlayer() : null;
-	}
-
-	@Override
-	public Object getServer() {
-		return super.getServer();
 	}
 
 	@Override

@@ -1,14 +1,13 @@
 package p455w0rdslib.util;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,21 +35,21 @@ public class PlayerUtils {
 		return EasyMappings.player();
 	}
 
-	public static EntityPlayer getPlayerByContext(MessageContext ctx) {
+	public static EntityPlayer getPlayerByContext(final MessageContext ctx) {
 		return P455w0rdsLib.PROXY.getPlayer(ctx);
 	}
 
-	public static void writeProfileToNBT(GameProfile profile, NBTTagCompound tag) {
+	public static void writeProfileToNBT(final GameProfile profile, final NBTTagCompound tag) {
 		tag.setString("Name", profile.getName());
-		UUID id = profile.getId();
+		final UUID id = profile.getId();
 		if (id != null) {
 			tag.setLong("UUIDL", id.getLeastSignificantBits());
 			tag.setLong("UUIDU", id.getMostSignificantBits());
 		}
 	}
 
-	public static GameProfile profileFromNBT(NBTTagCompound tag) {
-		String name = tag.getString("Name");
+	public static GameProfile profileFromNBT(final NBTTagCompound tag) {
+		final String name = tag.getString("Name");
 		UUID uuid = null;
 		if (tag.hasKey("UUIDL")) {
 			uuid = new UUID(tag.getLong("UUIDU"), tag.getLong("UUIDL"));
@@ -61,10 +60,10 @@ public class PlayerUtils {
 		return new GameProfile(uuid, name);
 	}
 
-	public static NBTTagCompound proifleToNBT(GameProfile profile) {
-		NBTTagCompound tag = new NBTTagCompound();
+	public static NBTTagCompound proifleToNBT(final GameProfile profile) {
+		final NBTTagCompound tag = new NBTTagCompound();
 		tag.setString("Name", profile.getName());
-		UUID id = profile.getId();
+		final UUID id = profile.getId();
 		if (id != null) {
 			tag.setLong("UUIDL", id.getLeastSignificantBits());
 			tag.setLong("UUIDU", id.getMostSignificantBits());
@@ -72,12 +71,12 @@ public class PlayerUtils {
 		return tag;
 	}
 
-	public static EntityPlayer getPlayerFromWorld(World world, UUID player) {
+	public static EntityPlayer getPlayerFromWorld(final World world, final UUID player) {
 		if (player == null) {
 			return null;
 		}
-		List<EntityPlayer> players = world.playerEntities;
-		for (EntityPlayer entityPlayer : players) {
+		final List<EntityPlayer> players = world.playerEntities;
+		for (final EntityPlayer entityPlayer : players) {
 			if (entityPlayer.getUniqueID().compareTo(player) != 0) {
 				continue;
 			}
@@ -86,29 +85,29 @@ public class PlayerUtils {
 		return null;
 	}
 
-	public static UUID getPlayerID(GameProfile profile) {
+	public static UUID getPlayerID(final GameProfile profile) {
 		return profile.getId();
 	}
 
-	public static GameProfile getPlayerProfile(GameProfile profile) {
+	public static GameProfile getPlayerProfile(final GameProfile profile) {
 		return profile;
 	}
 
-	public static boolean isOp(ICommandSender sender) {
+	public static boolean isOp(final ICommandSender sender) {
 		if (!ProxiedUtils.isSMP()) {
 			return true;
 		}
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			if (sender instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) sender;
+				final EntityPlayer player = (EntityPlayer) sender;
 				return player.capabilities.isCreativeMode || player.isSpectator();
 			}
 		}
 		else if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
 			if (sender instanceof EntityPlayerMP) {
-				EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(sender.getName());
+				final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(sender.getName());
 				if (player != null && player.getGameProfile() != null) {
-					UserListOpsEntry userentry = ((EntityPlayerMP) player).mcServer.getPlayerList().getOppedPlayers().getEntry(player.getGameProfile());
+					final UserListOpsEntry userentry = ((EntityPlayerMP) player).mcServer.getPlayerList().getOppedPlayers().getEntry(player.getGameProfile());
 					return userentry != null && userentry.getPermissionLevel() >= 4;
 				}
 			}
@@ -120,29 +119,34 @@ public class PlayerUtils {
 	}
 
 	public static List<UUID> getFullPlayerList() {
-		MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-		List<UUID> uuidList = Lists.newArrayList();
+		final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+		final List<UUID> uuidList = Lists.newArrayList();
 		if (server != null) {
-			PlayerProfileCache playerCache = server.getPlayerProfileCache();
-			String[] usernames = EasyMappings.getNames(server);
-			for (String username : usernames) {
+			final PlayerProfileCache playerCache = server.getPlayerProfileCache();
+			final String[] usernames = EasyMappings.getNames(server);
+			for (final String username : usernames) {
 				uuidList.add(playerCache.getGameProfileForUsername(username).getId());
 			}
 		}
 		return uuidList;
 	}
 
-	public static ItemStack getPlayerSkull(String playerName) {
+	public static ItemStack getPlayerSkull(final String playerName) {
 		ItemStack head = null;
-		Map<String, ItemStack> skullCache = LibRegistry.getSkullRegistry();
+		final Map<String, ItemStack> skullCache = LibRegistry.getSkullRegistry();
 		if (!skullCache.containsKey(playerName)) {
 			head = new ItemStack(Items.SKULL, 1, 3);
-			NBTTagCompound nametag = new NBTTagCompound();
+			final NBTTagCompound nametag = new NBTTagCompound();
 			nametag.setString("SkullOwner", playerName);
 			head.setTagCompound(nametag);
 			skullCache.put(playerName, head);
 		}
 		return skullCache.get(playerName);
+	}
+
+	public static double getDistanceToPos(final double x, final double y, final double z) {
+		final EntityPlayer p = Minecraft.getMinecraft().player;
+		return MathUtils.getDistanceSq(x, y, z, p.posX, p.posY, p.posZ);
 	}
 
 }

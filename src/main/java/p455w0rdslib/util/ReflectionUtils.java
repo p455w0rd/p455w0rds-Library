@@ -1,17 +1,5 @@
 package p455w0rdslib.util;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Map;
-
-import com.google.common.collect.Maps;
-
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-
 /**
  * @author p455w0rd
  *
@@ -19,7 +7,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 @SuppressWarnings("deprecation")
 public class ReflectionUtils {
 
-	public static Map<String, String> SRGList() {
+	/*public static Map<String, String> SRGList() {
 		final Map<String, String> list = Maps.newHashMap();
 		list.put("defaultResourcePacks", "field_110449_ao");
 		list.put("layerRenderers", "field_177097_h");
@@ -51,26 +39,26 @@ public class ReflectionUtils {
 		list.put("entitiesById", "field_175729_l");
 		return list;
 	}
-
+	
 	public static Map<Class<?>, String> zLevel() {
 		final Map<Class<?>, String> list = Maps.newHashMap();
 		list.put(Gui.class, "field_73735_i");
 		list.put(RenderItem.class, "field_77023_b");
 		return list;
 	}
-
+	
 	public static String getSRG(final String deobf) {
 		return SRGList().containsKey(deobf) ? SRGList().get(deobf) : "";
 	}
-
+	
 	public static String determineSRG(final String string) {
 		return MCUtils.isDeobf() ? string : getSRG(string);
 	}
-
+	
 	public static String determineZLevelSRG(final String string, final Class<?> clazz) {
 		return MCUtils.isDeobf() ? string : zLevel().containsKey(clazz) ? zLevel().get(clazz) : "";
 	}
-
+	
 	public static <T> MethodHandle findMethod(final Class<T> clazz, final String methodName, final String obfMethodName, final Class<?>... methodTypes) {
 		final Method method = ReflectionHelper.findMethod(clazz, methodName, obfMethodName, methodTypes);
 		try {
@@ -80,7 +68,7 @@ public class ReflectionUtils {
 			throw new ReflectionHelper.UnableToFindMethodException(e);
 		}
 	}
-
+	
 	public static MethodHandle findFieldGetter(final Class<?> clazz, final String... fieldNames) {
 		final Field field = ReflectionHelper.findField(clazz, fieldNames);
 		try {
@@ -90,7 +78,7 @@ public class ReflectionUtils {
 			throw new ReflectionHelper.UnableToAccessFieldException(fieldNames, e);
 		}
 	}
-
+	
 	public static MethodHandle findFieldSetter(final Class<?> clazz, final String... fieldNames) {
 		final Field field = ReflectionHelper.findField(clazz, fieldNames);
 		try {
@@ -99,6 +87,6 @@ public class ReflectionUtils {
 		catch (final IllegalAccessException e) {
 			throw new ReflectionHelper.UnableToAccessFieldException(fieldNames, e);
 		}
-	}
+	}*/
 
 }

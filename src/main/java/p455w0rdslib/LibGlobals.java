@@ -7,15 +7,17 @@ import org.lwjgl.opengl.GLContext;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Loader;
 import p455w0rdslib.asm.FMLPlugin;
+import p455w0rdslib.asm.Hooks;
 
 public class LibGlobals {
 
 	public static final String MODID = "p455w0rdslib";
-	public static final String VERSION = "2.2.101";
+	public static final String VERSION = "2.2.115";
 	public static final String NAME = "p455w0rd's Library";
 	public static final String SERVER_PROXY = "p455w0rdslib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rdslib.proxy.ClientProxy";
-	public static final String DEPENDENCIES = "after:redstoneflux;after:mantle;after:tconstruct;after:enderio;after:projecte;after:tesla;after:thaumcraft";
+	public static final String GUI_FACTORY = "p455w0rdslib.LibGuiFactory";
+	public static final String DEPENDENCIES = "after:redstoneflux;after:mantle;after:tconstruct;after:enderio;after:projecte;after:tesla;after:thaumcraft;after:albedo";
 	public static final String CONFIG_FILE = "config/p455w0rdsLib.cfg";
 	public static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(0, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
 	public static int ELAPSED_TICKS = 0;
@@ -34,9 +36,18 @@ public class LibGlobals {
 
 	public static boolean areShadersEnabled() {
 		if (!shaderCheck && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+			String msg = "Shaders supported: {}";
 			shaderCheck = true;
 			shadersEnabled = ConfigOptions.ENABLE_SHADERS && GLContext.getCapabilities().OpenGL20;
-			FMLPlugin.log("Shaders supported: {}", shadersEnabled);
+			if (Hooks.albedoDetected) {
+				shadersEnabled = false;
+				msg += ", Albedo detected";
+			}
+			if (Hooks.isOptifineDetected()) {
+				shadersEnabled = false;
+				msg += ", Optifine detected";
+			}
+			FMLPlugin.log(msg, shadersEnabled);
 		}
 		return shadersEnabled;
 	}
@@ -50,7 +61,7 @@ public class LibGlobals {
 			TOP("theoneprobe", "The One Probe"), WAILA("waila", "WAILA"), JEI("jei", "JEI"),
 			ITEMSCROLLER("itemscroller", "Item Scroller"), NEI("nei", "Not Enough Items"), CHISEL("chisel", "Chisel"),
 			THAUMCRAFT("thaumcraft", "Thaumcraft"), BAUBLES("baubles", "Baubles"),
-			BAUBLESAPI("Baubles|API", "Baubles API");
+			BAUBLESAPI("Baubles|API", "Baubles API"), ALBEDO("albedo", "Albedo");
 
 		private final String modid, name;
 
@@ -79,9 +90,10 @@ public class LibGlobals {
 		public static boolean ENABLE_CONTRIB_PARTICLES_OTHERS = true;
 		public static boolean ENABLE_SHADERS = true;
 		public static boolean ENABLE_BIT_NIGHTMARE = false;
-		//public static double SHADERS_MAX_DIST = 64D;
-		//public static int MAX_LIGHTS = 8;
+		public static double SHADERS_MAX_DIST = 64D;
+		public static int MAX_LIGHTS = 8;
 		public static int SHADER_NUM_FRAMES_TO_SKIP = 10;
+		public static boolean ENABLE_VANILLA_LIGHT_EFFECTS = true;
 
 	}
 }

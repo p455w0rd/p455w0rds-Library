@@ -28,21 +28,8 @@ public class ItemUtils {
 		return player.inventory.getStackInSlot(36);
 	}
 
-	public static boolean areItemTagsEqual(final ItemStack is1, final ItemStack itemStackIn) {
-		final ItemStack newStack = is1.copy();
-		if (newStack.hasTagCompound()) {
-			if (newStack.getTagCompound().hasKey("p455w0rd.StackSize")) {
-				newStack.getTagCompound().removeTag("p455w0rd.StackSize");
-			}
-			if (newStack.getTagCompound().hasNoTags()) {
-				newStack.setTagCompound(null);
-			}
-		}
-		return ItemStack.areItemStackTagsEqual(newStack, itemStackIn);
-	}
-
-	public static boolean areItemsEqual(final ItemStack is1, final ItemStack itemStackIn) {
-		return is1.getItem() == itemStackIn.getItem() && is1.getItemDamage() == itemStackIn.getItemDamage() && areItemTagsEqual(is1, itemStackIn);
+	public static boolean areItemStacksEqualIgnoreSize(final ItemStack stack1, final ItemStack stack2) {
+		return stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
 	}
 
 	public static void dropItemStackInWorld(final World worldObj, final double x, final double y, final double z, final ItemStack stack) {
@@ -113,7 +100,7 @@ public class ItemUtils {
 	public static CapabilityDispatcher getCaps(ItemStack stack) {
 		return stack.capabilities;//MCPrivateUtils.getItemStackCapabilities(stack);
 	}
-	
+
 	public static void setItem(ItemStack stack, Item newItem) {
 		Item item = stack.getItem();
 		NBTTagCompound capNBT = MCPrivateUtils.getItemStackCapNBT(stack);

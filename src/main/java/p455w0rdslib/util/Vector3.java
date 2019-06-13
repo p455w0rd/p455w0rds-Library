@@ -1,8 +1,6 @@
 package p455w0rdslib.util;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import java.math.*;
 
 import javax.vecmath.Vector4f;
 
@@ -11,9 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rdslib.api.ICopyable;
@@ -24,9 +20,10 @@ import p455w0rdslib.api.ICopyable;
  */
 public class Vector3 implements ICopyable<Vector3> {
 
-	public static Vector3 zero = new Vector3();
-	public static Vector3 one = new Vector3(1, 1, 1);
-	public static Vector3 center = new Vector3(0.5, 0.5, 0.5);
+	public static final Vector3 ZERO = new Vector3();
+	public static final Vector3 ONE = new Vector3(1, 1, 1);
+	public static final Vector3 CENTER = new Vector3(0.5, 0.5, 0.5);
+	public static final Vector3 NEGATIVE_INFINITY = new Vector3(Double.NEGATIVE_INFINITY);
 
 	public double x;
 	public double y;
@@ -35,30 +32,48 @@ public class Vector3 implements ICopyable<Vector3> {
 	public Vector3() {
 	}
 
-	public Vector3(double d, double d1, double d2) {
+	public Vector3(final double d, final double d1, final double d2) {
 		x = d;
 		y = d1;
 		z = d2;
 	}
 
-	public Vector3(Vector3 vec) {
+	public Vector3(final Vector3 vec) {
 		x = vec.x;
 		y = vec.y;
 		z = vec.z;
 	}
 
-	public Vector3(double[] da) {
+	public Vector3(final double[] da) {
 		this(da[0], da[1], da[2]);
 	}
 
-	public Vector3(float[] fa) {
+	public Vector3(final float[] fa) {
 		this(fa[0], fa[1], fa[2]);
 	}
 
-	public Vector3(Vec3d vec) {
+	public Vector3(final Vec3d vec) {
 		x = vec.x;
 		y = vec.y;
 		z = vec.z;
+	}
+
+	public Vector3(final double vec) {
+		x = vec;
+		y = vec;
+		z = vec;
+	}
+
+	public Vector3(final Vec3i pos) {
+		this(new Vec3d(pos));
+	}
+
+	public Vector3(final TileEntity tile) {
+		this(tile.getPos().getX());
+	}
+
+	public Vector3(final Entity entity) {
+		this(entity.posX, entity.posY, entity.posZ);
 	}
 
 	public double getX() {
@@ -73,54 +88,54 @@ public class Vector3 implements ICopyable<Vector3> {
 		return z;
 	}
 
-	public Vector3 add(Vec3i vec) {
+	public Vector3 add(final Vec3i vec) {
 		x += vec.getX();
 		y += vec.getY();
 		z += vec.getZ();
 		return this;
 	}
 
-	public static Vector3 fromBlockPos(BlockPos pos) {
+	public static Vector3 fromBlockPos(final BlockPos pos) {
 		return fromVec3i(pos);
 	}
 
-	public static Vector3 fromVec3i(Vec3i pos) {
+	public static Vector3 fromVec3i(final Vec3i pos) {
 		return new Vector3(pos.getX(), pos.getY(), pos.getZ());
 	}
 
-	public static Vector3 fromBlockPosCenter(BlockPos pos) {
+	public static Vector3 fromBlockPosCenter(final BlockPos pos) {
 		return fromBlockPos(pos).add(0.5);
 	}
 
-	public static Vector3 fromEntity(Entity e) {
+	public static Vector3 fromEntity(final Entity e) {
 		return new Vector3(e.posX, e.posY, e.posZ);
 	}
 
-	public static Vector3 fromEntityCenter(Entity e) {
+	public static Vector3 fromEntityCenter(final Entity e) {
 		return new Vector3(e.posX, e.posY - e.getYOffset() + e.height / 2, e.posZ);
 	}
 
-	public static Vector3 fromTile(TileEntity tile) {
+	public static Vector3 fromTile(final TileEntity tile) {
 		return fromBlockPos(tile.getPos());
 	}
 
-	public static Vector3 fromTileCenter(TileEntity tile) {
+	public static Vector3 fromTileCenter(final TileEntity tile) {
 		return fromTile(tile).add(0.5);
 	}
 
-	public static Vector3 fromAxes(double[] da) {
+	public static Vector3 fromAxes(final double[] da) {
 		return new Vector3(da[2], da[0], da[1]);
 	}
 
-	public static Vector3 fromAxes(float[] fa) {
+	public static Vector3 fromAxes(final float[] fa) {
 		return new Vector3(fa[2], fa[0], fa[1]);
 	}
 
-	public static Vector3 fromArray(double[] da) {
+	public static Vector3 fromArray(final double[] da) {
 		return new Vector3(da[0], da[1], da[2]);
 	}
 
-	public static Vector3 fromArray(float[] fa) {
+	public static Vector3 fromArray(final float[] fa) {
 		return new Vector3(fa[0], fa[1], fa[2]);
 	}
 
@@ -147,102 +162,102 @@ public class Vector3 implements ICopyable<Vector3> {
 		GlStateManager.glVertex3f((float) x, (float) y, (float) z);
 	}
 
-	public Vector3 set(double x1, double y1, double z1) {
+	public Vector3 set(final double x1, final double y1, final double z1) {
 		x = x1;
 		y = y1;
 		z = z1;
 		return this;
 	}
 
-	public Vector3 set(double d) {
+	public Vector3 set(final double d) {
 		return set(d, d, d);
 	}
 
-	public Vector3 set(Vector3 vec) {
+	public Vector3 set(final Vector3 vec) {
 		return set(vec.x, vec.y, vec.z);
 	}
 
-	public Vector3 set(Vec3i vec) {
+	public Vector3 set(final Vec3i vec) {
 		return set(vec.getX(), vec.getY(), vec.getZ());
 	}
 
-	public Vector3 set(double[] da) {
+	public Vector3 set(final double[] da) {
 		return set(da[0], da[1], da[2]);
 	}
 
-	public Vector3 set(float[] fa) {
+	public Vector3 set(final float[] fa) {
 		return set(fa[0], fa[1], fa[2]);
 	}
 
-	public Vector3 add(double dx, double dy, double dz) {
+	public Vector3 add(final double dx, final double dy, final double dz) {
 		x += dx;
 		y += dy;
 		z += dz;
 		return this;
 	}
 
-	public Vector3 add(double d) {
+	public Vector3 add(final double d) {
 		return add(d, d, d);
 	}
 
-	public Vector3 add(Vector3 vec) {
+	public Vector3 add(final Vector3 vec) {
 		return add(vec.x, vec.y, vec.z);
 	}
 
-	public Vector3 add(BlockPos pos) {
+	public Vector3 add(final BlockPos pos) {
 		return add(pos.getX(), pos.getY(), pos.getZ());
 	}
 
-	public Vector3 subtract(double dx, double dy, double dz) {
+	public Vector3 subtract(final double dx, final double dy, final double dz) {
 		x -= dx;
 		y -= dy;
 		z -= dz;
 		return this;
 	}
 
-	public Vector3 subtract(double d) {
+	public Vector3 subtract(final double d) {
 		return subtract(d, d, d);
 	}
 
-	public Vector3 subtract(Vector3 vec) {
+	public Vector3 subtract(final Vector3 vec) {
 		return subtract(vec.x, vec.y, vec.z);
 	}
 
-	public Vector3 subtract(BlockPos pos) {
+	public Vector3 subtract(final BlockPos pos) {
 		return subtract(pos.getX(), pos.getY(), pos.getZ());
 	}
 
-	public Vector3 multiply(double fx, double fy, double fz) {
+	public Vector3 multiply(final double fx, final double fy, final double fz) {
 		x *= fx;
 		y *= fy;
 		z *= fz;
 		return this;
 	}
 
-	public Vector3 multiply(double f) {
+	public Vector3 multiply(final double f) {
 		return multiply(f, f, f);
 	}
 
-	public Vector3 multiply(Vector3 f) {
+	public Vector3 multiply(final Vector3 f) {
 		return multiply(f.x, f.y, f.z);
 	}
 
-	public Vector3 divide(double fx, double fy, double fz) {
+	public Vector3 divide(final double fx, final double fy, final double fz) {
 		x /= fx;
 		y /= fy;
 		z /= fz;
 		return this;
 	}
 
-	public Vector3 divide(double f) {
+	public Vector3 divide(final double f) {
 		return divide(f, f, f);
 	}
 
-	public Vector3 divide(Vector3 vec) {
+	public Vector3 divide(final Vector3 vec) {
 		return divide(vec.x, vec.y, vec.z);
 	}
 
-	public Vector3 divide(BlockPos pos) {
+	public Vector3 divide(final BlockPos pos) {
 		return divide(pos.getX(), pos.getY(), pos.getZ());
 	}
 
@@ -276,18 +291,18 @@ public class Vector3 implements ICopyable<Vector3> {
 	}
 
 	public Vector3 normalize() {
-		double d = mag();
+		final double d = mag();
 		if (d != 0) {
 			multiply(1 / d);
 		}
 		return this;
 	}
 
-	public double dotProduct(double x1, double y1, double z1) {
+	public double dotProduct(final double x1, final double y1, final double z1) {
 		return x1 * x + y1 * y + z1 * z;
 	}
 
-	public double dotProduct(Vector3 vec) {
+	public double dotProduct(final Vector3 vec) {
 		double d = vec.x * x + vec.y * y + vec.z * z;
 
 		if (d > 1 && d < 1.00001) {
@@ -299,10 +314,10 @@ public class Vector3 implements ICopyable<Vector3> {
 		return d;
 	}
 
-	public Vector3 crossProduct(Vector3 vec) {
-		double d = y * vec.z - z * vec.y;
-		double d1 = z * vec.x - x * vec.z;
-		double d2 = x * vec.y - y * vec.x;
+	public Vector3 crossProduct(final Vector3 vec) {
+		final double d = y * vec.z - z * vec.y;
+		final double d1 = z * vec.x - x * vec.z;
+		final double d2 = x * vec.y - y * vec.x;
 		x = d;
 		y = d1;
 		z = d2;
@@ -317,8 +332,8 @@ public class Vector3 implements ICopyable<Vector3> {
 	}
 
 	public Vector3 xCrossProduct() {
-		double d = z;
-		double d1 = -y;
+		final double d = z;
+		final double d1 = -y;
 		x = 0;
 		y = d;
 		z = d1;
@@ -326,8 +341,8 @@ public class Vector3 implements ICopyable<Vector3> {
 	}
 
 	public Vector3 zCrossProduct() {
-		double d = y;
-		double d1 = -x;
+		final double d = y;
+		final double d1 = -x;
 		x = d;
 		y = d1;
 		z = 0;
@@ -335,54 +350,54 @@ public class Vector3 implements ICopyable<Vector3> {
 	}
 
 	public Vector3 yCrossProduct() {
-		double d = -z;
-		double d1 = x;
+		final double d = -z;
+		final double d1 = x;
 		x = d;
 		y = 0;
 		z = d1;
 		return this;
 	}
 
-	public double scalarProject(Vector3 b) {
-		double l = b.mag();
+	public double scalarProject(final Vector3 b) {
+		final double l = b.mag();
 		return l == 0 ? 0 : dotProduct(b) / l;
 	}
 
-	public Vector3 project(Vector3 b) {
-		double l = b.magSquared();
+	public Vector3 project(final Vector3 b) {
+		final double l = b.magSquared();
 		if (l == 0) {
 			set(0, 0, 0);
 			return this;
 		}
-		double m = dotProduct(b) / l;
+		final double m = dotProduct(b) / l;
 		set(b).multiply(m);
 		return this;
 	}
 
-	public Vector3 rotate(double angle, Vector3 axis) {
+	public Vector3 rotate(final double angle, final Vector3 axis) {
 		Quat.aroundAxis(axis.copy().normalize(), angle).rotate(this);
 		return this;
 	}
 
-	public Vector3 rotate(Quat rotator) {
+	public Vector3 rotate(final Quat rotator) {
 		rotator.rotate(this);
 		return this;
 	}
 
-	public double angle(Vector3 vec) {
+	public double angle(final Vector3 vec) {
 		return Math.acos(copy().normalize().dotProduct(vec.copy().normalize()));
 	}
 
-	public Vector3 YZintercept(Vector3 end, double px) {
-		double dx = end.x - x;
-		double dy = end.y - y;
-		double dz = end.z - z;
+	public Vector3 YZintercept(final Vector3 end, final double px) {
+		final double dx = end.x - x;
+		final double dy = end.y - y;
+		final double dz = end.z - z;
 
 		if (dx == 0) {
 			return null;
 		}
 
-		double d = (px - x) / dx;
+		final double d = (px - x) / dx;
 		if (MathUtils.between(-1E-5, d, 1E-5)) {
 			return this;
 		}
@@ -397,16 +412,16 @@ public class Vector3 implements ICopyable<Vector3> {
 		return this;
 	}
 
-	public Vector3 XZintercept(Vector3 end, double py) {
-		double dx = end.x - x;
-		double dy = end.y - y;
-		double dz = end.z - z;
+	public Vector3 XZintercept(final Vector3 end, final double py) {
+		final double dx = end.x - x;
+		final double dy = end.y - y;
+		final double dz = end.z - z;
 
 		if (dy == 0) {
 			return null;
 		}
 
-		double d = (py - y) / dy;
+		final double d = (py - y) / dy;
 		if (MathUtils.between(-1E-5, d, 1E-5)) {
 			return this;
 		}
@@ -421,16 +436,16 @@ public class Vector3 implements ICopyable<Vector3> {
 		return this;
 	}
 
-	public Vector3 XYintercept(Vector3 end, double pz) {
-		double dx = end.x - x;
-		double dy = end.y - y;
-		double dz = end.z - z;
+	public Vector3 XYintercept(final Vector3 end, final double pz) {
+		final double dx = end.x - x;
+		final double dy = end.y - y;
+		final double dz = end.z - z;
 
 		if (dz == 0) {
 			return null;
 		}
 
-		double d = (pz - z) / dz;
+		final double d = (pz - z) / dz;
 		if (MathUtils.between(-1E-5, d, 1E-5)) {
 			return this;
 		}
@@ -450,10 +465,10 @@ public class Vector3 implements ICopyable<Vector3> {
 	}
 
 	public boolean isAxial() {
-		return x == 0 ? (y == 0 || z == 0) : (y == 0 && z == 0);
+		return x == 0 ? y == 0 || z == 0 : y == 0 && z == 0;
 	}
 
-	public double getSide(int side) {
+	public double getSide(final int side) {
 		switch (side) {
 		case 0:
 		case 1:
@@ -468,7 +483,7 @@ public class Vector3 implements ICopyable<Vector3> {
 		throw new IndexOutOfBoundsException("Switch Falloff");
 	}
 
-	public Vector3 setSide(int s, double v) {
+	public Vector3 setSide(final int s, final double v) {
 		switch (s) {
 		case 0:
 		case 1:
@@ -489,11 +504,11 @@ public class Vector3 implements ICopyable<Vector3> {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (!(o instanceof Vector3)) {
 			return false;
 		}
-		Vector3 v = (Vector3) o;
+		final Vector3 v = (Vector3) o;
 		return x == v.x && y == v.y && z == v.z;
 	}
 
@@ -502,7 +517,7 @@ public class Vector3 implements ICopyable<Vector3> {
 	 *
 	 * @return true if this is equal to v within +-1E-5
 	 */
-	public boolean equalsT(Vector3 v) {
+	public boolean equalsT(final Vector3 v) {
 		return MathUtils.between(x - 1E-5, v.x, x + 1E-5) && MathUtils.between(y - 1E-5, v.y, y + 1E-5) && MathUtils.between(z - 1E-5, v.z, z + 1E-5);
 	}
 
@@ -513,7 +528,7 @@ public class Vector3 implements ICopyable<Vector3> {
 
 	@Override
 	public String toString() {
-		MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
+		final MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
 		return "Vector3(" + new BigDecimal(x, cont) + ", " + new BigDecimal(y, cont) + ", " + new BigDecimal(z, cont) + ")";
 	}
 
@@ -535,27 +550,27 @@ public class Vector3 implements ICopyable<Vector3> {
 		return normalize();
 	}
 
-	public Vector3 $plus(Vector3 v) {
+	public Vector3 $plus(final Vector3 v) {
 		return add(v);
 	}
 
-	public Vector3 $minus(Vector3 v) {
+	public Vector3 $minus(final Vector3 v) {
 		return subtract(v);
 	}
 
-	public Vector3 $times(double d) {
+	public Vector3 $times(final double d) {
 		return multiply(d);
 	}
 
-	public Vector3 $div(double d) {
+	public Vector3 $div(final double d) {
 		return multiply(1 / d);
 	}
 
-	public Vector3 $times(Vector3 v) {
+	public Vector3 $times(final Vector3 v) {
 		return crossProduct(v);
 	}
 
-	public double $dot$times(Vector3 v) {
+	public double $dot$times(final Vector3 v) {
 		return dotProduct(v);
 	}
 
@@ -570,35 +585,35 @@ public class Vector3 implements ICopyable<Vector3> {
 			this(1D);
 		}
 
-		public Quat(double zeroMag) {
+		public Quat(final double zeroMag) {
 			s = zeroMag;
 			i = 0D;
 			j = 0D;
 			k = 0D;
 		}
 
-		public Quat(Quat quat) {
+		public Quat(final Quat quat) {
 			i = quat.i;
 			j = quat.j;
 			k = quat.k;
 			s = quat.s;
 		}
 
-		public Quat(double w, double i, double j, double k) {
+		public Quat(final double w, final double i, final double j, final double k) {
 			this.i = i;
 			this.j = j;
 			this.k = k;
 			s = w;
 		}
 
-		public void set(Quat quat) {
+		public void set(final Quat quat) {
 			i = quat.i;
 			j = quat.j;
 			k = quat.k;
 			s = quat.s;
 		}
 
-		public Quat set(double d, double d1, double d2, double d3) {
+		public Quat set(final double d, final double d1, final double d2, final double d3) {
 			i = d1;
 			j = d2;
 			k = d3;
@@ -607,38 +622,38 @@ public class Vector3 implements ICopyable<Vector3> {
 			return this;
 		}
 
-		public void rotate(Vector3 vec) {
-			double d = -i * vec.x - j * vec.y - k * vec.z;
-			double d1 = s * vec.x + j * vec.z - k * vec.y;
-			double d2 = s * vec.y - i * vec.z + k * vec.x;
-			double d3 = s * vec.z + i * vec.y - j * vec.x;
+		public void rotate(final Vector3 vec) {
+			final double d = -i * vec.x - j * vec.y - k * vec.z;
+			final double d1 = s * vec.x + j * vec.z - k * vec.y;
+			final double d2 = s * vec.y - i * vec.z + k * vec.x;
+			final double d3 = s * vec.z + i * vec.y - j * vec.x;
 			vec.x = d1 * s - d * i - d2 * k + d3 * j;
 			vec.y = d2 * s - d * j + d1 * k - d3 * i;
 			vec.z = d3 * s - d * k - d1 * j + d2 * i;
 		}
 
-		public static Quat buildQuatWithAngle(double ax, double ay, double az, double angle) {
+		public static Quat buildQuatWithAngle(final double ax, final double ay, final double az, double angle) {
 			angle *= 0.5D;
-			double d4 = Math.sin(angle);
+			final double d4 = Math.sin(angle);
 			return new Quat(Math.cos(angle), ax * d4, ay * d4, az * d4);
 		}
 
-		public void leftMultiply(Quat quat) {
-			double d = s * quat.s - i * quat.i - j * quat.j - k * quat.k;
-			double d1 = s * quat.i + i * quat.s - j * quat.k + k * quat.j;
-			double d2 = s * quat.j + i * quat.k + j * quat.s - k * quat.i;
-			double d3 = s * quat.k - i * quat.j + j * quat.i + k * quat.s;
+		public void leftMultiply(final Quat quat) {
+			final double d = s * quat.s - i * quat.i - j * quat.j - k * quat.k;
+			final double d1 = s * quat.i + i * quat.s - j * quat.k + k * quat.j;
+			final double d2 = s * quat.j + i * quat.k + j * quat.s - k * quat.i;
+			final double d3 = s * quat.k - i * quat.j + j * quat.i + k * quat.s;
 			s = d;
 			i = d1;
 			j = d2;
 			k = d3;
 		}
 
-		public void rightMultiply(Quat quat) {
-			double d = s * quat.s - i * quat.i - j * quat.j - k * quat.k;
-			double d1 = s * quat.i + i * quat.s + j * quat.k - k * quat.j;
-			double d2 = s * quat.j - i * quat.k + j * quat.s + k * quat.i;
-			double d3 = s * quat.k + i * quat.j - j * quat.i + k * quat.s;
+		public void rightMultiply(final Quat quat) {
+			final double d = s * quat.s - i * quat.i - j * quat.j - k * quat.k;
+			final double d1 = s * quat.i + i * quat.s + j * quat.k - k * quat.j;
+			final double d2 = s * quat.j - i * quat.k + j * quat.s + k * quat.i;
+			final double d3 = s * quat.k + i * quat.j - j * quat.i + k * quat.s;
 			s = d;
 			i = d1;
 			j = d2;
@@ -661,14 +676,14 @@ public class Vector3 implements ICopyable<Vector3> {
 			s *= d;
 		}
 
-		public void rotateWithMagnitude(Vector3 vec) {
-			double d = -i * vec.x - j * vec.y - k * vec.z;
-			double d1 = s * vec.x + j * vec.z - k * vec.y;
-			double d2 = s * vec.y - i * vec.z + k * vec.x;
-			double d3 = s * vec.z + i * vec.y - j * vec.x;
-			vec.x = (d1 * s - d * i - d2 * k + d3 * j);
-			vec.y = (d2 * s - d * j + d1 * k - d3 * i);
-			vec.z = (d3 * s - d * k - d1 * j + d2 * i);
+		public void rotateWithMagnitude(final Vector3 vec) {
+			final double d = -i * vec.x - j * vec.y - k * vec.z;
+			final double d1 = s * vec.x + j * vec.z - k * vec.y;
+			final double d2 = s * vec.y - i * vec.z + k * vec.x;
+			final double d3 = s * vec.z + i * vec.y - j * vec.x;
+			vec.x = d1 * s - d * i - d2 * k + d3 * j;
+			vec.y = d2 * s - d * j + d1 * k - d3 * i;
+			vec.z = d3 * s - d * k - d1 * j + d2 * i;
 		}
 
 		@Override
@@ -676,25 +691,25 @@ public class Vector3 implements ICopyable<Vector3> {
 			return String.format("Quaternion: { s=%f, i=%f, j=%f, k=%f }", s, i, j, k);
 		}
 
-		public static Quat buildQuatFrom3DVector(Vector3 axis, double angle) {
+		public static Quat buildQuatFrom3DVector(final Vector3 axis, final double angle) {
 			return buildQuatWithAngle(axis.x, axis.y, axis.z, angle);
 		}
 
-		public static Quat aroundAxis(double ax, double ay, double az, double angle) {
+		public static Quat aroundAxis(final double ax, final double ay, final double az, final double angle) {
 			return new Quat().setAroundAxis(ax, ay, az, angle);
 		}
 
-		public static Quat aroundAxis(Vector3 axis, double angle) {
+		public static Quat aroundAxis(final Vector3 axis, final double angle) {
 			return aroundAxis(axis.x, axis.y, axis.z, angle);
 		}
 
-		public Quat setAroundAxis(double ax, double ay, double az, double angle) {
+		public Quat setAroundAxis(final double ax, final double ay, final double az, double angle) {
 			angle *= 0.5;
-			double d4 = MathUtils.sin((float) angle);
+			final double d4 = MathUtils.sin((float) angle);
 			return set(MathUtils.cos((float) angle), ax * d4, ay * d4, az * d4);
 		}
 
-		public Quat setAroundAxis(Vector3 axis, double angle) {
+		public Quat setAroundAxis(final Vector3 axis, final double angle) {
 			return setAroundAxis(axis.x, axis.y, axis.z, angle);
 		}
 

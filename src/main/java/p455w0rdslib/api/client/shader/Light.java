@@ -55,6 +55,8 @@ public class Light {
 
 	public float sf;
 
+	public Entity entity;
+
 	protected Light(final float x, final float y, final float z, final float r, final float g, final float b, final float a, final float radius) {
 		this.x = x;
 		this.y = y;
@@ -117,6 +119,11 @@ public class Light {
 		sz = (float) vec.z * mag;
 	}
 
+	public Light setEntity(final Entity entity) {
+		this.entity = entity;
+		return this;
+	}
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -139,6 +146,8 @@ public class Light {
 		private final float sy = 0;
 		private final float sz = 0;
 
+		private Entity entity;
+
 		public Builder pos(final BlockPos pos) {
 			return pos(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
 		}
@@ -148,6 +157,7 @@ public class Light {
 		}
 
 		public Builder pos(final Entity e) {
+			entity = e;
 			return pos(e.posX, e.posY, e.posZ);
 		}
 
@@ -201,6 +211,9 @@ public class Light {
 				l.mag = radius;
 				//l.sf = sf;
 				l.l = this.l;
+				if (entity != null) {
+					l.setEntity(entity);
+				}
 				return l;
 			}
 			else {

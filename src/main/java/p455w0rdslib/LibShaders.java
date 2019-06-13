@@ -60,8 +60,7 @@ public class LibShaders {
 			coloredLightShader.delete();
 			coloredLightShader = null;
 		}
-		coloredLightShader = new Shader(createProgram(LIGHTOVERLAY_SRC_VERT, LIGHTOVERLAY_SRC_FRAG));
-		//LogManager.getLogger(LibGlobals.MODID).info("Loaded colored light overlay shader");
+		coloredLightShader = new Shader(createProgram(getLightOverlaySrc(ShaderType.VERTEX), getLightOverlaySrc(ShaderType.FRAGMENT)));
 		coloredLightShader.use();
 		coloredLightShader.refreshUniforms();
 		Shader.NONE.use();
@@ -91,29 +90,31 @@ public class LibShaders {
 		return id;
 	}
 
-	public static final String LIGHTOVERLAY_SRC_FRAG = new StringBuilder()
-		//@formatter:off
-		.append("#version 120\n")
-		.append("varying vec3 position;\n")
-		.append("varying float magnitude;\n")
-		.append("varying vec4 lightColor;\n")
-		.append("uniform int chunkX;\n")
-		.append("uniform int chunkZ;\n")
-		.append("uniform sampler2D base;\n")
-		.append("uniform sampler2D lightmap;\n")
-		.append("vec3 normlize(vec3 vec) {\n")
-		.append("	float length = sqrt((vec.x*vec.x) + (vec.y*vec.y) + (vec.z*vec.z));\n")
-		.append("	if (length==0) return vec;\n")
-		.append("	return vec3(vec.x/length, vec.y/length, vec.z/length)+vec3(0.5,0.5,0.5);\n")
-		.append("}\n")
-		.append("void main() {\n")
-		.append("	vec4 color = clamp((gl_Color * (texture2D(base, gl_TexCoord[0].st) * (texture2D(lightmap, gl_TexCoord[0].ts)))) * vec4(vec3(mix(clamp(texture2D(lightmap, gl_TexCoord[1].st).xyz, 0.0f, 1.0f).xyz, normlize(lightColor.xyz), magnitude)),1), 0, 1);\n")
-		.append("   gl_FragColor = color;\n")
-		.append("}\n")
-		.toString();
-		//@formatter:on
-
-	public static final String LIGHTOVERLAY_SRC_VERT = new StringBuilder()
+	public static String getLightOverlaySrc(final ShaderType type) {
+		switch (type) {
+		case FRAGMENT:
+			return new StringBuilder()
+			//@formatter:off
+			.append("#version 120\n")
+			.append("varying vec3 position;\n")
+			.append("varying float magnitude;\n")
+			.append("varying vec4 lightColor;\n")
+			.append("uniform int chunkX;\n")
+			.append("uniform int chunkZ;\n")
+			.append("uniform sampler2D base;\n")
+			.append("uniform sampler2D lightmap;\n")
+			.append("vec3 normlize(vec3 vec) {\n")
+			.append("	float length = sqrt((vec.x*vec.x) + (vec.y*vec.y) + (vec.z*vec.z));\n")
+			.append("	if (length==0) return vec;\n")
+			.append("	return vec3(vec.x/length, vec.y/length, vec.z/length)+vec3(0.5,0.5,0.5);\n")
+			.append("}\n")
+			.append("void main() {\n")
+			.append("   gl_FragColor = clamp((gl_Color * (texture2D(base, gl_TexCoord[0].st) * (texture2D(lightmap, gl_TexCoord[0].ts)))) * vec4(vec3(mix(clamp(texture2D(lightmap, gl_TexCoord[1].st).xyz, 0.0f, 1.0f).xyz, normlize(lightColor.xyz), magnitude)),1), 0.0f, 1.0f);\n")
+			.append("}\n")
+			.toString();
+			//@formatter:on
+		case VERTEX:
+			return new StringBuilder()
 			//@formatter:off
 			.append("#version 120\n")
 			.append("varying vec3 position;\n")
@@ -137,9 +138,9 @@ public class LibShaders {
 			.append("vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;\n")
 			.append("position = gl_Vertex.xyz+vec3(chunkX,chunkY,chunkZ);\n")
 			.append("float offset = 0;\n")
-			.append("gl_TexCoord[0] = gl_MultiTexCoord0;\n")
+			.append("gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n")
 			.append("gl_TexCoord[1] = gl_TextureMatrix[1] * gl_MultiTexCoord1;\n")
-			.append("gl_Position = gl_ModelViewProjectionMatrix * (gl_Vertex + vec4(0,offset,0,0));\n")
+			.append("gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n")//vec4(gl_Vertex.xyz, 1.0);\n")//(gl_Vertex + vec4(0,offset,0,0));\n")
 			.append("gl_FrontColor = gl_Color;\n")
 			.append("float finalR = 0;\n")
 			.append("float finalG = 0;\n")
@@ -163,4 +164,12 @@ public class LibShaders {
 			.append("}\n")
 			.toString();
 			//@formatter:on
+		default:
+			return "";
+		}
+	}
+
+	public static final String LIGHTOVERLAY_SRC_FRAG = getLightOverlaySrc(ShaderType.FRAGMENT);
+
+	public static final String LIGHTOVERLAY_SRC_VERT = getLightOverlaySrc(ShaderType.VERTEX);
 }

@@ -20,13 +20,12 @@ package p455w0rdslib.proxy;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import p455w0rdslib.LibConfig;
-import p455w0rdslib.LibEntities;
+import p455w0rdslib.*;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
 import p455w0rdslib.handlers.ProcessHandler;
 
@@ -47,6 +46,23 @@ public class CommonProxy {
 
 	public void init(final FMLInitializationEvent e) {
 		LibEntities.init();
+	}
+
+	public void postInit(final FMLPostInitializationEvent e) {
+		MinecraftForge.TERRAIN_GEN_BUS.register(LibEvents.class);
+
+		/*GameRegistry.registerWorldGenerator((rand, x, z, world, chunkGenerator, chunkProvider) -> {
+			final int i = 8;
+			rand.setSeed(world.getSeed());
+			for (int l = x - i; l <= x + i; ++l) {
+				for (int i1 = z - i; i1 <= z + i; ++i1) {
+					for (int y = 0; y <= 255; y++) {
+						final BlockPos p = new BlockPos(l, y, i1);
+						MinecraftForge.TERRAIN_GEN_BUS.post(new BlockGenEvent(world, p, world.getBlockState(p)));
+					}
+				}
+			}
+		}, Integer.MAX_VALUE);*/
 	}
 
 	public boolean isSMP() {

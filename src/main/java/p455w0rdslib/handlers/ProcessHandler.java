@@ -1,8 +1,6 @@
 package p455w0rdslib.handlers;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import com.google.common.collect.Lists;
 
@@ -21,21 +19,21 @@ import p455w0rdslib.api.IProcess;
 
 public class ProcessHandler {
 
-	private static List<IProcess> processes = new ArrayList<IProcess>();
-	private static List<IProcess> newProcesses = new ArrayList<IProcess>();
+	private static List<IProcess> processes = new ArrayList<>();
+	private static List<IProcess> newProcesses = new ArrayList<>();
 
 	public static void init() {
 		MinecraftForge.EVENT_BUS.register(new ProcessHandler());
 	}
 
 	@SubscribeEvent
-	public void onServerTick(TickEvent.ServerTickEvent event) {
+	public void onServerTick(final TickEvent.ServerTickEvent event) {
 		if (event.phase == TickEvent.Phase.START) {
-			Iterator<IProcess> i = processes.iterator();
-			List<IProcess> toBeRemoved = Lists.newArrayList();
-
+			final List<IProcess> tmpList = new ArrayList<>(processes);
+			final Iterator<IProcess> i = tmpList.iterator();
+			final List<IProcess> toBeRemoved = Lists.newArrayList();
 			while (i.hasNext()) {
-				IProcess process = i.next();
+				final IProcess process = i.next();
 				if (process.isDead()) {
 					toBeRemoved.add(process);
 				}
@@ -43,18 +41,20 @@ public class ProcessHandler {
 					process.updateProcess();
 				}
 			}
-
 			if (!toBeRemoved.isEmpty()) {
-				for (IProcess p : toBeRemoved) {
-					if (processes.contains(p)) {
-						processes.remove(p);
+				for (final IProcess p : toBeRemoved) {
+					if (tmpList.contains(p)) {
+						tmpList.remove(p);
 					}
 				}
 			}
-
 			if (!newProcesses.isEmpty()) {
-				processes.addAll(newProcesses);
+				tmpList.addAll(newProcesses);
 				newProcesses.clear();
+			}
+			if (!tmpList.isEmpty()) {
+				processes.clear();
+				processes.addAll(tmpList);
 			}
 		}
 	}
@@ -64,7 +64,7 @@ public class ProcessHandler {
 		newProcesses.clear();
 	}
 
-	public static void addProcess(IProcess process) {
+	public static void addProcess(final IProcess process) {
 		newProcesses.add(process);
 	}
 

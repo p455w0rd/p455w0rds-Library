@@ -10,6 +10,8 @@
 !gradlew
 !gradlew.bat
 !build.gradle
+!gradle.properties
+!settings.gradle
 
 # Other Files.
 !LICENSE
@@ -22,5 +24,3 @@
 # Include Important Folders
 !src/
 !libs/
-
-maven.bat
