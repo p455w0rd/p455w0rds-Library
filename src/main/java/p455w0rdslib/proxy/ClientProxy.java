@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import p455w0rdslib.LibKeyBindings;
 import p455w0rdslib.LibShaders;
 import p455w0rdslib.capabilities.CapabilityLightEmitter;
 import p455w0rdslib.handlers.ProcessHandlerClient;
@@ -39,6 +40,7 @@ public class ClientProxy extends CommonProxy {
 		ProcessHandlerClient.init();
 		LibShaders.registerReloadListener();
 		CapabilityLightEmitter.register();
+		LibKeyBindings.register();
 	}
 
 	@Override

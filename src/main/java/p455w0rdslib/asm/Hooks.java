@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.util.math.BlockPos;
 import p455w0rdslib.LibGlobals;
+import p455w0rdslib.LibGlobals.ConfigOptions;
 import p455w0rdslib.LibShaders;
 import p455w0rdslib.api.client.shader.LightHandler;
 import p455w0rdslib.util.ShaderUtils.Shader;
@@ -17,13 +18,19 @@ public class Hooks {
 	public static boolean albedoDetected = false;
 
 	public static void enableColoredLighting() {
-		if (LibGlobals.areShadersEnabled()) {
+		if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
+			if (LibShaders.coloredLightShader == Shader.NONE) {
+				LibShaders.reload();
+			}
 			LibShaders.coloredLightShader.use();
 			LibShaders.coloredLightShader.getUniform("base").setInt(0);
 			LibShaders.coloredLightShader.getUniform("lightmap").setInt(1);
 			//LightHandler.clear();
 			LightHandler.update(Minecraft.getMinecraft().world);
 			LightHandler.uploadLights();
+		}
+		else if (LibShaders.coloredLightShader != Shader.NONE) {
+			LibShaders.coloredLightShader = Shader.NONE;
 		}
 	}
 
@@ -34,8 +41,11 @@ public class Hooks {
 	}
 
 	public static void preRenderChunk(final RenderChunk c) {
-		if (LibGlobals.areShadersEnabled()) {
+		if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
 			if (LibShaders.getActiveShader() == LibShaders.coloredLightShader) {
+				if (LibShaders.coloredLightShader == Shader.NONE) {
+					LibShaders.reload();
+				}
 				final BlockPos pos = c.getPosition();
 				LibShaders.getActiveShader().getUniform("chunkX").setInt(pos.getX());
 				LibShaders.getActiveShader().getUniform("chunkY").setInt(pos.getY());

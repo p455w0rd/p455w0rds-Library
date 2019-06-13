@@ -30,6 +30,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -43,6 +44,7 @@ import p455w0rdslib.api.event.BlockGenEvent;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
 import p455w0rdslib.capabilities.CapabilityChunkLoader.ProviderTE;
 import p455w0rdslib.capabilities.CapabilityLightEmitter;
+import p455w0rdslib.handlers.BrightnessHandler;
 import p455w0rdslib.integration.Albedo;
 import p455w0rdslib.util.ContributorUtils;
 
@@ -59,6 +61,9 @@ public class LibEvents {
 	public static void tickStart(final TickEvent.ClientTickEvent event) {
 		if (event.phase != TickEvent.Phase.START || event.type != TickEvent.Type.CLIENT || event.side != Side.CLIENT) {
 			return;
+		}
+		if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
+			BrightnessHandler.tickAllHandlers();
 		}
 		if (FMLClientHandler.instance().getWorldClient() != null) {
 			if (Keyboard.isKeyDown(Keyboard.KEY_NUMPAD8)) {
@@ -109,6 +114,19 @@ public class LibEvents {
 		else {
 			if (LibGlobals.ELAPSED_TICKS != 0) {
 				LibGlobals.ELAPSED_TICKS = 0;
+			}
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public static void onKeyBind(final KeyInputEvent event) {
+		if (LibKeyBindings.TOGGLE_SHADERS.isPressed()) {
+			if (LibGlobals.areShadersEnabled()) {
+				ConfigOptions.ENABLE_SHADERS = !ConfigOptions.ENABLE_SHADERS;
+				//LibConfig.CONFIG.get(LibConfig.SHADER_CAT, "EnableShaders", true).set(!ConfigOptions.ENABLE_SHADERS);
+				//ConfigOptions.ENABLE_SHADERS = LibConfig.CONFIG.get(LibConfig.SHADER_CAT, "EnableShaders", true).getBoolean();
+				LibConfig.CONFIG.save();
 			}
 		}
 	}

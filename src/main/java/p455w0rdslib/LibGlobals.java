@@ -12,7 +12,7 @@ import p455w0rdslib.asm.Hooks;
 public class LibGlobals {
 
 	public static final String MODID = "p455w0rdslib";
-	public static final String VERSION = "2.2.115";
+	public static final String VERSION = "2.2.122";
 	public static final String NAME = "p455w0rd's Library";
 	public static final String SERVER_PROXY = "p455w0rdslib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rdslib.proxy.ClientProxy";
@@ -38,7 +38,7 @@ public class LibGlobals {
 		if (!shaderCheck && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
 			String msg = "Shaders supported: {}";
 			shaderCheck = true;
-			shadersEnabled = ConfigOptions.ENABLE_SHADERS && GLContext.getCapabilities().OpenGL20;
+			shadersEnabled = GLContext.getCapabilities().OpenGL20;
 			if (Hooks.albedoDetected) {
 				shadersEnabled = false;
 				msg += ", Albedo detected";

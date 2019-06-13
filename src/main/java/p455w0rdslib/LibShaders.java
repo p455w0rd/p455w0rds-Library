@@ -109,7 +109,7 @@ public class LibShaders {
 			.append("	return vec3(vec.x/length, vec.y/length, vec.z/length)+vec3(0.5,0.5,0.5);\n")
 			.append("}\n")
 			.append("void main() {\n")
-			.append("   gl_FragColor = clamp((gl_Color * (texture2D(base, gl_TexCoord[0].st) * (texture2D(lightmap, gl_TexCoord[0].ts)))) * vec4(vec3(mix(clamp(texture2D(lightmap, gl_TexCoord[1].st).xyz, 0.0f, 1.0f).xyz, normlize(lightColor.xyz), magnitude)),1), 0.0f, 1.0f);\n")
+			.append("   gl_FragColor = clamp((gl_Color * texture2D(base, gl_TexCoord[0].st)) * vec4(vec3(mix(clamp(texture2D(lightmap, gl_TexCoord[1].st).xyz, 0.0f, 1.0f).xyz, normlize(lightColor.xyz), magnitude)),1), 0.0f, 1.0f);\n")
 			.append("}\n")
 			.toString();
 			//@formatter:on

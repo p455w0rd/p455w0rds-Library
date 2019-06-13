@@ -41,6 +41,15 @@ public class BrightnessHandler {
 		tick();
 	}
 
+	public static void tickAllHandlers() {
+		for (final Map.Entry<TileEntity, BrightnessHandler> tileHandler : TILE_BRIGHTNESS_HANDLERS.entrySet()) {
+			tileHandler.getValue().tick();
+		}
+		for (final Map.Entry<Entity, BrightnessHandler> entityHandler : ENTITY_BRIGHTNESS_HANDLERS.entrySet()) {
+			entityHandler.getValue().tick();
+		}
+	}
+
 	public static BrightnessHandler getBrightness(final TileEntity tile) {
 		if (!TILE_BRIGHTNESS_HANDLERS.containsKey(tile)) {
 			TILE_BRIGHTNESS_HANDLERS.put(tile, new BrightnessHandler());
@@ -56,7 +65,7 @@ public class BrightnessHandler {
 	}
 
 	public int value() {
-		tick();
+		//tick();
 		return brightness;
 	}
 
@@ -66,7 +75,7 @@ public class BrightnessHandler {
 			initLight = true;
 		}
 		if (brightnessDir) {
-			brightness++;
+			brightness += 30;
 			if (brightness > STEPS_MOST[step]) {
 				brightnessDir = !brightnessDir;
 				step++;
@@ -76,7 +85,7 @@ public class BrightnessHandler {
 			}
 		}
 		else {
-			brightness--;
+			brightness -= 30;
 			if (brightness < STEPS_LEAST[step]) {
 				brightnessDir = !brightnessDir;
 				step++;
