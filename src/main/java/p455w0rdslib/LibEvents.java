@@ -210,7 +210,7 @@ public class LibEvents {
 				e.addCapability(new ResourceLocation("pwlib:albedo_entity_cap"), Albedo.getEmptyProvider());
 			}
 		}
-		else if (LibGlobals.areShadersEnabled()) {
+		else if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
 			if (e.getObject() instanceof EntityPlayer) {
 				e.addCapability(new ResourceLocation("pwlib:light_emitter_cap"), CapabilityLightEmitter.getDummyProvider());
 			}
@@ -226,7 +226,7 @@ public class LibEvents {
 				e.addCapability(new ResourceLocation("pwlib:albedo_stack_cap"), Albedo.getVanillaStackProvider(stack));
 			}
 		}
-		else if (LibGlobals.areShadersEnabled()) {
+		else if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
 			if (CapabilityLightEmitter.getColorForStack(stack).getLeft() != 0x0) {
 				if (!e.getObject().hasCapability(CapabilityLightEmitter.LIGHT_EMITTER_CAPABILITY, null)) {
 					e.addCapability(new ResourceLocation("pwlib:light_emitter_cap"), CapabilityLightEmitter.getVanillaStackProvider(stack));

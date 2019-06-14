@@ -6,13 +6,12 @@ import org.lwjgl.opengl.GLContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Loader;
-import p455w0rdslib.asm.FMLPlugin;
 import p455w0rdslib.asm.Hooks;
 
 public class LibGlobals {
 
 	public static final String MODID = "p455w0rdslib";
-	public static final String VERSION = "2.2.122";
+	public static final String VERSION = "2.2.126";
 	public static final String NAME = "p455w0rd's Library";
 	public static final String SERVER_PROXY = "p455w0rdslib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rdslib.proxy.ClientProxy";
@@ -36,18 +35,11 @@ public class LibGlobals {
 
 	public static boolean areShadersEnabled() {
 		if (!shaderCheck && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-			String msg = "Shaders supported: {}";
 			shaderCheck = true;
 			shadersEnabled = GLContext.getCapabilities().OpenGL20;
-			if (Hooks.albedoDetected) {
+			if (Hooks.conflictDetected) {
 				shadersEnabled = false;
-				msg += ", Albedo detected";
 			}
-			if (Hooks.isOptifineDetected()) {
-				shadersEnabled = false;
-				msg += ", Optifine detected";
-			}
-			FMLPlugin.log(msg, shadersEnabled);
 		}
 		return shadersEnabled;
 	}

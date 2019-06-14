@@ -25,15 +25,17 @@ public class ClassTransformer implements IClassTransformer {
 	public byte[] transform(final String name, final String transformedName, final byte[] basicClass) {
 		if (!init) {
 			init = true;
-			if (Hooks.isOptifineDetected()) {
-				enabled = false;
-				FMLPlugin.log("Optifine detected; Patching aborted :D");
-			}
+
 			for (final Map.Entry<String, List<String>> e : CoreModManager.getTransformers().entrySet()) { //if possible, detect Albedo, and abort
 				if (e.getValue().get(0).equals("elucent.albedo.asm.ASMTransformer")) {
 					enabled = false;
-					Hooks.albedoDetected = true;
+					Hooks.conflictDetected = true;
 					FMLPlugin.log("Albedo detected; Patching aborted :D");
+				}
+				else if (detectOptifine()) {
+					enabled = false;
+					Hooks.conflictDetected = true;
+					FMLPlugin.log("Optifine detected; Patching aborted :D");
 				}
 			}
 		}
@@ -46,6 +48,17 @@ public class ClassTransformer implements IClassTransformer {
 			}
 		}
 		return basicClass;
+	}
+
+	private boolean detectOptifine() {
+		try {
+			if (Class.forName("optifine.OptiFineClassTransformer") != null) {
+				return true;
+			}
+		}
+		catch (final Exception e) {
+		}
+		return false;
 	}
 
 	private static byte[] patchRenderGlobal(final byte[] c) {

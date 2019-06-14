@@ -15,7 +15,7 @@ import p455w0rdslib.util.ShaderUtils.Shader;
  */
 public class Hooks {
 
-	public static boolean albedoDetected = false;
+	public static boolean conflictDetected = false;
 
 	public static void enableColoredLighting() {
 		if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
@@ -51,15 +51,6 @@ public class Hooks {
 				LibShaders.getActiveShader().getUniform("chunkY").setInt(pos.getY());
 				LibShaders.getActiveShader().getUniform("chunkZ").setInt(pos.getZ());
 			}
-		}
-	}
-
-	public static boolean isOptifineDetected() {
-		try {
-			return Class.forName("optifine.OptiFineClassTransformer") != null;
-		}
-		catch (final ClassNotFoundException e) {
-			return false;
 		}
 	}
 
