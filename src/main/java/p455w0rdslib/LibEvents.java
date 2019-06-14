@@ -124,8 +124,6 @@ public class LibEvents {
 		if (LibKeyBindings.TOGGLE_SHADERS.isPressed()) {
 			if (LibGlobals.areShadersEnabled()) {
 				ConfigOptions.ENABLE_SHADERS = !ConfigOptions.ENABLE_SHADERS;
-				//LibConfig.CONFIG.get(LibConfig.SHADER_CAT, "EnableShaders", true).set(!ConfigOptions.ENABLE_SHADERS);
-				//ConfigOptions.ENABLE_SHADERS = LibConfig.CONFIG.get(LibConfig.SHADER_CAT, "EnableShaders", true).getBoolean();
 				LibConfig.CONFIG.save();
 			}
 		}

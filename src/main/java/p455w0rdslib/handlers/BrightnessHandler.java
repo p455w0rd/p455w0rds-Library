@@ -75,7 +75,7 @@ public class BrightnessHandler {
 			initLight = true;
 		}
 		if (brightnessDir) {
-			brightness += 30;
+			brightness += 5;
 			if (brightness > STEPS_MOST[step]) {
 				brightnessDir = !brightnessDir;
 				step++;
@@ -85,7 +85,7 @@ public class BrightnessHandler {
 			}
 		}
 		else {
-			brightness -= 30;
+			brightness -= 5;
 			if (brightness < STEPS_LEAST[step]) {
 				brightnessDir = !brightnessDir;
 				step++;
