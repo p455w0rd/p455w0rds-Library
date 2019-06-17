@@ -27,15 +27,17 @@ public class ClassTransformer implements IClassTransformer {
 			init = true;
 
 			for (final Map.Entry<String, List<String>> e : CoreModManager.getTransformers().entrySet()) { //if possible, detect Albedo, and abort
-				if (e.getValue().get(0).equals("elucent.albedo.asm.ASMTransformer")) {
-					enabled = false;
-					Hooks.conflictDetected = true;
-					FMLPlugin.log("Albedo detected; Patching aborted :D");
-				}
-				else if (detectOptifine()) {
-					enabled = false;
-					Hooks.conflictDetected = true;
-					FMLPlugin.log("Optifine detected; Patching aborted :D");
+				if (e.getValue().size() > 0) {
+					if (e.getValue().get(0).equals("elucent.albedo.asm.ASMTransformer")) {
+						enabled = false;
+						Hooks.conflictDetected = true;
+						FMLPlugin.log("Albedo detected; Patching aborted :D");
+					}
+					else if (detectOptifine()) {
+						enabled = false;
+						Hooks.conflictDetected = true;
+						FMLPlugin.log("Optifine detected; Patching aborted :D");
+					}
 				}
 			}
 		}
