@@ -86,6 +86,7 @@ public class ClassTransformer implements IClassTransformer {
 			}
 		}
 		final SafeClassWriter writer = new SafeClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+		//final CustomClassWriter writer = new CustomClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		node.accept(writer);
 		return writer.toByteArray();
 	}
@@ -109,6 +110,7 @@ public class ClassTransformer implements IClassTransformer {
 			}
 		}
 		final SafeClassWriter writer = new SafeClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+		//final CustomClassWriter writer = new CustomClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		node.accept(writer);
 		return writer.toByteArray();
 	}

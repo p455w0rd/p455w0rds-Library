@@ -62,7 +62,7 @@ public class LibEvents {
 		if (event.phase != TickEvent.Phase.START || event.type != TickEvent.Type.CLIENT || event.side != Side.CLIENT) {
 			return;
 		}
-		if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
+		if (LibShaders.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
 			BrightnessHandler.tickAllHandlers();
 		}
 		if (FMLClientHandler.instance().getWorldClient() != null) {
@@ -122,7 +122,7 @@ public class LibEvents {
 	@SubscribeEvent
 	public static void onKeyBind(final KeyInputEvent event) {
 		if (LibKeyBindings.TOGGLE_SHADERS.isPressed()) {
-			if (LibGlobals.areShadersEnabled()) {
+			if (LibShaders.areShadersEnabled()) {
 				ConfigOptions.ENABLE_SHADERS = !ConfigOptions.ENABLE_SHADERS;
 				LibConfig.CONFIG.save();
 			}
@@ -210,7 +210,7 @@ public class LibEvents {
 				e.addCapability(new ResourceLocation("pwlib:albedo_entity_cap"), Albedo.getEmptyProvider());
 			}
 		}
-		else if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
+		else if (LibShaders.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
 			if (e.getObject() instanceof EntityPlayer) {
 				e.addCapability(new ResourceLocation("pwlib:light_emitter_cap"), CapabilityLightEmitter.getDummyProvider());
 			}
@@ -226,7 +226,7 @@ public class LibEvents {
 				e.addCapability(new ResourceLocation("pwlib:albedo_stack_cap"), Albedo.getVanillaStackProvider(stack));
 			}
 		}
-		else if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
+		else if (LibShaders.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
 			if (CapabilityLightEmitter.getColorForStack(stack).getLeft() != 0x0) {
 				if (!e.getObject().hasCapability(CapabilityLightEmitter.LIGHT_EMITTER_CAPABILITY, null)) {
 					e.addCapability(new ResourceLocation("pwlib:light_emitter_cap"), CapabilityLightEmitter.getVanillaStackProvider(stack));

@@ -3,7 +3,6 @@ package p455w0rdslib.asm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.util.math.BlockPos;
-import p455w0rdslib.LibGlobals;
 import p455w0rdslib.LibGlobals.ConfigOptions;
 import p455w0rdslib.LibShaders;
 import p455w0rdslib.api.client.shader.LightHandler;
@@ -18,7 +17,7 @@ public class Hooks {
 	public static boolean conflictDetected = false;
 
 	public static void enableColoredLighting() {
-		if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
+		if (LibShaders.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
 			if (LibShaders.coloredLightShader == Shader.NONE) {
 				LibShaders.reload();
 			}
@@ -35,13 +34,13 @@ public class Hooks {
 	}
 
 	public static void disableColoredLighting() {
-		if (LibGlobals.areShadersEnabled()) {
+		if (LibShaders.areShadersEnabled()) {
 			Shader.NONE.use();
 		}
 	}
 
 	public static void preRenderChunk(final RenderChunk c) {
-		if (LibGlobals.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
+		if (LibShaders.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
 			if (LibShaders.getActiveShader() == LibShaders.coloredLightShader) {
 				if (LibShaders.coloredLightShader == Shader.NONE) {
 					LibShaders.reload();

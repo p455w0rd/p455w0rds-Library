@@ -62,4 +62,9 @@ public class ClientProxy extends CommonProxy {
 	public boolean isClientSide() {
 		return true;
 	}
+
+	@Override
+	public boolean areShadersEnabled() {
+		return LibShaders.areShadersEnabled();
+	}
 }

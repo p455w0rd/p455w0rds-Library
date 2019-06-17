@@ -30,13 +30,31 @@ import org.lwjgl.opengl.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import p455w0rdslib.asm.Hooks;
 import p455w0rdslib.util.ShaderUtils.Shader;
 import p455w0rdslib.util.ShaderUtils.ShaderType;
 
+@SideOnly(Side.CLIENT)
 public class LibShaders {
 
 	private static Shader activeShader = Shader.NONE;
 	public static Shader coloredLightShader = Shader.NONE;
+
+	private static boolean shaderCheck = false;
+	private static boolean shadersEnabled = false;
+
+	public static boolean areShadersEnabled() {
+		if (!shaderCheck && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+			shaderCheck = true;
+			shadersEnabled = GLContext.getCapabilities().OpenGL20;
+			if (Hooks.conflictDetected) {
+				shadersEnabled = false;
+			}
+		}
+		return shadersEnabled;
+	}
 
 	public static Shader getActiveShader() {
 		return activeShader;
@@ -47,7 +65,7 @@ public class LibShaders {
 	}
 
 	public static void registerReloadListener() {
-		if (!LibGlobals.areShadersEnabled()) {
+		if (!areShadersEnabled()) {
 			return;
 		}
 		((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener((irm) -> {

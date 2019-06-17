@@ -2,16 +2,12 @@ package p455w0rdslib;
 
 import java.util.concurrent.*;
 
-import org.lwjgl.opengl.GLContext;
-
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Loader;
-import p455w0rdslib.asm.Hooks;
 
 public class LibGlobals {
 
 	public static final String MODID = "p455w0rdslib";
-	public static final String VERSION = "2.2.126";
+	public static final String VERSION = "2.2.133";
 	public static final String NAME = "p455w0rd's Library";
 	public static final String SERVER_PROXY = "p455w0rdslib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rdslib.proxy.ClientProxy";
@@ -29,20 +25,6 @@ public class LibGlobals {
 	public static boolean IS_CONTRIBUTOR = false;
 	public static boolean CONTRIBUTOR_FILE_DOWNLOADED = false;
 	public static final String REQUIRE_DEP = "required-after:" + MODID + "@[" + VERSION + ",);";
-
-	private static boolean shaderCheck = false;
-	private static boolean shadersEnabled = false;
-
-	public static boolean areShadersEnabled() {
-		if (!shaderCheck && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-			shaderCheck = true;
-			shadersEnabled = GLContext.getCapabilities().OpenGL20;
-			if (Hooks.conflictDetected) {
-				shadersEnabled = false;
-			}
-		}
-		return shadersEnabled;
-	}
 
 	public static enum Mods {
 			DANKNULL("danknull", "/dank/null"), AE2WTLIB("ae2wtlib", "AE2 Wireless Terminal Library"),
