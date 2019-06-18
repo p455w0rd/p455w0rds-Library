@@ -1,13 +1,12 @@
 package p455w0rdslib.asm;
 
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraftforge.fml.relauncher.CoreModManager;
+import net.minecraft.launchwrapper.Launch;
 
 /**
  * @author p455w0rd
@@ -25,20 +24,20 @@ public class ClassTransformer implements IClassTransformer {
 	public byte[] transform(final String name, final String transformedName, final byte[] basicClass) {
 		if (!init) {
 			init = true;
-
-			for (final Map.Entry<String, List<String>> e : CoreModManager.getTransformers().entrySet()) { //if possible, detect Albedo, and abort
-				if (e.getValue().size() > 0) {
-					if (e.getValue().get(0).equals("elucent.albedo.asm.ASMTransformer")) {
-						enabled = false;
-						Hooks.conflictDetected = true;
-						FMLPlugin.log("Albedo detected; Patching aborted :D");
-					}
-					else if (detectOptifine()) {
-						enabled = false;
-						Hooks.conflictDetected = true;
-						FMLPlugin.log("Optifine detected; Patching aborted :D");
-					}
-				}
+			if (classExists("elucent.albedo.asm.ASMTransformer")) {
+				enabled = false;
+				Hooks.conflictDetected = true;
+				FMLPlugin.log("Albedo detected; Patching aborted :D");
+			}
+			else if (classExists("optifine.OptiFineClassTransformer")) {
+				enabled = false;
+				Hooks.conflictDetected = true;
+				FMLPlugin.log("Optifine detected; Patching aborted :D");
+			}
+			else if (classExists("ru.fewizz.neid.asm.Transformer")) {
+				enabled = false;
+				Hooks.conflictDetected = true;
+				FMLPlugin.log("Not Enough IDs detected; Patching aborted :D");
 			}
 		}
 		if (enabled) {
@@ -52,15 +51,13 @@ public class ClassTransformer implements IClassTransformer {
 		return basicClass;
 	}
 
-	private boolean detectOptifine() {
+	public boolean classExists(final String name) {
 		try {
-			if (Class.forName("optifine.OptiFineClassTransformer") != null) {
-				return true;
-			}
+			return Launch.classLoader.getClassBytes(name) != null;
 		}
-		catch (final Exception e) {
+		catch (final IOException e) {
+			throw new RuntimeException(e);
 		}
-		return false;
 	}
 
 	private static byte[] patchRenderGlobal(final byte[] c) {
