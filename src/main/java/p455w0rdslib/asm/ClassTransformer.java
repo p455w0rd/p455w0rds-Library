@@ -2,6 +2,8 @@ package p455w0rdslib.asm;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 
@@ -17,30 +19,13 @@ public class ClassTransformer implements IClassTransformer {
 	private static final String RENDERGLOBAL_CLASS = "net.minecraft.client.renderer.RenderGlobal";
 	private static final String CHUNKRENDERCONTAINER_CLASS = "net.minecraft.client.renderer.ChunkRenderContainer";
 	private static final String HOOKS_PATH = "p455w0rdslib/asm/Hooks";
+	private static final Logger log = LogManager.getLogger("p455w0rdsc0re");
+	public static boolean enabled = true;
 	private static boolean init = false;
-	private static boolean enabled = true;
 
 	@Override
 	public byte[] transform(final String name, final String transformedName, final byte[] basicClass) {
-		if (!init) {
-			init = true;
-			if (classExists("elucent.albedo.asm.ASMTransformer")) {
-				enabled = false;
-				Hooks.conflictDetected = true;
-				FMLPlugin.log("Albedo detected; Patching aborted :D");
-			}
-			else if (classExists("optifine.OptiFineClassTransformer")) {
-				enabled = false;
-				Hooks.conflictDetected = true;
-				FMLPlugin.log("Optifine detected; Patching aborted :D");
-			}
-			else if (classExists("ru.fewizz.neid.asm.Transformer")) {
-				enabled = false;
-				Hooks.conflictDetected = true;
-				FMLPlugin.log("Not Enough IDs detected; Patching aborted :D");
-			}
-		}
-		if (enabled) {
+		if (shouldPatch()) {
 			if (transformedName.equals(RENDERGLOBAL_CLASS)) {
 				return patchRenderGlobal(basicClass);
 			}
@@ -51,7 +36,26 @@ public class ClassTransformer implements IClassTransformer {
 		return basicClass;
 	}
 
-	public boolean classExists(final String name) {
+	private boolean shouldPatch() {
+		if (!init) {
+			init = true;
+			if (classExists("org.spongepowered.mod.SpongeCoremod")) {
+				enabled = false;
+				log.info("Albedo detected; Patching aborted :D");
+			}
+			else if (classExists("optifine.OptiFineForgeTweaker")) {
+				enabled = false;
+				log.info("Optifine detected; Patching aborted :D");
+			}
+			else if (classExists("elucent.albedo.asm.ASMTransformer")) {
+				enabled = false;
+				log.info("Mixins detected; Patching aborted :D");
+			}
+		}
+		return enabled;
+	}
+
+	private boolean classExists(final String name) {
 		try {
 			return Launch.classLoader.getClassBytes(name) != null;
 		}
@@ -77,7 +81,7 @@ public class ClassTransformer implements IClassTransformer {
 					final AbstractInsnNode currentNode = nodeList[i];
 					if (currentNode.getOpcode() == Opcodes.RETURN) {
 						instr.insertBefore(currentNode, new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_PATH, "disableColoredLighting", "()V", false));
-						FMLPlugin.log("Successfully patched " + RENDERGLOBAL_CLASS + "#renderBlockLayer(Lnet/minecraft/util/BlockRenderLayer;)V");
+						log.info("Successfully patched " + RENDERGLOBAL_CLASS + "#renderBlockLayer(Lnet/minecraft/util/BlockRenderLayer;)V");
 						found = true;
 						break;
 					}
@@ -85,7 +89,6 @@ public class ClassTransformer implements IClassTransformer {
 			}
 		}
 		final SafeClassWriter writer = new SafeClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		//final CustomClassWriter writer = new CustomClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		node.accept(writer);
 		return writer.toByteArray();
 	}
@@ -103,13 +106,12 @@ public class ClassTransformer implements IClassTransformer {
 					if (currentNode.getOpcode() == Opcodes.RETURN) {
 						instr.insertBefore(currentNode, new VarInsnNode(Opcodes.ALOAD, 1));
 						instr.insertBefore(currentNode, new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_PATH, "preRenderChunk", "(Lnet/minecraft/client/renderer/chunk/RenderChunk;)V", false));
-						FMLPlugin.log("Successfully patched " + CHUNKRENDERCONTAINER_CLASS + "#preRenderChunk(Lnet/minecraft/client/renderer/chunk/RenderChunk;)V");
+						log.info("Successfully patched " + CHUNKRENDERCONTAINER_CLASS + "#preRenderChunk(Lnet/minecraft/client/renderer/chunk/RenderChunk;)V");
 					}
 				}
 			}
 		}
 		final SafeClassWriter writer = new SafeClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		//final CustomClassWriter writer = new CustomClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		node.accept(writer);
 		return writer.toByteArray();
 	}

@@ -2,8 +2,6 @@ package p455w0rdslib.asm;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 /**
@@ -11,15 +9,14 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
  *
  */
 @IFMLLoadingPlugin.MCVersion("1.12.2")
-@IFMLLoadingPlugin.Name(FMLPlugin.COREMODID)
+@IFMLLoadingPlugin.Name("p455w0rdc0re")
 @IFMLLoadingPlugin.TransformerExclusions({
 		"p455w0rdslib.asm"
 })
-@IFMLLoadingPlugin.SortingIndex(Integer.MAX_VALUE)
+@IFMLLoadingPlugin.SortingIndex(1001)
 public class FMLPlugin implements IFMLLoadingPlugin {
 
-	public static final String COREMODID = "p455w0rdc0re";
-	public static boolean isDeobf = false;
+	//public static boolean isDeobf = false;
 
 	@Override
 	public String[] getASMTransformerClass() {
@@ -40,20 +37,12 @@ public class FMLPlugin implements IFMLLoadingPlugin {
 
 	@Override
 	public void injectData(final Map<String, Object> data) {
-		isDeobf = !(Boolean) data.get("runtimeDeobfuscationEnabled");
+		//isDeobf = !(Boolean) data.get("runtimeDeobfuscationEnabled");
 	}
 
 	@Override
 	public String getAccessTransformerClass() {
 		return null;
-	}
-
-	public static void log(final String msg) {
-		LogManager.getLogger(FMLPlugin.COREMODID).info(msg);
-	}
-
-	public static void log(final String msg, final Object... format) {
-		LogManager.getLogger(FMLPlugin.COREMODID).info(msg, format);
 	}
 
 }

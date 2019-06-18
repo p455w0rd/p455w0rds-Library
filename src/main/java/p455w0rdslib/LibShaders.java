@@ -32,7 +32,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import p455w0rdslib.asm.Hooks;
+import p455w0rdslib.asm.ClassTransformer;
 import p455w0rdslib.util.ShaderUtils.Shader;
 import p455w0rdslib.util.ShaderUtils.ShaderType;
 
@@ -49,7 +49,7 @@ public class LibShaders {
 		if (!shaderCheck && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
 			shaderCheck = true;
 			shadersEnabled = GLContext.getCapabilities().OpenGL20;
-			if (Hooks.conflictDetected) {
+			if (!ClassTransformer.enabled) {
 				shadersEnabled = false;
 			}
 		}

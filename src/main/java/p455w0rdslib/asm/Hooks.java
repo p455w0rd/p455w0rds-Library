@@ -14,8 +14,6 @@ import p455w0rdslib.util.ShaderUtils.Shader;
  */
 public class Hooks {
 
-	public static boolean conflictDetected = false;
-
 	public static void enableColoredLighting() {
 		if (LibShaders.areShadersEnabled() && ConfigOptions.ENABLE_SHADERS) {
 			if (LibShaders.coloredLightShader == Shader.NONE) {
