@@ -12,8 +12,6 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 
-import p455w0rdslib.asm.FMLPlugin;
-
 public class MappingsUtil {
 	//private static Map<String, String> fields;
 	//private static Map<String, String> methods;
@@ -51,7 +49,7 @@ public class MappingsUtil {
 	}
 
 	public static final boolean mcp() {
-		return FMLPlugin.isDeobf;
+		return false;
 	}
 
 	public static final String getField(final String name) {

@@ -16,8 +16,6 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 @IFMLLoadingPlugin.SortingIndex(1001)
 public class FMLPlugin implements IFMLLoadingPlugin {
 
-	//public static boolean isDeobf = false;
-
 	@Override
 	public String[] getASMTransformerClass() {
 		return new String[] {
@@ -37,7 +35,6 @@ public class FMLPlugin implements IFMLLoadingPlugin {
 
 	@Override
 	public void injectData(final Map<String, Object> data) {
-		//isDeobf = !(Boolean) data.get("runtimeDeobfuscationEnabled");
 	}
 
 	@Override
