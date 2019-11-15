@@ -19,6 +19,9 @@ import p455w0rdslib.LibGlobals;
  * From https://github.com/MightyPirates/BedrockOres/blob/master-MC1.12/src/main/java/li/cil/bedrockores/common/config/ore/WrappedBlockState.java
  *
  */
+@SuppressWarnings({
+		"unchecked", "rawtypes"
+})
 public class WrappedBlockState {
 	public static final List<WrappedBlockState> ERRORED = new ArrayList<>();
 
@@ -113,24 +116,19 @@ public class WrappedBlockState {
 
 	// --------------------------------------------------------------------- //
 
-	@SuppressWarnings("unchecked")
 	private IBlockState resolveBlockState() {
 		final Block block = ForgeRegistries.BLOCKS.getValue(name);
 		if (block == null || block == Blocks.AIR) {
 			return Blocks.AIR.getDefaultState();
 		}
-
 		IBlockState state = block.getDefaultState();
 		if (properties != null) {
-			final Collection<IProperty<?>> blockProperties = state.getPropertyKeys();
 			outer: for (final Map.Entry<String, String> entry : properties.entrySet()) {
 				final String serializedKey = entry.getKey();
 				final String serializedValue = entry.getValue();
-
-				for (final IProperty property : blockProperties) {
+				for (final IProperty property : state.getPropertyKeys()) {
 					if (Objects.equals(property.getName(), serializedKey)) {
-						final Comparable originalValue = state.getValue(property);
-
+						final Comparable<?> originalValue = state.getValue(property);
 						do {
 							if (Objects.equals(property.getName(state.getValue(property)), serializedValue)) {
 								continue outer;
@@ -144,7 +142,6 @@ public class WrappedBlockState {
 						return Blocks.AIR.getDefaultState();
 					}
 				}
-
 				LogManager.getLogger(LibGlobals.MODID).warn("Block {} has no property '{}'.", name, serializedKey);
 				ERRORED.add(this);
 				return Blocks.AIR.getDefaultState();
@@ -152,4 +149,5 @@ public class WrappedBlockState {
 		}
 		return state;
 	}
+
 }

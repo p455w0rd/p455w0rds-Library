@@ -41,7 +41,7 @@ public class LibConfig {
 			ConfigOptions.SHADER_NUM_FRAMES_TO_SKIP = CONFIG.getInt("NumFramesToSkipWhenRenderingShaders", SHADER_CAT, 10, 0, 160, "Skips sending light updates to the card some frames. This can speed up fps greatly when bandwidth is a problem. 0 always sends data.");
 			ConfigOptions.SHADERS_MAX_DIST = CONFIG.getFloat("MaxRenderDist", SHADER_CAT, 128.0F, 4.0F, 128.0F, "Maximum Distance to render a colored light");
 			ConfigOptions.MAX_LIGHTS = CONFIG.getInt("MaxLights", SHADER_CAT, 64, 4, 256, "Maximum Number of lights to be rendered on the screen at once");
-			ConfigOptions.ENABLE_VANILLA_LIGHT_EFFECTS = CONFIG.getBoolean("EnableVanillaLightingEffects", SHADER_CAT, true, "If true, then colored lighting effects will be added to vanilla items, blocks, and tile entities.");
+			ConfigOptions.ENABLE_VANILLA_LIGHT_EFFECTS = CONFIG.getBoolean("EnableVanillaLightingEffects", SHADER_CAT, false, "If true, then colored lighting effects will be added to vanilla items, blocks, and tile entities.");
 			if (CONFIG.hasChanged()) {
 				CONFIG.save();
 			}

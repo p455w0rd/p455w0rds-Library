@@ -24,8 +24,6 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import p455w0rdslib.LibKeyBindings;
-import p455w0rdslib.LibShaders;
-import p455w0rdslib.capabilities.CapabilityLightEmitter;
 import p455w0rdslib.handlers.ProcessHandlerClient;
 
 /**
@@ -38,8 +36,6 @@ public class ClientProxy extends CommonProxy {
 	public void preInit(final FMLPreInitializationEvent e) {
 		super.preInit(e);
 		ProcessHandlerClient.init();
-		LibShaders.registerReloadListener();
-		CapabilityLightEmitter.register();
 		LibKeyBindings.register();
 	}
 
@@ -61,10 +57,5 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public boolean isClientSide() {
 		return true;
-	}
-
-	@Override
-	public boolean areShadersEnabled() {
-		return LibShaders.areShadersEnabled();
 	}
 }

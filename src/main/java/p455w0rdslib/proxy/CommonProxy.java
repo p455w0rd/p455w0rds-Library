@@ -89,8 +89,4 @@ public class CommonProxy {
 		return FMLCommonHandler.instance().getMinecraftServerInstance();
 	}
 
-	public boolean areShadersEnabled() {
-		return false;
-	}
-
 }

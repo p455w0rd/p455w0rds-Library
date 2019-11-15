@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Loader;
 public class LibGlobals {
 
 	public static final String MODID = "p455w0rdslib";
-	public static final String VERSION = "2.2.145";
+	public static final String VERSION = "2.3.158";
 	public static final String NAME = "p455w0rd's Library";
 	public static final String SERVER_PROXY = "p455w0rdslib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rdslib.proxy.ClientProxy";
@@ -67,7 +67,7 @@ public class LibGlobals {
 		public static double SHADERS_MAX_DIST = 64D;
 		public static int MAX_LIGHTS = 8;
 		public static int SHADER_NUM_FRAMES_TO_SKIP = 10;
-		public static boolean ENABLE_VANILLA_LIGHT_EFFECTS = true;
+		public static boolean ENABLE_VANILLA_LIGHT_EFFECTS = false;
 
 	}
 }
