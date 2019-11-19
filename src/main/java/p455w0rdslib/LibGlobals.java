@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Loader;
 public class LibGlobals {
 
 	public static final String MODID = "p455w0rdslib";
-	public static final String VERSION = "2.3.158";
+	public static final String VERSION = "2.3.159";
 	public static final String NAME = "p455w0rd's Library";
 	public static final String SERVER_PROXY = "p455w0rdslib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rdslib.proxy.ClientProxy";
@@ -35,7 +35,8 @@ public class LibGlobals {
 			TOP("theoneprobe", "The One Probe"), WAILA("waila", "WAILA"), JEI("jei", "JEI"),
 			ITEMSCROLLER("itemscroller", "Item Scroller"), NEI("nei", "Not Enough Items"), CHISEL("chisel", "Chisel"),
 			THAUMCRAFT("thaumcraft", "Thaumcraft"), BAUBLES("baubles", "Baubles"),
-			BAUBLESAPI("Baubles|API", "Baubles API"), ALBEDO("albedo", "Albedo");
+			BAUBLESAPI("Baubles|API", "Baubles API"), ALBEDO("albedo", "Albedo"),
+			EXTRA_UTILITIES_2("extrautils2", "Extra Utilities 2");
 
 		private final String modid, name;
 
