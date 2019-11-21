@@ -14,7 +14,9 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.renderer.entity.layers.*;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.entity.layers.LayerCape;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -149,9 +151,9 @@ public class ContributorUtils {
 		return null;
 	}
 
-	private static void removeVanillaSpecialLayers(final List<LayerRenderer<?>> r) {
+	private static void removeVanillaSpecialLayers(final List<LayerRenderer<AbstractClientPlayer>> r) {
 		for (int i = 0; i < r.size(); ++i) {
-			if (r.get(i) instanceof LayerElytra || r.get(i) instanceof LayerCape) {
+			if (/*r.get(i) instanceof LayerElytra ||*/ r.get(i) instanceof LayerCape) {
 				r.remove(i);
 			}
 		}
@@ -166,9 +168,9 @@ public class ContributorUtils {
 	}
 
 	public static void addDankNull() {
-		for (final RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
-			final List<?> r = renderPlayer.layerRenderers;
-			removeVanillaSpecialLayers((List<LayerRenderer<?>>) r);
+		for (final RenderPlayer renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
+			final List<LayerRenderer<AbstractClientPlayer>> r = renderPlayer.layerRenderers;
+			removeVanillaSpecialLayers(r);
 			renderPlayer.addLayer(layerDankNull = new LayerContribDankNull());
 		}
 	}
